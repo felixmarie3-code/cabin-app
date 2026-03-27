@@ -203,39 +203,16 @@ function buildBriefing(){
     tags.appendChild(btn);
   });
 
-  // Flight profile
+  // Flight profile — horizontal line with dots
   const fp=el('flightProfile');fp.textContent='';
-  const phases=[
-    {label:'D\u00e9part ORY',time:'14:00',pct:0},{label:'TOC (FL390)',time:'14:32',pct:25},
-    {label:'Croisi\u00e8re',time:'',pct:50},{label:'TOD',time:'00:38',pct:75},{label:'Arriv\u00e9e RUN',time:'01:15',pct:100}
-  ];
-  const fpSvg=document.createElementNS('http://www.w3.org/2000/svg','svg');
-  fpSvg.setAttribute('viewBox','0 0 500 60');fpSvg.style.cssText='width:100%;height:60px;';
-  // Path
-  const path=document.createElementNS('http://www.w3.org/2000/svg','path');
-  path.setAttribute('d','M10,50 Q60,50 100,15 L250,12 L350,12 Q400,12 440,50 L490,50');
-  path.setAttribute('stroke','#52A7BE');path.setAttribute('stroke-width','2');path.setAttribute('fill','none');path.setAttribute('opacity','0.6');
-  fpSvg.appendChild(path);
-  // Fill
-  const fill2=document.createElementNS('http://www.w3.org/2000/svg','path');
-  fill2.setAttribute('d','M10,50 Q60,50 100,15 L250,12 L350,12 Q400,12 440,50 L490,50 L490,60 L10,60 Z');
-  fill2.setAttribute('fill','#52A7BE');fill2.setAttribute('opacity','0.05');fpSvg.appendChild(fill2);
-  // Points
-  const pts=[{x:10,y:50},{x:100,y:15},{x:250,y:12},{x:400,y:12},{x:490,y:50}];
-  phases.forEach((ph,i)=>{
-    const g=document.createElementNS('http://www.w3.org/2000/svg','g');
-    const circ=document.createElementNS('http://www.w3.org/2000/svg','circle');
-    circ.setAttribute('cx',pts[i].x);circ.setAttribute('cy',pts[i].y);circ.setAttribute('r','4');
-    circ.setAttribute('fill',i===0?'#355EAB':i===4?'#4ade80':'#52A7BE');g.appendChild(circ);
-    const lbl=document.createElementNS('http://www.w3.org/2000/svg','text');
-    lbl.setAttribute('x',pts[i].x);lbl.setAttribute('y',pts[i].y<30?pts[i].y+16:pts[i].y-8);
-    lbl.setAttribute('text-anchor','middle');lbl.setAttribute('font-size','7');lbl.setAttribute('fill','#9a9bb8');lbl.textContent=ph.label;g.appendChild(lbl);
-    if(ph.time){const tm=document.createElementNS('http://www.w3.org/2000/svg','text');
-      tm.setAttribute('x',pts[i].x);tm.setAttribute('y',pts[i].y<30?pts[i].y+24:pts[i].y-16);
-      tm.setAttribute('text-anchor','middle');tm.setAttribute('font-size','8');tm.setAttribute('font-weight','600');tm.setAttribute('fill','#52A7BE');tm.textContent=ph.time;g.appendChild(tm);}
-    fpSvg.appendChild(g);
+  const line=document.createElement('div');line.className='fp-line';fp.appendChild(line);
+  [{label:'D\u00e9part ORY',time:'14:00',cls:'dep'},{label:'TOC (FL390)',time:'14:32',cls:''},{label:'Croisi\u00e8re',time:'',cls:''},{label:'TOD',time:'00:38',cls:''},{label:'Arriv\u00e9e RUN',time:'01:15',cls:'arr'}].forEach(ph=>{
+    const pt=document.createElement('div');pt.className='fp-point';
+    const tm=document.createElement('div');tm.className='fp-time';tm.textContent=ph.time||'\u00b7';
+    const dot=document.createElement('div');dot.className='fp-dot'+(ph.cls?' '+ph.cls:'');
+    const lb=document.createElement('div');lb.className='fp-label';lb.textContent=ph.label;
+    pt.appendChild(tm);pt.appendChild(dot);pt.appendChild(lb);fp.appendChild(pt);
   });
-  fp.appendChild(fpSvg);
 
   // Crew
   const crewEl=el('briefCrew');crewEl.textContent='';
@@ -402,7 +379,7 @@ document.getElementById('searchInput').addEventListener('input',e=>{searchQuery=
 function applyFilters(){const has=activeFilter!=='all'||searchQuery.length>0;document.querySelectorAll('.seat:not(.no-seat)').forEach(el=>{const sid=el.dataset.seat,pax=passengers[sid];let m=true;
   if(activeFilter==='occupied')m=!!pax;else if(activeFilter==='empty')m=!pax;else if(activeFilter==='special-meal')m=pax&&pax.meal;else if(activeFilter==='um')m=pax&&pax.remark==='UM';else if(activeFilter==='wchr')m=pax&&pax.remark==='WCHR';else if(activeFilter==='not-boarded')m=pax&&!pax.boarded;else if(activeFilter==='bookmarked')m=!!bookmarks[sid];
   if(searchQuery&&m){if(pax)m=(pax.name+' '+pax.pnr+' '+sid+' '+pax.remark+' '+pax.meal).toLowerCase().includes(searchQuery);else m=sid.toLowerCase().includes(searchQuery);}
-  el.classList.toggle('dimmed',has&&!m);el.classList.toggle('highlighted',has&&m&&(activeFilter!=='all'||searchQuery));});
+  el.classList.toggle('dimmed',has&&!m);el.classList.toggle('breathing',has&&m);});
   // Update pax list below cabin
   buildPaxList();
 }
