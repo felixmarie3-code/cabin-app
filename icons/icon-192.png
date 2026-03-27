@@ -1,19 +1,30 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 192 192">
-  <rect width="192" height="192" rx="42" fill="#181A3B"/>
-  <!-- Simplified airplane silhouette -->
-  <g transform="translate(96,88)">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0d0f2b"/>
+      <stop offset="100%" stop-color="#1a1d4a"/>
+    </linearGradient>
+  </defs>
+  <rect width="192" height="192" rx="42" fill="url(#bg)"/>
+  <!-- Airplane icon — clean, geometric, front-facing -->
+  <g transform="translate(96, 86)">
     <!-- Fuselage -->
-    <ellipse cx="0" cy="0" rx="52" ry="8" fill="#52A7BE" opacity="0.2"/>
+    <path d="M0,-52 C4,-52 6,-48 6,-40 L6,28 C6,32 4,36 0,40 C-4,36 -6,32 -6,28 L-6,-40 C-6,-48 -4,-52 0,-52Z" fill="white" opacity="0.92"/>
     <!-- Wings -->
-    <path d="M-12,-4 L-48,18 L-44,20 L-8,4 Z" fill="#52A7BE" opacity="0.35"/>
-    <path d="M12,-4 L48,18 L44,20 L8,4 Z" fill="#52A7BE" opacity="0.35"/>
-    <!-- Body -->
-    <path d="M-6,6 L0,-36 L6,6 Z" fill="white" opacity="0.9"/>
-    <!-- Tail -->
-    <path d="M-4,-30 L0,-42 L4,-30" fill="#52A7BE" opacity="0.6"/>
+    <path d="M6,-6 L52,14 C54,15 54,18 52,19 L6,8Z" fill="#52A7BE" opacity="0.8"/>
+    <path d="M-6,-6 L-52,14 C-54,15 -54,18 -52,19 L-6,8Z" fill="#52A7BE" opacity="0.8"/>
+    <!-- Tail fin -->
+    <path d="M0,-52 L0,-62 C0,-64 2,-65 4,-63 L6,-52 L0,-48Z" fill="#355EAB" opacity="0.9"/>
+    <path d="M0,-52 L0,-62 C0,-64 -2,-65 -4,-63 L-6,-52 L0,-48Z" fill="#355EAB" opacity="0.7"/>
+    <!-- Tail wings -->
+    <path d="M6,-44 L22,-50 C23,-50 24,-49 23,-48 L6,-40Z" fill="#52A7BE" opacity="0.5"/>
+    <path d="M-6,-44 L-22,-50 C-23,-50 -24,-49 -23,-48 L-6,-40Z" fill="#52A7BE" opacity="0.5"/>
+    <!-- Engines -->
+    <ellipse cx="20" cy="12" rx="4" ry="6" fill="white" opacity="0.25"/>
+    <ellipse cx="-20" cy="12" rx="4" ry="6" fill="white" opacity="0.25"/>
+    <!-- Windshield -->
+    <path d="M-3,-42 Q0,-46 3,-42 L3,-36 Q0,-34 -3,-36Z" fill="#52A7BE" opacity="0.5"/>
   </g>
-  <!-- CABIN text -->
-  <text x="96" y="136" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="20" font-weight="700" fill="white" letter-spacing="6" opacity="0.95">CABIN</text>
   <!-- Neoline -->
-  <line x1="46" y1="148" x2="146" y2="148" stroke="#DA3D32" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="46" y1="162" x2="146" y2="162" stroke="#DA3D32" stroke-width="2.5" stroke-linecap="round"/>
 </svg>

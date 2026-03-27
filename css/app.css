@@ -728,3 +728,81 @@ button, [role="button"] { min-height: 36px; min-width: 36px; }
 }
 .notif-item.swiping { transition: none; }
 .notif-item.dismissed { transform: translateX(-100%); opacity: 0; }
+
+/* === Pax bottom panel (list + detail under cabin) === */
+.pax-bottom-panel {
+  margin-top: 10px; background: var(--bg-surface); border-radius: var(--radius);
+  border: 1px solid var(--border); max-height: 260px; overflow: hidden; display: flex; flex-direction: column;
+}
+.pax-list-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 12px; border-bottom: 1px solid var(--border); flex-shrink: 0;
+}
+.pax-list-title { font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--accent); }
+.pax-list-scroll { overflow-y: auto; -webkit-overflow-scrolling: touch; flex: 1; }
+.pax-list-row {
+  display: flex; align-items: center; gap: 10px; padding: 7px 12px;
+  border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.15s; font-size: 12px;
+}
+.pax-list-row:active { background: rgba(82,167,190,0.08); }
+.pax-list-row.selected { background: rgba(82,167,190,0.12); }
+.pax-list-seat { font-weight: 600; color: var(--accent); min-width: 32px; }
+.pax-list-name { flex: 1; color: var(--text); }
+.pax-list-tags { display: flex; gap: 4px; }
+.pax-list-tag { font-size: 9px; padding: 1px 5px; border-radius: 3px; font-weight: 600; letter-spacing: 0.3px; }
+.pax-list-tag.meal { background: rgba(251,191,36,0.15); color: #fbbf24; }
+.pax-list-tag.remark { background: rgba(82,167,190,0.15); color: var(--corsair-bleu-economie); }
+
+.pax-detail-view { padding: 12px; overflow-y: auto; }
+.pax-detail-back {
+  font-size: 12px; color: var(--corsair-bleu-economie); cursor: pointer; margin-bottom: 8px;
+  font-weight: 600; min-height: 28px; display: inline-flex; align-items: center;
+}
+.pax-detail-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+
+/* === Seat breathing animation (filter active) === */
+@keyframes breathe {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(82,167,190,0); }
+  50% { opacity: 0.85; box-shadow: 0 0 6px 2px rgba(82,167,190,0.25); }
+}
+.seat.highlighted {
+  animation: breathe 2.5s ease-in-out infinite;
+  box-shadow: none; border-color: transparent;
+}
+
+/* Remove dot indicators on seats */
+.seat.special-meal::after, .seat.wheelchair::after, .seat.bookmarked::before { display: none; }
+
+/* === Cabin defects === */
+.cabin-defects-list { display: flex; flex-direction: column; gap: 4px; }
+.defect-row {
+  display: flex; align-items: center; gap: 8px; padding: 6px 8px;
+  background: rgba(255,255,255,0.03); border-radius: 4px; font-size: 12px;
+}
+.defect-zone { font-weight: 600; color: var(--corsair-bleu-economie); min-width: 70px; }
+.defect-desc { flex: 1; color: var(--text-muted); }
+.defect-impact { font-size: 9px; font-weight: 600; padding: 2px 6px; border-radius: 3px; }
+.defect-impact.minor { background: rgba(82,167,190,0.15); color: var(--corsair-bleu-economie); }
+.defect-impact.major { background: rgba(251,191,36,0.15); color: #fbbf24; }
+.defect-impact.go-if { background: rgba(218,61,50,0.15); color: var(--corsair-rouge-vermillon); }
+.no-defects { font-size: 12px; color: var(--text-muted); opacity: 0.6; padding: 4px 0; }
+
+/* === Briefing themes & mgmt info === */
+.briefing-themes { display: flex; flex-direction: column; gap: 4px; }
+.theme-item {
+  padding: 8px 10px; background: rgba(255,255,255,0.03); border-radius: 4px;
+  font-size: 12px; color: var(--text-muted); border-left: 2px solid var(--corsair-bleu-economie);
+}
+.mgmt-info { display: flex; flex-direction: column; gap: 4px; }
+.mgmt-item {
+  padding: 8px 10px; border-radius: 4px; font-size: 12px;
+}
+.mgmt-item.info { background: rgba(53,94,171,0.08); border-left: 2px solid var(--corsair-bleu-premium); color: var(--text-muted); }
+.mgmt-item.warn { background: rgba(218,61,50,0.06); border-left: 2px solid var(--corsair-rouge-vermillon); color: var(--text-muted); }
+
+/* Light theme additions */
+[data-theme="light"] .pax-bottom-panel { background: var(--bg-surface); }
+[data-theme="light"] .pax-list-name { color: var(--text); }
+[data-theme="light"] .defect-row { background: var(--bg-card); }
+[data-theme="light"] .theme-item { background: var(--bg-card); }
+[data-theme="light"] .mgmt-item { background: var(--bg-card); }

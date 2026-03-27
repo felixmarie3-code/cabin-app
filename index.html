@@ -121,18 +121,35 @@
           <div class="brief-crew-list" id="briefCrew"></div>
         </div>
 
-        <!-- M&eacute;t&eacute;o -->
+        <!-- Cabin Status -->
         <div class="brief-card">
-          <div class="brief-card-title">M&eacute;t&eacute;o destination (RUN)</div>
-          <div class="brief-kpi-row">
-            <div class="brief-kpi"><div class="brief-kpi-value">28&deg;C</div><div class="brief-kpi-label">Temp&eacute;rature</div></div>
-            <div class="brief-kpi"><div class="brief-kpi-value">12 kt</div><div class="brief-kpi-label">Vent</div></div>
-            <div class="brief-kpi"><div class="brief-kpi-value">FEW025</div><div class="brief-kpi-label">Plafond</div></div>
+          <div class="brief-card-title">Cabin Status <button class="inline-btn" id="addDefectBtn">+ D&eacute;faut</button></div>
+          <div class="cabin-defects-list" id="cabinDefects"></div>
+        </div>
+
+        <!-- Th&egrave;mes de briefing -->
+        <div class="brief-card wide">
+          <div class="brief-card-title">Th&egrave;mes de briefing</div>
+          <div class="briefing-themes" id="briefingThemes">
+            <div class="theme-item">S&eacute;curit&eacute; : v&eacute;rification portes arm&eacute;es avant push-back</div>
+            <div class="theme-item">Service : nouveau menu long-courrier, pr&eacute;sentation plateau Business</div>
+            <div class="theme-item">Communication : annonces bilingues FR/EN syst&eacute;matiques</div>
+            <div class="theme-item">Ponctualit&eacute; : objectif D-0 sur ce vol, respecter les jalons OTP</div>
+          </div>
+        </div>
+
+        <!-- Infos manag&eacute;riales -->
+        <div class="brief-card wide">
+          <div class="brief-card-title">Informations manag&eacute;riales</div>
+          <div class="mgmt-info" id="mgmtInfo">
+            <div class="mgmt-item info">Rappel : port du badge obligatoire en zone publique (note DS 2025-14)</div>
+            <div class="mgmt-item info">Formation CRM recycl&eacute;e disponible sur le portail &mdash; deadline 15 avril</div>
+            <div class="mgmt-item warn">Contr&ocirc;les DGAC renforc&eacute;s sur les annonces s&eacute;curit&eacute; &mdash; soyez rigoureux</div>
           </div>
         </div>
 
         <!-- Notes -->
-        <div class="brief-card">
+        <div class="brief-card wide">
           <div class="brief-card-title">Notes de briefing</div>
           <textarea class="brief-notes" id="briefingNotes" placeholder="Ajouter des notes..."></textarea>
           <div style="margin-top:10px">
@@ -181,6 +198,37 @@
       <div class="cabin-container">
         <div class="cabin-plan" id="cabinPlan"></div>
         <div class="cabin-stats" id="cabinStats"></div>
+      </div>
+      <!-- Pax list / detail below cabin -->
+      <div class="pax-bottom-panel" id="paxBottomPanel">
+        <div class="pax-list-view" id="paxListView">
+          <div class="pax-list-header">
+            <span class="pax-list-title" id="paxListTitle">Liste passagers</span>
+            <span class="badge" id="paxListCount">0</span>
+          </div>
+          <div class="pax-list-scroll" id="paxListScroll"></div>
+        </div>
+        <div class="pax-detail-view" id="paxDetailView" style="display:none">
+          <div class="pax-detail-back" id="paxDetailBack">&larr; Retour &agrave; la liste</div>
+          <div class="pax-detail-header">
+            <div class="pax-seat-badge" id="paxDetBadge"></div>
+            <div>
+              <div class="pax-name" id="paxDetName"></div>
+              <div class="pax-class" id="paxDetClass"></div>
+            </div>
+            <div class="pax-panel-actions">
+              <button class="pax-action-btn" id="paxDetBookmark" title="Marquer">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="pax-info-grid" id="paxDetGrid"></div>
+          <div class="pax-notes-section">
+            <label class="pax-notes-label">Notes PNC</label>
+            <textarea class="pax-notes" id="paxDetNotes" placeholder="Ajouter une note..."></textarea>
+            <button class="pax-save-note" id="paxDetSaveNote">Enregistrer la note</button>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -360,6 +408,36 @@
       <div class="pax-panel-body">
         <div class="door-grid" id="doorGrid"></div>
         <button class="pax-save-note" id="doorSave" style="width:100%;margin-top:12px">Enregistrer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cabin defect modal -->
+  <div class="pax-panel-overlay" id="defectOverlay">
+    <div class="pax-panel" style="max-width:420px">
+      <div class="pax-panel-header">
+        <div class="pax-panel-title"><div class="pax-name">Nouveau d&eacute;faut cabine</div></div>
+        <div class="pax-panel-actions">
+          <button class="pax-action-btn close-btn" id="defectClose">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="pax-panel-body">
+        <div class="form-group"><label class="form-label">Zone</label>
+          <select class="form-select" id="defectZone">
+            <option>Business</option><option>Premium</option><option>&Eacute;conomy avant</option><option>&Eacute;conomy arri&egrave;re</option><option>Galley</option><option>Toilettes</option><option>Autre</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Description</label><textarea class="brief-notes" id="defectDesc" placeholder="Si&egrave;ge 14A accoudoir cass&eacute;..." style="min-height:60px"></textarea></div>
+        <div class="form-group"><label class="form-label">Impact op&eacute;rationnel</label>
+          <div class="severity-btns" id="defectImpact">
+            <button class="sev-btn low active" data-sev="minor">Mineur</button>
+            <button class="sev-btn med" data-sev="major">Majeur</button>
+            <button class="sev-btn high" data-sev="go-if">GO-IF</button>
+          </div>
+        </div>
+        <button class="pax-save-note" id="defectSave" style="width:100%;margin-top:12px">Enregistrer</button>
       </div>
     </div>
   </div>
