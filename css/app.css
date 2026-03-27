@@ -23,7 +23,7 @@
   --corsair-beige-sable: #DEDBCE;
   --corsair-noir-nuit: #252525;
   --radius: 8px;
-  --tab-height: 56px;
+  --tab-height: 72px;
   --header-height: 48px;
 }
 
@@ -188,7 +188,7 @@ html, body {
 .tab.active { color: var(--corsair-bleu-economie); }
 [data-theme="light"] .tab.active { color: var(--corsair-bleu-premium); }
 .tab.active::after { display: none; }
-.tab-icon { width: 22px; height: 22px; flex-shrink: 0; stroke-width: 1.75; }
+.tab-icon { width: 24px; height: 24px; flex-shrink: 0; stroke-width: 1.75; }
 
 /* === Content (above bottom tab bar) === */
 .content {
