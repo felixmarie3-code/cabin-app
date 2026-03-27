@@ -31,44 +31,110 @@ function updateThemeIcon(theme) {
 document.getElementById('notifTestBtn').addEventListener('click', function() {
   const btn = this;
   btn.disabled = true;
-  const originalText = btn.querySelector('svg').nextSibling;
   let countdown = 5;
-  btn.childNodes[btn.childNodes.length - 1].textContent = ' Envoi dans ' + countdown + 's...';
+  const textNode = btn.childNodes[btn.childNodes.length - 1];
+
+  // Request permission immediately on click (iOS requires user gesture)
+  requestNotifPermission();
+
+  textNode.textContent = ' Envoi dans ' + countdown + 's...';
   const timer = setInterval(() => {
     countdown--;
     if (countdown > 0) {
-      btn.childNodes[btn.childNodes.length - 1].textContent = ' Envoi dans ' + countdown + 's...';
+      textNode.textContent = ' Envoi dans ' + countdown + 's...';
     } else {
       clearInterval(timer);
       triggerNotification();
-      btn.childNodes[btn.childNodes.length - 1].textContent = ' Notification envoyee !';
-      setTimeout(() => {
-        btn.disabled = false;
-        btn.childNodes[btn.childNodes.length - 1].textContent = ' Tester une notification';
-      }, 2000);
+      textNode.textContent = ' Notification envoyee !';
+      setTimeout(() => { btn.disabled = false; textNode.textContent = ' Tester une notification'; }, 3000);
     }
   }, 1000);
 });
 
-function triggerNotification() {
-  if (!('Notification' in window)) { alert('Notifications non supportees sur ce navigateur.'); return; }
-  if (Notification.permission === 'granted') {
-    new Notification('CORSAIR Cabin — SS 901', {
-      body: 'Passager 22K — MARTIN Thomas demande une assistance medicale en Economy. Verifiez la trousse de premiers secours.',
-      icon: 'icons/icon-192.svg',
-      tag: 'cabin-test'
-    });
-  } else if (Notification.permission !== 'denied') {
-    Notification.requestPermission().then(p => {
-      if (p === 'granted') {
-        new Notification('CORSAIR Cabin — SS 901', {
-          body: 'Passager 22K — MARTIN Thomas demande une assistance medicale en Economy. Verifiez la trousse de premiers secours.',
-          icon: 'icons/icon-192.svg',
-          tag: 'cabin-test'
-        });
-      }
-    });
+function requestNotifPermission() {
+  if ('Notification' in window && Notification.permission === 'default') {
+    Notification.requestPermission();
   }
+}
+
+function triggerNotification() {
+  const title = 'CORSAIR Cabin — SS 901';
+  const options = {
+    body: 'ALERTE MEDICALE — Siege 22K, MARTIN Thomas demande une assistance en Economy. Verifiez la trousse de premiers secours et le defibrillateur.',
+    icon: 'icons/icon-192.svg',
+    badge: 'icons/icon-192.svg',
+    tag: 'cabin-alert-' + Date.now(),
+    renotify: true,
+    requireInteraction: true,
+    vibrate: [200, 100, 200]
+  };
+
+  // Method 1: Service Worker notification (required for iOS PWA)
+  if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+    navigator.serviceWorker.ready.then(reg => {
+      reg.showNotification(title, options).catch(() => fallbackNotification(title, options));
+    }).catch(() => fallbackNotification(title, options));
+    return;
+  }
+
+  // Method 2: Fallback for desktop / non-SW contexts
+  fallbackNotification(title, options);
+}
+
+function fallbackNotification(title, options) {
+  if (!('Notification' in window)) {
+    showInAppAlert(title, options.body);
+    return;
+  }
+  if (Notification.permission === 'granted') {
+    try { new Notification(title, options); } catch { showInAppAlert(title, options.body); }
+  } else if (Notification.permission === 'denied') {
+    showInAppAlert(title, options.body);
+  }
+}
+
+// In-app alert fallback (always works, even without permission)
+function showInAppAlert(title, body) {
+  const existing = document.getElementById('inAppAlert');
+  if (existing) existing.remove();
+
+  const alert = document.createElement('div');
+  alert.id = 'inAppAlert';
+  alert.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9999;padding:12px 16px;display:flex;gap:10px;align-items:flex-start;animation:slideDown 0.3s ease;';
+  alert.style.background = 'linear-gradient(135deg, #1a1d4a 0%, #282B62 100%)';
+  alert.style.borderBottom = '2px solid var(--corsair-rouge-vermillon)';
+  alert.style.boxShadow = '0 4px 24px rgba(0,0,0,0.4)';
+
+  const icon = document.createElement('div');
+  icon.style.cssText = 'width:36px;height:36px;border-radius:8px;background:#DA3D32;display:flex;align-items:center;justify-content:center;flex-shrink:0;';
+  icon.textContent = '!';
+  icon.style.color = 'white';
+  icon.style.fontWeight = '700';
+  icon.style.fontSize = '18px';
+
+  const content = document.createElement('div');
+  content.style.flex = '1';
+  const t = document.createElement('div');
+  t.style.cssText = 'font-size:12px;font-weight:600;color:white;letter-spacing:0.5px;';
+  t.textContent = title;
+  const b = document.createElement('div');
+  b.style.cssText = 'font-size:13px;color:#DEDBCE;margin-top:3px;line-height:1.4;';
+  b.textContent = body;
+  content.appendChild(t);
+  content.appendChild(b);
+
+  const close = document.createElement('button');
+  close.style.cssText = 'background:none;border:none;color:white;font-size:20px;cursor:pointer;padding:0 4px;min-height:36px;min-width:36px;';
+  close.textContent = '\u00d7';
+  close.addEventListener('click', () => alert.remove());
+
+  alert.appendChild(icon);
+  alert.appendChild(content);
+  alert.appendChild(close);
+  document.body.appendChild(alert);
+
+  // Auto-dismiss after 8s
+  setTimeout(() => { if (alert.parentNode) alert.remove(); }, 8000);
 }
 
 // === Tab Navigation ===

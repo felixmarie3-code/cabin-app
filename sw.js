@@ -1,4 +1,4 @@
-const CACHE_NAME = 'cabin-app-v6';
+const CACHE_NAME = 'cabin-app-v7';
 const ASSETS = [
   './',
   './index.html',
@@ -42,5 +42,18 @@ self.addEventListener('fetch', (e) => {
         return response;
       })
       .catch(() => caches.match(e.request))
+  );
+});
+
+// Notification click — focus/open the app
+self.addEventListener('notificationclick', (e) => {
+  e.notification.close();
+  e.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clientList => {
+      if (clientList.length > 0) {
+        return clientList[0].focus();
+      }
+      return clients.openWindow('./');
+    })
   );
 });
