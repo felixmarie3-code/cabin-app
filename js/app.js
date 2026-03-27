@@ -138,15 +138,43 @@ function showInAppAlert(title, body) {
 }
 
 // === Tab Navigation ===
+function switchToTab(moduleName) {
+  document.querySelectorAll('.tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.module === moduleName);
+  });
+  document.querySelectorAll('.module').forEach(m => {
+    m.classList.toggle('active', m.id === 'mod-' + moduleName);
+  });
+}
+
 document.getElementById('tabBar').addEventListener('click', (e) => {
   const tab = e.target.closest('.tab');
   if (!tab) return;
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  tab.classList.add('active');
-  document.querySelectorAll('.module').forEach(m => {
-    m.classList.toggle('active', m.id === 'mod-' + tab.dataset.module);
-  });
+  switchToTab(tab.dataset.module);
 });
+
+// Handle hash-based deep links (for manifest shortcuts)
+function handleHash() {
+  const hash = window.location.hash.replace('#', '');
+  if (hash) switchToTab(hash);
+}
+window.addEventListener('hashchange', handleHash);
+if (window.location.hash) handleHash();
+
+// === App Badge ===
+function updateAppBadge() {
+  if (!('setAppBadge' in navigator)) return;
+  let alertCount = 0;
+  // Count non-boarded passengers
+  Object.values(passengers).forEach(p => { if (!p.boarded) alertCount++; });
+  // Count incidents
+  alertCount += incidents.length;
+  if (alertCount > 0) {
+    navigator.setAppBadge(alertCount).catch(() => {});
+  } else {
+    navigator.clearAppBadge().catch(() => {});
+  }
+}
 
 // === Persistence helpers ===
 function lsGet(k, def) { try { return JSON.parse(localStorage.getItem(k)) || def; } catch { return def; } }
@@ -685,6 +713,7 @@ document.getElementById('incidentSave').addEventListener('click',()=>{
   document.getElementById('incidentSeat').value='';
   document.getElementById('incidentOverlay').classList.remove('visible');
   buildReport();
+  updateAppBadge();
 });
 
 // ============================================================
@@ -760,3 +789,4 @@ buildTimeline();
 buildChecklists();
 buildReport();
 updateClocks();
+updateAppBadge();
