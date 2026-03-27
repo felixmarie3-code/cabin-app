@@ -20,6 +20,9 @@
     </div>
     <div class="header-right">
       <span class="flight-info" id="flightInfo">SS 901 &middot; ORY &rarr; RUN &middot; B787-9</span>
+      <button class="theme-toggle" id="themeToggle" title="Changer de theme">
+        <svg id="themeIcon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
       <span class="sync-status" id="syncStatus" title="En ligne"></span>
     </div>
   </header>
@@ -127,6 +130,12 @@
         <div class="brief-card">
           <div class="brief-card-title">Notes de briefing</div>
           <textarea class="brief-notes" id="briefingNotes" placeholder="Ajouter des notes..."></textarea>
+          <div style="margin-top:10px">
+            <button class="notif-test-btn" id="notifTestBtn">
+              <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+              Tester une notification
+            </button>
+          </div>
         </div>
       </div>
     </section>

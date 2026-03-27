@@ -5,6 +5,72 @@ if ('serviceWorker' in navigator) {
     .catch(err => console.error('SW error:', err));
 }
 
+// === Theme Toggle ===
+const savedTheme = localStorage.getItem('cabin_theme') || 'dark';
+document.documentElement.setAttribute('data-theme', savedTheme);
+updateThemeIcon(savedTheme);
+
+document.getElementById('themeToggle').addEventListener('click', () => {
+  const current = document.documentElement.getAttribute('data-theme');
+  const next = current === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('cabin_theme', next);
+  updateThemeIcon(next);
+});
+
+function updateThemeIcon(theme) {
+  const icon = document.getElementById('themeIcon');
+  if (theme === 'light') {
+    icon.innerHTML = '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';
+  } else {
+    icon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+  }
+}
+
+// === Notification Test ===
+document.getElementById('notifTestBtn').addEventListener('click', function() {
+  const btn = this;
+  btn.disabled = true;
+  const originalText = btn.querySelector('svg').nextSibling;
+  let countdown = 5;
+  btn.childNodes[btn.childNodes.length - 1].textContent = ' Envoi dans ' + countdown + 's...';
+  const timer = setInterval(() => {
+    countdown--;
+    if (countdown > 0) {
+      btn.childNodes[btn.childNodes.length - 1].textContent = ' Envoi dans ' + countdown + 's...';
+    } else {
+      clearInterval(timer);
+      triggerNotification();
+      btn.childNodes[btn.childNodes.length - 1].textContent = ' Notification envoyee !';
+      setTimeout(() => {
+        btn.disabled = false;
+        btn.childNodes[btn.childNodes.length - 1].textContent = ' Tester une notification';
+      }, 2000);
+    }
+  }, 1000);
+});
+
+function triggerNotification() {
+  if (!('Notification' in window)) { alert('Notifications non supportees sur ce navigateur.'); return; }
+  if (Notification.permission === 'granted') {
+    new Notification('CORSAIR Cabin — SS 901', {
+      body: 'Passager 22K — MARTIN Thomas demande une assistance medicale en Economy. Verifiez la trousse de premiers secours.',
+      icon: 'icons/icon-192.svg',
+      tag: 'cabin-test'
+    });
+  } else if (Notification.permission !== 'denied') {
+    Notification.requestPermission().then(p => {
+      if (p === 'granted') {
+        new Notification('CORSAIR Cabin — SS 901', {
+          body: 'Passager 22K — MARTIN Thomas demande une assistance medicale en Economy. Verifiez la trousse de premiers secours.',
+          icon: 'icons/icon-192.svg',
+          tag: 'cabin-test'
+        });
+      }
+    });
+  }
+}
+
 // === Tab Navigation ===
 document.getElementById('tabBar').addEventListener('click', (e) => {
   const tab = e.target.closest('.tab');
