@@ -20,7 +20,11 @@
     </div>
     <div class="header-right">
       <span class="flight-info" id="flightInfo">SS 901 &middot; ORY &rarr; RUN &middot; B787-9</span>
-      <button class="theme-toggle" id="themeToggle" title="Changer de theme">
+      <button class="header-btn" id="notifToggle" title="Notifications">
+        <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span class="notif-badge" id="notifBadge"></span>
+      </button>
+      <button class="header-btn" id="themeToggle" title="Changer de theme">
         <svg id="themeIcon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
       </button>
       <span class="sync-status" id="syncStatus" title="En ligne"></span>
@@ -106,7 +110,7 @@
 
         <!-- Crew -->
         <div class="brief-card">
-          <div class="brief-card-title">Equipage cabine</div>
+          <div class="brief-card-title">&Eacute;quipage cabine</div>
           <div class="brief-crew-list" id="briefCrew"></div>
         </div>
 
@@ -118,7 +122,7 @@
 
         <!-- Meteo -->
         <div class="brief-card">
-          <div class="brief-card-title">Meteo destination (RUN)</div>
+          <div class="brief-card-title">M&eacute;t&eacute;o destination (RUN)</div>
           <div class="brief-kpi-row">
             <div class="brief-kpi"><div class="brief-kpi-value">28&deg;C</div><div class="brief-kpi-label">Temperature</div></div>
             <div class="brief-kpi"><div class="brief-kpi-value">12 kt</div><div class="brief-kpi-label">Vent</div></div>
@@ -154,7 +158,7 @@
           <button class="filter-btn" data-filter="special-meal">Repas spe.</button>
           <button class="filter-btn" data-filter="um">UM</button>
           <button class="filter-btn" data-filter="wchr">WCHR</button>
-          <button class="filter-btn" data-filter="not-boarded">Non embarques</button>
+          <button class="filter-btn" data-filter="not-boarded">Non embarqu&eacute;s</button>
           <button class="filter-btn" data-filter="bookmarked">Marques</button>
         </div>
       </div>
@@ -205,11 +209,11 @@
     <!-- ==================== PONCTUALITE ==================== -->
     <section class="module" id="mod-punctuality">
       <div class="module-header">
-        <h2>Ponctualite &mdash; Depart ORY</h2>
+        <h2>Ponctualit&eacute; &mdash; D&eacute;part ORY</h2>
         <div class="otp-clock" id="otpClock"></div>
       </div>
       <div class="otp-dep-time">
-        <label>Heure de depart prevue (STD)</label>
+        <label>Heure de d&eacute;part pr&eacute;vue (STD)</label>
         <input type="time" id="stdInput" value="14:00">
       </div>
       <div class="timeline-container" id="timelineContainer"></div>
@@ -218,7 +222,7 @@
     <!-- ==================== CHECKLIST ==================== -->
     <section class="module" id="mod-checklist">
       <div class="module-header">
-        <h2>Checklists securite</h2>
+        <h2>Checklists s&eacute;curit&eacute;</h2>
         <span class="badge" id="checklistBadge">0 / 0</span>
       </div>
       <div class="checklist-sections" id="checklistSections"></div>
@@ -231,20 +235,20 @@
       </div>
       <div class="report-sections">
         <div class="brief-card wide">
-          <div class="brief-card-title">Etat cabine</div>
+          <div class="brief-card-title">&Eacute;tat cabine</div>
           <div class="report-cabin-grid" id="reportCabinGrid"></div>
         </div>
         <div class="brief-card wide">
-          <div class="brief-card-title">Incidents &amp; evenements</div>
+          <div class="brief-card-title">Incidents &amp; &eacute;v&eacute;nements</div>
           <div class="incidents-list" id="incidentsList"></div>
           <button class="add-incident-btn" id="addIncidentBtn">+ Ajouter un incident</button>
         </div>
         <div class="brief-card wide">
-          <div class="brief-card-title">Remarques generales</div>
+          <div class="brief-card-title">Remarques g&eacute;n&eacute;rales</div>
           <textarea class="brief-notes" id="reportNotes" placeholder="Observations sur le vol..."></textarea>
         </div>
         <div class="brief-card wide">
-          <div class="brief-card-title">Resume du vol</div>
+          <div class="brief-card-title">R&eacute;sum&eacute; du vol</div>
           <div class="report-summary" id="reportSummary"></div>
         </div>
       </div>
@@ -295,20 +299,20 @@
         <div class="form-group">
           <label class="form-label">Type</label>
           <select class="form-select" id="incidentType">
-            <option>Medial</option><option>Securite</option><option>Comportement passager</option>
-            <option>Equipement cabine</option><option>Service</option><option>Autre</option>
+            <option>M&eacute;dical</option><option>S&eacute;curit&eacute;</option><option>Comportement passager</option>
+            <option>&Eacute;quipement cabine</option><option>Service</option><option>Autre</option>
           </select>
         </div>
         <div class="form-group">
-          <label class="form-label">Siege concerne (optionnel)</label>
+          <label class="form-label">Si&egrave;ge concern&eacute; (optionnel)</label>
           <input class="form-input" id="incidentSeat" placeholder="Ex: 14A">
         </div>
         <div class="form-group">
           <label class="form-label">Description</label>
-          <textarea class="brief-notes" id="incidentDesc" placeholder="Decrire l'incident..." style="min-height:80px"></textarea>
+          <textarea class="brief-notes" id="incidentDesc" placeholder="D&eacute;crire l'incident..." style="min-height:80px"></textarea>
         </div>
         <div class="form-group">
-          <label class="form-label">Gravite</label>
+          <label class="form-label">Gravit&eacute;</label>
           <div class="severity-btns" id="severityBtns">
             <button class="sev-btn low active" data-sev="low">Faible</button>
             <button class="sev-btn med" data-sev="med">Moyen</button>
@@ -317,6 +321,17 @@
         </div>
         <button class="pax-save-note" id="incidentSave" style="width:100%;margin-top:12px">Enregistrer l'incident</button>
       </div>
+    </div>
+  </div>
+
+  <!-- Notification center -->
+  <div class="notif-center" id="notifCenter">
+    <div class="notif-center-header">
+      <span class="notif-center-title">Notifications</span>
+      <button class="notif-clear-btn" id="notifClearAll">Tout effacer</button>
+    </div>
+    <div class="notif-list" id="notifList">
+      <div class="notif-empty" id="notifEmpty">Aucune notification</div>
     </div>
   </div>
 

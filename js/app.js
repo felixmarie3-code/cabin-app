@@ -27,16 +27,108 @@ function updateThemeIcon(theme) {
   }
 }
 
-// === Notification Test ===
+// ============================================================
+// NOTIFICATION CENTER
+// ============================================================
+let appNotifications = lsGet('cabin_notifications', []);
+
+function addNotification(title, body, type) {
+  const notif = {
+    id: Date.now(),
+    title: title,
+    body: body,
+    type: type || 'info',
+    time: fmt(new Date()),
+    read: false
+  };
+  appNotifications.unshift(notif);
+  if (appNotifications.length > 50) appNotifications = appNotifications.slice(0, 50);
+  lsSet('cabin_notifications', appNotifications);
+  renderNotifCenter();
+  updateNotifBadge();
+
+  // Also try OS-level notification
+  sendOSNotification(title, body);
+}
+
+function sendOSNotification(title, body) {
+  const opts = { body: body, icon: 'icons/icon-192.svg', badge: 'icons/icon-192.svg',
+    tag: 'cabin-' + Date.now(), renotify: true, vibrate: [200, 100, 200] };
+  if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+    navigator.serviceWorker.ready.then(r => r.showNotification(title, opts).catch(() => {})).catch(() => {});
+  } else if ('Notification' in window && Notification.permission === 'granted') {
+    try { new Notification(title, opts); } catch {}
+  }
+}
+
+function renderNotifCenter() {
+  const list = document.getElementById('notifList');
+  const empty = document.getElementById('notifEmpty');
+  list.textContent = '';
+  if (appNotifications.length === 0) {
+    list.appendChild(empty);
+    empty.style.display = '';
+    return;
+  }
+  empty.style.display = 'none';
+  appNotifications.forEach((n, idx) => {
+    const item = document.createElement('div');
+    item.className = 'notif-item';
+    const icon = document.createElement('div');
+    icon.className = 'notif-item-icon ' + n.type;
+    icon.textContent = n.type === 'alert' ? '!' : n.type === 'warn' ? '!' : 'i';
+    const content = document.createElement('div');
+    content.className = 'notif-item-content';
+    const t = document.createElement('div'); t.className = 'notif-item-title'; t.textContent = n.title;
+    const b = document.createElement('div'); b.className = 'notif-item-body'; b.textContent = n.body;
+    const tm = document.createElement('div'); tm.className = 'notif-item-time'; tm.textContent = n.time;
+    content.appendChild(t); content.appendChild(b); content.appendChild(tm);
+    const dismiss = document.createElement('button');
+    dismiss.className = 'notif-item-dismiss';
+    dismiss.textContent = '\u00d7';
+    dismiss.addEventListener('click', (e) => {
+      e.stopPropagation();
+      appNotifications.splice(idx, 1);
+      lsSet('cabin_notifications', appNotifications);
+      renderNotifCenter();
+      updateNotifBadge();
+    });
+    item.appendChild(icon); item.appendChild(content); item.appendChild(dismiss);
+    list.appendChild(item);
+  });
+  list.insertBefore(empty, null);
+}
+
+function updateNotifBadge() {
+  const badge = document.getElementById('notifBadge');
+  const count = appNotifications.length;
+  badge.textContent = count > 0 ? String(count) : '';
+}
+
+// Toggle notification center
+document.getElementById('notifToggle').addEventListener('click', () => {
+  const center = document.getElementById('notifCenter');
+  center.classList.toggle('visible');
+});
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('#notifCenter') && !e.target.closest('#notifToggle')) {
+    document.getElementById('notifCenter').classList.remove('visible');
+  }
+});
+document.getElementById('notifClearAll').addEventListener('click', () => {
+  appNotifications = [];
+  lsSet('cabin_notifications', appNotifications);
+  renderNotifCenter();
+  updateNotifBadge();
+});
+
+// Notification test button
 document.getElementById('notifTestBtn').addEventListener('click', function() {
   const btn = this;
   btn.disabled = true;
-  let countdown = 5;
   const textNode = btn.childNodes[btn.childNodes.length - 1];
-
-  // Request permission immediately on click (iOS requires user gesture)
-  requestNotifPermission();
-
+  if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission();
+  let countdown = 5;
   textNode.textContent = ' Envoi dans ' + countdown + 's...';
   const timer = setInterval(() => {
     countdown--;
@@ -44,98 +136,20 @@ document.getElementById('notifTestBtn').addEventListener('click', function() {
       textNode.textContent = ' Envoi dans ' + countdown + 's...';
     } else {
       clearInterval(timer);
-      triggerNotification();
-      textNode.textContent = ' Notification envoyee !';
+      addNotification(
+        'ALERTE M\u00c9DICALE \u2014 Si\u00e8ge 22K',
+        'MARTIN Thomas demande une assistance en \u00c9conomy. V\u00e9rifiez la trousse de premiers secours et le d\u00e9fibrillateur.',
+        'alert'
+      );
+      textNode.textContent = ' Notification envoy\u00e9e !';
       setTimeout(() => { btn.disabled = false; textNode.textContent = ' Tester une notification'; }, 3000);
     }
   }, 1000);
 });
 
-function requestNotifPermission() {
-  if ('Notification' in window && Notification.permission === 'default') {
-    Notification.requestPermission();
-  }
-}
-
-function triggerNotification() {
-  const title = 'CORSAIR Cabin — SS 901';
-  const options = {
-    body: 'ALERTE MEDICALE — Siege 22K, MARTIN Thomas demande une assistance en Economy. Verifiez la trousse de premiers secours et le defibrillateur.',
-    icon: 'icons/icon-192.svg',
-    badge: 'icons/icon-192.svg',
-    tag: 'cabin-alert-' + Date.now(),
-    renotify: true,
-    requireInteraction: true,
-    vibrate: [200, 100, 200]
-  };
-
-  // Method 1: Service Worker notification (required for iOS PWA)
-  if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
-    navigator.serviceWorker.ready.then(reg => {
-      reg.showNotification(title, options).catch(() => fallbackNotification(title, options));
-    }).catch(() => fallbackNotification(title, options));
-    return;
-  }
-
-  // Method 2: Fallback for desktop / non-SW contexts
-  fallbackNotification(title, options);
-}
-
-function fallbackNotification(title, options) {
-  if (!('Notification' in window)) {
-    showInAppAlert(title, options.body);
-    return;
-  }
-  if (Notification.permission === 'granted') {
-    try { new Notification(title, options); } catch { showInAppAlert(title, options.body); }
-  } else if (Notification.permission === 'denied') {
-    showInAppAlert(title, options.body);
-  }
-}
-
-// In-app alert fallback (always works, even without permission)
-function showInAppAlert(title, body) {
-  const existing = document.getElementById('inAppAlert');
-  if (existing) existing.remove();
-
-  const alert = document.createElement('div');
-  alert.id = 'inAppAlert';
-  alert.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9999;padding:12px 16px;display:flex;gap:10px;align-items:flex-start;animation:slideDown 0.3s ease;';
-  alert.style.background = 'linear-gradient(135deg, #1a1d4a 0%, #282B62 100%)';
-  alert.style.borderBottom = '2px solid var(--corsair-rouge-vermillon)';
-  alert.style.boxShadow = '0 4px 24px rgba(0,0,0,0.4)';
-
-  const icon = document.createElement('div');
-  icon.style.cssText = 'width:36px;height:36px;border-radius:8px;background:#DA3D32;display:flex;align-items:center;justify-content:center;flex-shrink:0;';
-  icon.textContent = '!';
-  icon.style.color = 'white';
-  icon.style.fontWeight = '700';
-  icon.style.fontSize = '18px';
-
-  const content = document.createElement('div');
-  content.style.flex = '1';
-  const t = document.createElement('div');
-  t.style.cssText = 'font-size:12px;font-weight:600;color:white;letter-spacing:0.5px;';
-  t.textContent = title;
-  const b = document.createElement('div');
-  b.style.cssText = 'font-size:13px;color:#DEDBCE;margin-top:3px;line-height:1.4;';
-  b.textContent = body;
-  content.appendChild(t);
-  content.appendChild(b);
-
-  const close = document.createElement('button');
-  close.style.cssText = 'background:none;border:none;color:white;font-size:20px;cursor:pointer;padding:0 4px;min-height:36px;min-width:36px;';
-  close.textContent = '\u00d7';
-  close.addEventListener('click', () => alert.remove());
-
-  alert.appendChild(icon);
-  alert.appendChild(content);
-  alert.appendChild(close);
-  document.body.appendChild(alert);
-
-  // Auto-dismiss after 8s
-  setTimeout(() => { if (alert.parentNode) alert.remove(); }, 8000);
-}
+// Init notification center
+renderNotifCenter();
+updateNotifBadge();
 
 // === Tab Navigation ===
 function switchToTab(moduleName) {
@@ -298,12 +312,12 @@ function buildBriefing() {
   alerts.textContent = '';
   const alertData = [];
   Object.entries(passengers).forEach(([seat,p]) => {
-    if (p.remark==='UM') alertData.push({ seat, text: p.name+' — Mineur non accompagne', type: 'warn', tag: 'UM' });
+    if (p.remark==='UM') alertData.push({ seat, text: p.name+' — Mineur non accompagn\u00e9', type: 'warn', tag: 'UM' });
     if (p.remark==='WCHR') alertData.push({ seat, text: p.name+' — Fauteuil roulant', type: 'info', tag: 'WCHR' });
     if (p.remark==='VIP') alertData.push({ seat, text: p.name+' — Passager VIP', type: 'info', tag: 'VIP' });
     if (p.remark==='DEAF'||p.remark==='BLND') alertData.push({ seat, text: p.name+' — '+p.remark, type: 'warn', tag: p.remark });
-    if (p.infant) alertData.push({ seat, text: p.name+' — Nourrisson a bord', type: 'warn', tag: 'INF' });
-    if (!p.boarded) alertData.push({ seat, text: p.name+' — Non embarque', type: 'critical', tag: 'MANQ' });
+    if (p.infant) alertData.push({ seat, text: p.name+' — Nourrisson \u00e0 bord', type: 'warn', tag: 'INF' });
+    if (!p.boarded) alertData.push({ seat, text: p.name+' — Non embarqu\u00e9', type: 'critical', tag: 'MANQ' });
   });
   alertData.sort((a,b) => { const o = {critical:0,warn:1,info:2}; return (o[a.type]||3)-(o[b.type]||3); });
   alertData.slice(0, 20).forEach(a => {
@@ -420,7 +434,7 @@ function updateStats(){
   const total=document.querySelectorAll('.seat:not(.no-seat)').length;
   const occ=biz+prem+eco, pct=Math.round(occ/total*100);
   const sm=document.querySelectorAll('.seat.special-meal').length;
-  [{v:pct+'%',l:'Remplissage'},null,{v:''+biz,l:'Business'},null,{v:''+prem,l:'Premium'},null,{v:''+eco,l:'Economy'},null,{v:''+sm,l:'Repas spe.'},null,{v:''+Object.keys(bookmarks).length,l:'Marques'}].forEach(i=>{
+  [{v:pct+'%',l:'Remplissage'},null,{v:''+biz,l:'Business'},null,{v:''+prem,l:'Premium'},null,{v:''+eco,l:'Economy'},null,{v:''+sm,l:'Repas sp\u00e9.'},null,{v:''+Object.keys(bookmarks).length,l:'Marqu\u00e9s'}].forEach(i=>{
     if(!i){const d=document.createElement('div');d.className='stat-divider';se.appendChild(d);return;}
     const si=document.createElement('div');si.className='stat-item';const w=document.createElement('div');
     const v=document.createElement('div');v.className='stat-value';v.textContent=i.v;
@@ -437,13 +451,13 @@ function openPaxPanel(seatId, secCls){
   currentPanelSeat=seatId; const pax=passengers[seatId];
   const badge=document.getElementById('panelSeatBadge');
   badge.textContent=seatId; badge.className='pax-seat-badge '+(pax?secCls:'empty-seat');
-  document.getElementById('panelName').textContent=pax?pax.name:'Siege libre';
+  document.getElementById('panelName').textContent=pax?pax.name:'Si\u00e8ge libre';
   document.getElementById('panelClass').textContent=pax?(secCls+(pax.ffn?' | FFN '+pax.ffn:'')):secCls;
   document.getElementById('panelBookmark').style.display=pax?'':'none';
   const grid=document.getElementById('panelGrid'); grid.textContent='';
   if(pax){
-    [{l:'PNR',v:pax.pnr},{l:'Nationalite',v:pax.nationality},
-     {l:'Embarquement',v:pax.boarded?'A bord':'En attente',c:pax.boarded?'ok':'warn'},
+    [{l:'PNR',v:pax.pnr},{l:'Nationalit\u00e9',v:pax.nationality},
+     {l:'Embarquement',v:pax.boarded?'\u00c0 bord':'En attente',c:pax.boarded?'ok':'warn'},
      {l:'Check-in',v:pax.checkedIn?'Oui':'Non',c:pax.checkedIn?'ok':'warn'},
      {l:'Repas',v:pax.meal||'Standard'},{l:'Remarque',v:pax.remark||'Aucune',c:pax.remark?'warn':''},
      {l:'Bagages',v:pax.bags+' pcs'},{l:'Nourrisson',v:pax.infant?'Oui':'Non',c:pax.infant?'warn':''}
@@ -476,7 +490,7 @@ document.getElementById('panelSaveNote').addEventListener('click',()=>{
   const v=document.getElementById('panelNotes').value.trim();
   if(v)notes[currentPanelSeat]=v;else delete notes[currentPanelSeat];
   lsSet('cabin_notes',notes);
-  const btn=document.getElementById('panelSaveNote');btn.textContent='Enregistre !';
+  const btn=document.getElementById('panelSaveNote');btn.textContent='Enregistr\u00e9 !';
   setTimeout(()=>{btn.textContent='Enregistrer la note';},1500);
 });
 
@@ -543,44 +557,44 @@ function buildMeals(){
 // CHECKLIST MODULE
 // ============================================================
 const CHECKLISTS = {
-  'Pre-vol — Securite cabine': [
-    'Verifier les equipements de secours (gilets, masques O2)',
-    'Verifier les extincteurs et leur date de validite',
-    'Verifier les issues de secours et leur signalisation',
-    'Verifier les toboggans (armed/disarmed)',
-    'Verifier le materiel medical (trousse, defibrillateur)',
-    'Verifier les ceintures et accoudoirs des sieges',
-    'Verifier l\'eclairage de secours au sol',
-    'Verifier les compartiments a bagages',
-    'Verifier la proprete generale de la cabine'
+  'Pr\u00e9-vol \u2014 S\u00e9curit\u00e9 cabine': [
+    'V\u00e9rifier les \u00e9quipements de secours (gilets, masques O2)',
+    'V\u00e9rifier les extincteurs et leur date de validit\u00e9',
+    'V\u00e9rifier les issues de secours et leur signalisation',
+    'V\u00e9rifier les toboggans (armed/disarmed)',
+    'V\u00e9rifier le mat\u00e9riel m\u00e9dical (trousse, d\u00e9fibrillateur)',
+    'V\u00e9rifier les ceintures et accoudoirs des si\u00e8ges',
+    'V\u00e9rifier l\'\u00e9clairage de secours au sol',
+    'V\u00e9rifier les compartiments \u00e0 bagages',
+    'V\u00e9rifier la propret\u00e9 g\u00e9n\u00e9rale de la cabine'
   ],
-  'Pre-depart — Avant fermeture portes': [
-    'Comptage passagers effectue',
-    'Bagages cabine correctement ranges',
-    'Tablettes et dossiers releves',
-    'Ceintures attachees verifiees',
+  'Pr\u00e9-d\u00e9part \u2014 Avant fermeture portes': [
+    'Comptage passagers effectu\u00e9',
+    'Bagages cabine correctement rang\u00e9s',
+    'Tablettes et dossiers relev\u00e9s',
+    'Ceintures attach\u00e9es v\u00e9rifi\u00e9es',
     'Hublots ouverts',
-    'Appareils electroniques en mode avion',
-    'Annonce bienvenue effectuee',
-    'Demo securite effectuee / video lancee',
-    'Portes armees et cross-check'
+    'Appareils \u00e9lectroniques en mode avion',
+    'Annonce bienvenue effectu\u00e9e',
+    'D\u00e9mo s\u00e9curit\u00e9 effectu\u00e9e / vid\u00e9o lanc\u00e9e',
+    'Portes arm\u00e9es et cross-check'
   ],
-  'En vol — Turbulences': [
-    'Annonce ceintures attachees',
-    'Service interrompu et galleys securisees',
-    'Verification attache ceintures passagers',
-    'Equipement galley arrime',
-    'Chariots freines et bloques'
+  'En vol \u2014 Turbulences': [
+    'Annonce ceintures attach\u00e9es',
+    'Service interrompu et galleys s\u00e9curis\u00e9es',
+    'V\u00e9rification attache ceintures passagers',
+    '\u00c9quipement galley arrim\u00e9',
+    'Chariots frein\u00e9s et bloqu\u00e9s'
   ],
-  'Post-vol — Arrivee': [
+  'Post-vol \u2014 Arriv\u00e9e': [
     'Annonce atterrissage et consignes',
-    'Verification cabine position atterrissage',
-    'Cabine securisee pour atterrissage',
-    'Portes desarmees apres arret complet',
+    'V\u00e9rification cabine position atterrissage',
+    'Cabine s\u00e9curis\u00e9e pour atterrissage',
+    'Portes d\u00e9sarm\u00e9es apr\u00e8s arr\u00eat complet',
     'Assistance passagers PMR/UM',
-    'Inspection finale des sieges et poches',
-    'Objets trouves repertories',
-    'Rapport cabine complete'
+    'Inspection finale des si\u00e8ges et poches',
+    'Objets trouv\u00e9s r\u00e9pertori\u00e9s',
+    'Rapport cabine compl\u00e9t\u00e9'
   ]
 };
 
@@ -664,10 +678,10 @@ function buildReport(){
   const summary=document.getElementById('reportSummary');summary.textContent='';
   const occ=Object.keys(passengers).length;
   const boarded=Object.values(passengers).filter(p=>p.boarded).length;
-  [{v:''+occ,l:'Passagers'},{v:''+boarded,l:'Embarques'},{v:''+incidents.length,l:'Incidents'},
+  [{v:''+occ,l:'Passagers'},{v:''+boarded,l:'Embarqu\u00e9s'},{v:''+incidents.length,l:'Incidents'},
    {v:''+Object.values(cabinZones).filter(v=>v==='OK').length+'/'+CABIN_ZONES_LIST.length,l:'Zones OK'},
    {v:''+Object.values(checklistState).filter(Boolean).length,l:'Checks faits'},
-   {v:''+Object.values(passengers).filter(p=>p.meal).length,l:'Repas spe.'}
+   {v:''+Object.values(passengers).filter(p=>p.meal).length,l:'Repas sp\u00e9.'}
   ].forEach(s=>{
     const d=document.createElement('div');d.className='report-stat';
     const v=document.createElement('div');v.className='report-stat-value';v.textContent=s.v;

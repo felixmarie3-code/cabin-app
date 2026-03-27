@@ -90,18 +90,71 @@ html, body {
 .app-logo { height: 20px; width: auto; }
 .app-title { font-size: 14px; font-weight: 400; letter-spacing: 3px; text-transform: uppercase; color: white; }
 .header-right { display: flex; align-items: center; gap: 10px; }
-.theme-toggle {
+/* theme-toggle uses .header-btn styles */
+.header-btn {
   width: 34px; height: 34px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.15);
   background: rgba(255,255,255,0.08); cursor: pointer; display: flex; align-items: center; justify-content: center;
-  min-height: 34px; min-width: 34px; padding: 0; transition: background 0.2s;
+  min-height: 34px; min-width: 34px; padding: 0; transition: background 0.2s; position: relative;
 }
-.theme-toggle:active { background: rgba(255,255,255,0.15); }
-.theme-toggle svg { width: 18px; height: 18px; stroke: white; stroke-width: 1.75; fill: none; }
-[data-theme="light"] .theme-toggle { border-color: rgba(0,0,0,0.1); background: rgba(0,0,0,0.05); }
-[data-theme="light"] .theme-toggle svg { stroke: var(--corsair-bleu-business); }
+.header-btn:active { background: rgba(255,255,255,0.15); }
+.header-btn svg { width: 18px; height: 18px; stroke: white; stroke-width: 1.75; fill: none; }
+.notif-badge {
+  position: absolute; top: -4px; right: -4px; min-width: 16px; height: 16px; border-radius: 8px;
+  background: var(--corsair-rouge-vermillon); color: white; font-size: 9px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center; padding: 0 4px;
+}
+.notif-badge:empty { display: none; }
+[data-theme="light"] .header-btn { border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.12); }
+[data-theme="light"] .header-btn svg { stroke: white; }
 [data-theme="light"] .app-header { color: white; }
 [data-theme="light"] .flight-info { color: rgba(255,255,255,0.7); }
 [data-theme="light"] .app-title { color: white; }
+[data-theme="light"] .app-logo { filter: brightness(1); }
+
+/* Notification center */
+.notif-center {
+  position: fixed; top: var(--header-height); right: 0; width: 380px; max-width: 95vw;
+  max-height: calc(100vh - var(--header-height) - 20px);
+  background: var(--bg-surface); border: 1px solid var(--border-strong);
+  border-radius: 0 0 0 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  z-index: 500; display: none; flex-direction: column; overflow: hidden;
+}
+.notif-center.visible { display: flex; }
+.notif-center-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 14px; border-bottom: 1px solid var(--border);
+}
+.notif-center-title { font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--accent); }
+.notif-clear-btn {
+  background: none; border: none; color: var(--corsair-rouge-vermillon); font-family: 'Gilroy', Arial, sans-serif;
+  font-size: 11px; cursor: pointer; padding: 4px 8px; border-radius: 4px; min-height: 28px; min-width: 28px;
+}
+.notif-clear-btn:active { opacity: 0.7; }
+.notif-list { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+.notif-empty { text-align: center; padding: 40px 20px; color: var(--text-muted); font-size: 13px; }
+.notif-item {
+  display: flex; gap: 10px; padding: 12px 14px; border-bottom: 1px solid var(--border);
+  animation: fadeIn 0.2s ease; position: relative;
+}
+.notif-item-icon {
+  width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; font-size: 14px; font-weight: 700; color: white;
+}
+.notif-item-icon.alert { background: var(--corsair-rouge-vermillon); }
+.notif-item-icon.info { background: var(--corsair-bleu-premium); }
+.notif-item-icon.warn { background: #b64b32; }
+.notif-item-content { flex: 1; }
+.notif-item-title { font-size: 12px; font-weight: 600; color: var(--text); }
+.notif-item-body { font-size: 12px; color: var(--text-muted); margin-top: 2px; line-height: 1.4; }
+.notif-item-time { font-size: 10px; color: var(--text-muted); opacity: 0.6; margin-top: 3px; }
+.notif-item-dismiss {
+  position: absolute; top: 8px; right: 8px; width: 24px; height: 24px; border-radius: 50%;
+  background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  color: var(--text-muted); font-size: 16px; opacity: 0; transition: opacity 0.15s;
+  min-height: 24px; min-width: 24px;
+}
+.notif-item:hover .notif-item-dismiss, .notif-item .notif-item-dismiss { opacity: 0.6; }
+.notif-item-dismiss:active { opacity: 1; }
 .flight-info { font-size: 12px; color: var(--corsair-beige-sable); font-weight: 400; letter-spacing: 0.5px; }
 .sync-status { width: 7px; height: 7px; border-radius: 50%; background: #4ade80; display: inline-block; }
 
@@ -121,7 +174,8 @@ html, body {
   min-width: 0; position: relative;
 }
 .tab:active { transform: scale(0.97); }
-.tab.active { color: white; background: rgba(82,167,190,0.12); }
+.tab.active { color: var(--corsair-bleu-economie); background: rgba(82,167,190,0.12); }
+[data-theme="dark"] .tab.active { color: white; }
 .tab.active::after {
   content: ''; position: absolute; bottom: 0; left: 20%; right: 20%;
   height: 2px; background: var(--corsair-bleu-economie); border-radius: 2px 2px 0 0;
