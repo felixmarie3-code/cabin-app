@@ -440,7 +440,7 @@ function buildMeals(){const mc={};let st=0;Object.entries(passengers).forEach(([
 // ============================================================
 const CHECKLISTS = {
   'Pr\u00e9vol': {
-    icon: '\u2708\uFE0F', color: 'prevol',
+    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>', color: 'prevol',
     subs: {
       'Check pr\u00e9-vol': [
         'V\u00e9rifier les \u00e9quipements de secours (gilets, masques O2)',
@@ -465,7 +465,7 @@ const CHECKLISTS = {
     }
   },
   'En vol': {
-    icon: '\u2601\uFE0F', color: 'envol',
+    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.4-.1.9.3 1.1l5.2 3L6 14l-2-1c-.4-.2-.9-.1-1.1.3l-.4.6c-.2.4-.1.8.2 1.1l4 3 3 4c.3.3.7.4 1.1.2l.6-.4c.4-.2.5-.7.3-1.1l-1-2 2.9-2.9 3 5.2c.2.4.7.5 1.1.3l.5-.3c.4-.2.6-.6.5-1.1z"/></svg>', color: 'envol',
     subs: {
       'Mont\u00e9e': [
         'Consigne ceintures \u00e9teinte \u2014 service autoris\u00e9',
@@ -490,22 +490,29 @@ const CHECKLISTS = {
     }
   },
   'Annonces': {
-    icon: '\uD83C\uDFA4', color: 'annonces',
+    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>', color: 'annonces',
     subs: {
-      'Annonces commerciales': [
-        'Annonce bienvenue (fran\u00e7ais)',
-        'Annonce bienvenue (anglais)',
-        'D\u00e9mo s\u00e9curit\u00e9 / vid\u00e9o lanc\u00e9e',
-        'Annonce service repas',
-        'Annonce duty-free',
-        'Annonce pr\u00e9paration atterrissage',
-        'Annonce arriv\u00e9e et correspondances',
-        'Remerciements et au revoir'
+      'Bienvenue \u00e0 bord': [
+        'FR \u2014 Mesdames et Messieurs, bienvenue \u00e0 bord de ce vol CORSAIR SS 901 \u00e0 destination de La R\u00e9union. Notre temps de vol pr\u00e9vu est de 11 heures et 15 minutes.',
+        'EN \u2014 Ladies and Gentlemen, welcome aboard this CORSAIR flight SS 901 to R\u00e9union Island. Our estimated flight time is 11 hours and 15 minutes.',
+        'D\u00e9mo s\u00e9curit\u00e9 / vid\u00e9o lanc\u00e9e'
+      ],
+      'Service en vol': [
+        'FR \u2014 Nous allons proc\u00e9der au service des boissons suivi du repas. N\'h\u00e9sitez pas \u00e0 solliciter notre \u00e9quipage.',
+        'EN \u2014 We will now begin our beverage and meal service. Please do not hesitate to call our crew.',
+        'FR \u2014 La vente \u00e0 bord est disponible. D\u00e9couvrez notre catalogue duty-free CORSAIR.',
+        'EN \u2014 Our onboard duty-free shop is now open. Please browse our CORSAIR catalog.'
+      ],
+      'Pr\u00e9paration arriv\u00e9e': [
+        'FR \u2014 Mesdames et Messieurs, nous commen\u00e7ons notre descente vers La R\u00e9union. Veuillez regagner votre si\u00e8ge et attacher votre ceinture.',
+        'EN \u2014 Ladies and Gentlemen, we are beginning our descent into R\u00e9union. Please return to your seat and fasten your seatbelt.',
+        'FR \u2014 La temp\u00e9rature au sol est de 28 degr\u00e9s. L\'heure locale est [heure]. Nous esp\u00e9rons que vous avez pass\u00e9 un agr\u00e9able voyage.',
+        'EN \u2014 The local temperature is 28 degrees. Local time is [time]. We hope you enjoyed your flight with CORSAIR.'
       ]
     }
   },
   'M\u00e9mo': {
-    icon: '\u26A0\uFE0F', color: 'memo',
+    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>', color: 'memo',
     subs: {
       'Descente d\'urgence': [
         'Masques O2 tomb\u00e9s \u2014 assister les passagers',
@@ -544,7 +551,7 @@ function buildChecklists(){
   let totalItems=0,doneItems=0;
   Object.entries(CHECKLISTS).forEach(([catName,cat])=>{
     const tile=document.createElement('div');tile.className='cl-tile '+cat.color;
-    const icon=document.createElement('div');icon.className='cl-tile-icon';icon.textContent=cat.icon;
+    const icon=document.createElement('div');icon.className='cl-tile-icon';icon.innerHTML=cat.icon;
     const title=document.createElement('div');title.className='cl-tile-title';title.textContent=catName;
     tile.appendChild(icon);tile.appendChild(title);
     // Sub-tiles
