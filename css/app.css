@@ -616,3 +616,115 @@ button, [role="button"] { min-height: 36px; min-width: 36px; }
 [data-theme="light"] .meal-special-row { background: var(--bg-card); }
 [data-theme="light"] .crew-member { background: var(--bg-card); }
 [data-theme="light"] .brief-alert-text { color: var(--text-muted); }
+
+/* === Flight Profile === */
+.flight-profile {
+  margin-top: 12px; padding: 12px; background: rgba(255,255,255,0.03); border-radius: 6px;
+  display: flex; align-items: flex-end; gap: 0; height: 80px; position: relative;
+}
+.fp-segment { display: flex; flex-direction: column; align-items: center; position: relative; }
+.fp-label { font-size: 8px; color: var(--text-muted); letter-spacing: 0.5px; text-transform: uppercase; }
+.fp-time { font-size: 11px; font-weight: 600; color: var(--accent); }
+.fp-line { position: absolute; top: 0; left: 0; right: 0; bottom: 0; }
+.fp-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--corsair-bleu-economie); flex-shrink: 0; }
+.fp-dot.dep { background: var(--corsair-bleu-premium); }
+.fp-dot.arr { background: #4ade80; }
+[data-theme="light"] .flight-profile { background: var(--bg-card); }
+
+/* === Pax Tags (clickable particularit\u00e9s) === */
+.pax-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.pax-tag {
+  display: flex; align-items: center; gap: 5px; padding: 5px 10px; border-radius: 6px;
+  font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.15s; border: none;
+  font-family: 'Gilroy', Arial, sans-serif; min-height: 30px;
+}
+.pax-tag:active { transform: scale(0.95); }
+.pax-tag .tag-count {
+  min-width: 18px; height: 18px; border-radius: 9px; display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 700;
+}
+.pax-tag.um { background: rgba(251,191,36,0.12); color: #fbbf24; }
+.pax-tag.um .tag-count { background: rgba(251,191,36,0.2); }
+.pax-tag.wchr { background: rgba(82,167,190,0.12); color: var(--corsair-bleu-economie); }
+.pax-tag.wchr .tag-count { background: rgba(82,167,190,0.2); }
+.pax-tag.vip { background: rgba(53,94,171,0.12); color: var(--corsair-bleu-premium); }
+.pax-tag.vip .tag-count { background: rgba(53,94,171,0.2); }
+.pax-tag.meal { background: rgba(251,191,36,0.12); color: #fbbf24; }
+.pax-tag.meal .tag-count { background: rgba(251,191,36,0.2); }
+.pax-tag.inf { background: rgba(218,61,50,0.1); color: var(--corsair-rouge-vermillon); }
+.pax-tag.inf .tag-count { background: rgba(218,61,50,0.15); }
+.pax-tag.noboard { background: rgba(218,61,50,0.12); color: var(--corsair-rouge-vermillon); }
+.pax-tag.noboard .tag-count { background: rgba(218,61,50,0.2); }
+
+/* === Inline btn === */
+.inline-btn {
+  background: rgba(82,167,190,0.15); color: var(--corsair-bleu-economie); border: none;
+  font-family: 'Gilroy', Arial, sans-serif; font-size: 10px; font-weight: 600;
+  padding: 4px 10px; border-radius: 4px; cursor: pointer; margin-left: 8px;
+  letter-spacing: 0.5px; min-height: 24px; min-width: 24px;
+}
+.inline-btn:active { opacity: 0.7; }
+
+/* === Door assignment === */
+.door-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.door-item {
+  display: flex; align-items: center; justify-content: space-between; padding: 10px;
+  background: var(--input-bg); border-radius: 6px; border: 1px solid var(--border);
+}
+.door-name { font-size: 12px; font-weight: 600; color: var(--text); }
+.door-select {
+  background: var(--bg-surface); border: 1px solid var(--border-strong); color: var(--text);
+  font-family: 'Gilroy', Arial, sans-serif; font-size: 11px; padding: 4px 8px;
+  border-radius: 4px; outline: none; min-height: 28px;
+}
+.door-select option { background: var(--bg-surface); }
+
+/* === Checklist Tiles === */
+.checklist-tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.cl-tile {
+  background: var(--bg-surface); border-radius: 10px; padding: 16px; cursor: pointer;
+  border: 1px solid var(--border); transition: all 0.15s; min-height: 100px;
+  display: flex; flex-direction: column; justify-content: space-between;
+}
+.cl-tile:active { transform: scale(0.98); }
+.cl-tile-icon { font-size: 28px; margin-bottom: 8px; opacity: 0.8; }
+.cl-tile-title { font-size: 13px; font-weight: 600; color: var(--text); letter-spacing: 0.5px; }
+.cl-tile-subtitle { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+.cl-tile-count { font-size: 10px; color: var(--text-muted); margin-top: 8px; }
+.cl-tile.prevol { border-left: 3px solid var(--corsair-bleu-premium); }
+.cl-tile.envol { border-left: 3px solid var(--corsair-bleu-economie); }
+.cl-tile.annonces { border-left: 3px solid #fbbf24; }
+.cl-tile.memo { border-left: 3px solid var(--corsair-rouge-vermillon); }
+
+/* Sub-tiles inside a category */
+.cl-subtiles { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 8px; }
+.cl-subtile {
+  background: rgba(255,255,255,0.03); border-radius: 6px; padding: 10px; cursor: pointer;
+  border: 1px solid var(--border); transition: all 0.15s;
+}
+.cl-subtile:active { transform: scale(0.97); }
+.cl-subtile-title { font-size: 11px; font-weight: 600; color: var(--text); }
+.cl-subtile-count { font-size: 9px; color: var(--text-muted); margin-top: 2px; }
+
+.checklist-detail { animation: fadeIn 0.2s ease; }
+.back-btn {
+  background: none; border: none; color: var(--corsair-bleu-economie); font-family: 'Gilroy', Arial, sans-serif;
+  font-size: 13px; font-weight: 600; cursor: pointer; padding: 6px 0; margin-bottom: 8px;
+  min-height: 36px; min-width: 36px;
+}
+.checklist-detail-title { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 12px; letter-spacing: 0.5px; }
+
+/* === Share options === */
+.share-options { display: flex; flex-direction: column; gap: 6px; }
+.share-opt {
+  display: flex; align-items: center; gap: 10px; padding: 8px 10px;
+  background: var(--input-bg); border-radius: 6px; font-size: 13px; color: var(--text); cursor: pointer;
+}
+.share-opt input { width: 18px; height: 18px; accent-color: var(--corsair-bleu-economie); }
+
+/* === Swipe notification === */
+.notif-item {
+  transition: transform 0.2s ease, opacity 0.2s ease; touch-action: pan-y;
+}
+.notif-item.swiping { transition: none; }
+.notif-item.dismissed { transform: translateX(-100%); opacity: 0; }

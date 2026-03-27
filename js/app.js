@@ -11,796 +11,529 @@ document.documentElement.setAttribute('data-theme', savedTheme);
 updateThemeIcon(savedTheme);
 
 document.getElementById('themeToggle').addEventListener('click', () => {
-  const current = document.documentElement.getAttribute('data-theme');
-  const next = current === 'dark' ? 'light' : 'dark';
+  const cur = document.documentElement.getAttribute('data-theme');
+  const next = cur === 'dark' ? 'light' : 'dark';
   document.documentElement.setAttribute('data-theme', next);
   localStorage.setItem('cabin_theme', next);
   updateThemeIcon(next);
 });
-
 function updateThemeIcon(theme) {
-  const icon = document.getElementById('themeIcon');
-  if (theme === 'light') {
-    icon.innerHTML = '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';
-  } else {
-    icon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
-  }
+  const i = document.getElementById('themeIcon');
+  i.innerHTML = theme === 'light'
+    ? '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>'
+    : '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
 }
-
-// ============================================================
-// NOTIFICATION CENTER
-// ============================================================
-let appNotifications = lsGet('cabin_notifications', []);
-
-function addNotification(title, body, type) {
-  const notif = {
-    id: Date.now(),
-    title: title,
-    body: body,
-    type: type || 'info',
-    time: fmt(new Date()),
-    read: false
-  };
-  appNotifications.unshift(notif);
-  if (appNotifications.length > 50) appNotifications = appNotifications.slice(0, 50);
-  lsSet('cabin_notifications', appNotifications);
-  renderNotifCenter();
-  updateNotifBadge();
-
-  // Also try OS-level notification
-  sendOSNotification(title, body);
-}
-
-function sendOSNotification(title, body) {
-  const opts = { body: body, icon: 'icons/icon-192.svg', badge: 'icons/icon-192.svg',
-    tag: 'cabin-' + Date.now(), renotify: true, vibrate: [200, 100, 200] };
-  if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
-    navigator.serviceWorker.ready.then(r => r.showNotification(title, opts).catch(() => {})).catch(() => {});
-  } else if ('Notification' in window && Notification.permission === 'granted') {
-    try { new Notification(title, opts); } catch {}
-  }
-}
-
-function renderNotifCenter() {
-  const list = document.getElementById('notifList');
-  const empty = document.getElementById('notifEmpty');
-  list.textContent = '';
-  if (appNotifications.length === 0) {
-    list.appendChild(empty);
-    empty.style.display = '';
-    return;
-  }
-  empty.style.display = 'none';
-  appNotifications.forEach((n, idx) => {
-    const item = document.createElement('div');
-    item.className = 'notif-item';
-    const icon = document.createElement('div');
-    icon.className = 'notif-item-icon ' + n.type;
-    icon.textContent = n.type === 'alert' ? '!' : n.type === 'warn' ? '!' : 'i';
-    const content = document.createElement('div');
-    content.className = 'notif-item-content';
-    const t = document.createElement('div'); t.className = 'notif-item-title'; t.textContent = n.title;
-    const b = document.createElement('div'); b.className = 'notif-item-body'; b.textContent = n.body;
-    const tm = document.createElement('div'); tm.className = 'notif-item-time'; tm.textContent = n.time;
-    content.appendChild(t); content.appendChild(b); content.appendChild(tm);
-    const dismiss = document.createElement('button');
-    dismiss.className = 'notif-item-dismiss';
-    dismiss.textContent = '\u00d7';
-    dismiss.addEventListener('click', (e) => {
-      e.stopPropagation();
-      appNotifications.splice(idx, 1);
-      lsSet('cabin_notifications', appNotifications);
-      renderNotifCenter();
-      updateNotifBadge();
-    });
-    item.appendChild(icon); item.appendChild(content); item.appendChild(dismiss);
-    list.appendChild(item);
-  });
-  list.insertBefore(empty, null);
-}
-
-function updateNotifBadge() {
-  const badge = document.getElementById('notifBadge');
-  const count = appNotifications.length;
-  badge.textContent = count > 0 ? String(count) : '';
-}
-
-// Toggle notification center
-document.getElementById('notifToggle').addEventListener('click', () => {
-  const center = document.getElementById('notifCenter');
-  center.classList.toggle('visible');
-});
-document.addEventListener('click', (e) => {
-  if (!e.target.closest('#notifCenter') && !e.target.closest('#notifToggle')) {
-    document.getElementById('notifCenter').classList.remove('visible');
-  }
-});
-document.getElementById('notifClearAll').addEventListener('click', () => {
-  appNotifications = [];
-  lsSet('cabin_notifications', appNotifications);
-  renderNotifCenter();
-  updateNotifBadge();
-});
-
-// Notification test button
-document.getElementById('notifTestBtn').addEventListener('click', function() {
-  const btn = this;
-  btn.disabled = true;
-  const textNode = btn.childNodes[btn.childNodes.length - 1];
-  if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission();
-  let countdown = 5;
-  textNode.textContent = ' Envoi dans ' + countdown + 's...';
-  const timer = setInterval(() => {
-    countdown--;
-    if (countdown > 0) {
-      textNode.textContent = ' Envoi dans ' + countdown + 's...';
-    } else {
-      clearInterval(timer);
-      addNotification(
-        'ALERTE M\u00c9DICALE \u2014 Si\u00e8ge 22K',
-        'MARTIN Thomas demande une assistance en \u00c9conomy. V\u00e9rifiez la trousse de premiers secours et le d\u00e9fibrillateur.',
-        'alert'
-      );
-      textNode.textContent = ' Notification envoy\u00e9e !';
-      setTimeout(() => { btn.disabled = false; textNode.textContent = ' Tester une notification'; }, 3000);
-    }
-  }, 1000);
-});
-
-// Init notification center
-renderNotifCenter();
-updateNotifBadge();
 
 // === Tab Navigation ===
-function switchToTab(moduleName) {
-  document.querySelectorAll('.tab').forEach(t => {
-    t.classList.toggle('active', t.dataset.module === moduleName);
-  });
-  document.querySelectorAll('.module').forEach(m => {
-    m.classList.toggle('active', m.id === 'mod-' + moduleName);
-  });
+function switchToTab(name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.module === name));
+  document.querySelectorAll('.module').forEach(m => m.classList.toggle('active', m.id === 'mod-' + name));
 }
-
-document.getElementById('tabBar').addEventListener('click', (e) => {
-  const tab = e.target.closest('.tab');
-  if (!tab) return;
-  switchToTab(tab.dataset.module);
+document.getElementById('tabBar').addEventListener('click', e => {
+  const t = e.target.closest('.tab'); if (!t) return; switchToTab(t.dataset.module);
 });
-
-// Handle hash-based deep links (for manifest shortcuts)
-function handleHash() {
-  const hash = window.location.hash.replace('#', '');
-  if (hash) switchToTab(hash);
-}
+function handleHash() { const h = window.location.hash.replace('#',''); if (h) switchToTab(h); }
 window.addEventListener('hashchange', handleHash);
 if (window.location.hash) handleHash();
 
-// === App Badge ===
-function updateAppBadge() {
-  if (!('setAppBadge' in navigator)) return;
-  let alertCount = 0;
-  // Count non-boarded passengers
-  Object.values(passengers).forEach(p => { if (!p.boarded) alertCount++; });
-  // Count incidents
-  alertCount += incidents.length;
-  if (alertCount > 0) {
-    navigator.setAppBadge(alertCount).catch(() => {});
-  } else {
-    navigator.clearAppBadge().catch(() => {});
-  }
-}
+// === Persistence ===
+function lsGet(k,d){try{return JSON.parse(localStorage.getItem(k))||d;}catch{return d;}}
+function lsSet(k,v){localStorage.setItem(k,JSON.stringify(v));}
+let bookmarks=lsGet('cabin_bookmarks',{}), notes=lsGet('cabin_notes',{});
+let milestoneChecks=lsGet('cabin_otp_checks',{}), checklistState=lsGet('cabin_checklist',{});
+let incidents=lsGet('cabin_incidents',[]), cabinZones=lsGet('cabin_zones',{});
+let serviceState=lsGet('cabin_services',{s1:{},s2:{}}), doorAssignments=lsGet('cabin_doors',{});
+let appNotifications=lsGet('cabin_notifications',[]);
 
-// === Persistence helpers ===
-function lsGet(k, def) { try { return JSON.parse(localStorage.getItem(k)) || def; } catch { return def; } }
-function lsSet(k, v) { localStorage.setItem(k, JSON.stringify(v)); }
-
-let bookmarks = lsGet('cabin_bookmarks', {});
-let notes = lsGet('cabin_notes', {});
-let milestoneChecks = lsGet('cabin_otp_checks', {});
-let checklistState = lsGet('cabin_checklist', {});
-let incidents = lsGet('cabin_incidents', []);
-let cabinZones = lsGet('cabin_zones', {});
-let serviceState = lsGet('cabin_services', { s1: {}, s2: {} });
-
-// ============================================================
-// CABIN CONFIG — CORSAIR B787-9
-// ============================================================
+// === Cabin Config ===
 const CABIN_CONFIG = {
-  business: { label: 'Business', cls: 'business', rows: [1,2,3,4,5,6,7,8],
-    layout: ['K','.','.','|','.','F','E','|','.','.','A'] },
-  premium: { label: 'Premium', cls: 'premium', rows: [9,10,11,12,13,14],
-    layout: ['K','J','.','|','F','E','D','|','.','B','A'] },
-  economy_front: { label: 'Economy', cls: 'economy', rows: [15,16,17,18,19,20,21,22,23,24,25,26,27,28,29],
-    layout: ['K','J','H','|','F','E','D','|','C','B','A'] },
-  economy_rear: { label: '', cls: 'economy', rows: [30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47],
-    layout: ['K','J','H','|','F','E','D','|','C','B','A'] }
+  business:{label:'Business',cls:'business',rows:[1,2,3,4,5,6,7,8],layout:['K','.','.','|','.','F','E','|','.','.','A']},
+  premium:{label:'Premium',cls:'premium',rows:[9,10,11,12,13,14],layout:['K','J','.','|','F','E','D','|','.','B','A']},
+  economy_front:{label:'Economy',cls:'economy',rows:[15,16,17,18,19,20,21,22,23,24,25,26,27,28,29],layout:['K','J','H','|','F','E','D','|','C','B','A']},
+  economy_rear:{label:'',cls:'economy',rows:[30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47],layout:['K','J','H','|','F','E','D','|','C','B','A']}
 };
-const ALL_POSITIONS = ['K','J','H','|','F','E','D','|','C','B','A'];
-const EXIT_ROWS = [1,9,15,30,46];
-const GALLEY_AFTER = { business: 'GAL', economy_front: 'GAL/LAV' };
+const ALL_POSITIONS=['K','J','H','|','F','E','D','|','C','B','A'];
+const EXIT_ROWS=[1,9,15,30,46];
+const GALLEY_AFTER={business:'GAL',economy_front:'GAL/LAV'};
+
+// === Mock Passengers ===
+function genPax(){
+  const fn=['Marie','Thomas','Camille','Lucas','L\u00e9a','Hugo','Manon','Louis','Chlo\u00e9','Nathan','Emma','Rapha\u00ebl','Sarah','Jules','In\u00e8s','Arthur','Jade','Adam','Lola','Gabriel','Alice','Paul','Louise','No\u00ebl','Fatima','Jean-Pierre','Aisha','Ravi','Chen','Yuki','Sophie'];
+  const ln=['MARTIN','BERNARD','DUBOIS','THOMAS','ROBERT','PETIT','DURAND','MOREAU','LAURENT','SIMON','MICHEL','GARCIA','ROUX','LEROY','FONTAINE','CHEVALIER','BOYER','BLANC','NAIR','WONG','SUZUKI','PAYET','HOARAU','RIVI\u00c8RE','GRONDIN','DIJOUX','CADET','MAILLOT'];
+  const meals=['','','','','','VGML','VLML','HNML','DBML','CHML','AVML','KSML'];
+  const remarks=['','','','','','','','UM','WCHR','DEAF','BLND','PETC','VIP','MAAS'];
+  const nats=['FR','FR','FR','FR','RE','RE','MU','MG','IN','CN','JP','GB','DE','US'];
+  const abc='ABCDEFGHJKLMNPQRSTUVWXYZ';
+  const p={};const all=[];
+  Object.values(CABIN_CONFIG).forEach(s=>s.rows.forEach(r=>s.layout.forEach(c=>{if(c!=='.'&&c!=='|')all.push({seat:r+c,cls:s.cls});})));
+  const sh=all.sort(()=>Math.random()-0.5).slice(0,Math.floor(all.length*0.82));
+  sh.forEach(({seat,cls})=>{let pnr='';for(let i=0;i<6;i++)pnr+=abc[Math.floor(Math.random()*abc.length)];
+    p[seat]={name:ln[Math.floor(Math.random()*ln.length)]+' '+fn[Math.floor(Math.random()*fn.length)],pnr,class:cls,
+      meal:meals[Math.floor(Math.random()*meals.length)],remark:remarks[Math.floor(Math.random()*remarks.length)],
+      nationality:nats[Math.floor(Math.random()*nats.length)],checkedIn:Math.random()>0.08,boarded:Math.random()>0.15,
+      bags:Math.floor(Math.random()*3),infant:Math.random()>0.95,ffn:Math.random()>0.7?'SS'+String(Math.floor(Math.random()*9e6+1e6)):''};
+  });return p;
+}
+const passengers=genPax();
 
 // ============================================================
-// MOCK PASSENGERS
+// NOTIFICATIONS
 // ============================================================
-function generateMockPassengers() {
-  const fn = ['Marie','Thomas','Camille','Lucas','Lea','Hugo','Manon','Louis','Chloe','Nathan',
-    'Emma','Raphael','Sarah','Jules','Ines','Arthur','Jade','Adam','Lola','Gabriel',
-    'Alice','Paul','Louise','Noel','Fatima','Jean-Pierre','Aisha','Ravi','Chen','Yuki','Sophie'];
-  const ln = ['MARTIN','BERNARD','DUBOIS','THOMAS','ROBERT','PETIT','DURAND','MOREAU','LAURENT',
-    'SIMON','MICHEL','GARCIA','ROUX','LEROY','FONTAINE','CHEVALIER','BOYER','BLANC',
-    'NAIR','WONG','SUZUKI','PAYET','HOARAU','RIVIERE','GRONDIN','DIJOUX','CADET','MAILLOT'];
-  const meals = ['','','','','','VGML','VLML','HNML','DBML','CHML','AVML','KSML'];
-  const remarks = ['','','','','','','','UM','WCHR','DEAF','BLND','PETC','VIP','MAAS'];
-  const nats = ['FR','FR','FR','FR','RE','RE','MU','MG','IN','CN','JP','GB','DE','US'];
-  const abc = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
-  const pass = {};
-  const allSeats = [];
-  Object.values(CABIN_CONFIG).forEach(s => s.rows.forEach(r => s.layout.forEach(p => {
-    if (p !== '.' && p !== '|') allSeats.push({ seat: r+p, cls: s.cls });
-  })));
-  const shuffled = allSeats.sort(() => Math.random()-0.5).slice(0, Math.floor(allSeats.length*0.82));
-  shuffled.forEach(({seat,cls}) => {
-    let pnr=''; for(let i=0;i<6;i++) pnr+=abc[Math.floor(Math.random()*abc.length)];
-    pass[seat] = {
-      name: ln[Math.floor(Math.random()*ln.length)]+' '+fn[Math.floor(Math.random()*fn.length)],
-      pnr, class: cls,
-      meal: meals[Math.floor(Math.random()*meals.length)],
-      remark: remarks[Math.floor(Math.random()*remarks.length)],
-      nationality: nats[Math.floor(Math.random()*nats.length)],
-      checkedIn: Math.random()>0.08, boarded: Math.random()>0.15,
-      bags: Math.floor(Math.random()*3), infant: Math.random()>0.95,
-      ffn: Math.random()>0.7 ? 'SS'+String(Math.floor(Math.random()*9000000+1000000)) : ''
-    };
-  });
-  return pass;
+function addNotification(title,body,type){
+  appNotifications.unshift({id:Date.now(),title,body,type:type||'info',time:fmt(new Date())});
+  if(appNotifications.length>50)appNotifications=appNotifications.slice(0,50);
+  lsSet('cabin_notifications',appNotifications);renderNotifCenter();updateNotifBadge();
+  sendOSNotification(title,body);
 }
-const passengers = generateMockPassengers();
+function sendOSNotification(t,b){
+  const o={body:b,icon:'icons/icon-192.svg',badge:'icons/icon-192.svg',tag:'cabin-'+Date.now(),renotify:true,vibrate:[200,100,200]};
+  if('serviceWorker' in navigator&&navigator.serviceWorker.controller)
+    navigator.serviceWorker.ready.then(r=>r.showNotification(t,o).catch(()=>{})).catch(()=>{});
+  else if('Notification' in window&&Notification.permission==='granted') try{new Notification(t,o);}catch{}
+}
+function renderNotifCenter(){
+  const list=document.getElementById('notifList'),empty=document.getElementById('notifEmpty');
+  list.textContent='';
+  if(!appNotifications.length){list.appendChild(empty);empty.style.display='';return;}
+  empty.style.display='none';
+  appNotifications.forEach((n,idx)=>{
+    const item=document.createElement('div');item.className='notif-item';item.dataset.idx=idx;
+    const ic=document.createElement('div');ic.className='notif-item-icon '+n.type;ic.textContent=n.type==='alert'?'!':'i';
+    const ct=document.createElement('div');ct.className='notif-item-content';
+    const t=document.createElement('div');t.className='notif-item-title';t.textContent=n.title;
+    const b=document.createElement('div');b.className='notif-item-body';b.textContent=n.body;
+    const tm=document.createElement('div');tm.className='notif-item-time';tm.textContent=n.time;
+    ct.appendChild(t);ct.appendChild(b);ct.appendChild(tm);
+    const dm=document.createElement('button');dm.className='notif-item-dismiss';dm.textContent='\u00d7';
+    dm.addEventListener('click',e=>{e.stopPropagation();removeNotif(idx);});
+    item.appendChild(ic);item.appendChild(ct);item.appendChild(dm);
+    // Swipe to delete
+    let sx=0,dx=0;
+    item.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;dx=0;item.classList.add('swiping');},{passive:true});
+    item.addEventListener('touchmove',e=>{dx=e.touches[0].clientX-sx;if(dx<0)item.style.transform='translateX('+dx+'px)';},{passive:true});
+    item.addEventListener('touchend',()=>{item.classList.remove('swiping');if(dx<-80){item.classList.add('dismissed');setTimeout(()=>removeNotif(idx),200);}else{item.style.transform='';}});
+    list.appendChild(item);
+  });
+  list.appendChild(empty);
+}
+function removeNotif(idx){appNotifications.splice(idx,1);lsSet('cabin_notifications',appNotifications);renderNotifCenter();updateNotifBadge();}
+function updateNotifBadge(){const b=document.getElementById('notifBadge');b.textContent=appNotifications.length>0?String(appNotifications.length):'';}
+document.getElementById('notifToggle').addEventListener('click',()=>document.getElementById('notifCenter').classList.toggle('visible'));
+document.addEventListener('click',e=>{if(!e.target.closest('#notifCenter')&&!e.target.closest('#notifToggle'))document.getElementById('notifCenter').classList.remove('visible');});
+document.getElementById('notifClearAll').addEventListener('click',()=>{appNotifications=[];lsSet('cabin_notifications',appNotifications);renderNotifCenter();updateNotifBadge();});
+
+// Notif test button
+document.getElementById('notifTestBtn').addEventListener('click',function(){
+  const btn=this;btn.disabled=true;const tn=btn.childNodes[btn.childNodes.length-1];
+  if('Notification' in window&&Notification.permission==='default')Notification.requestPermission();
+  let c=5;tn.textContent=' Envoi dans '+c+'s...';
+  const ti=setInterval(()=>{c--;if(c>0){tn.textContent=' Envoi dans '+c+'s...';}else{clearInterval(ti);
+    addNotification('ALERTE M\u00c9DICALE \u2014 Si\u00e8ge 22K','MARTIN Thomas demande une assistance en \u00c9conomy. V\u00e9rifiez la trousse de premiers secours et le d\u00e9fibrillateur.','alert');
+    tn.textContent=' Notification envoy\u00e9e !';setTimeout(()=>{btn.disabled=false;tn.textContent=' Tester une notification';},3000);}},1000);
+});
+
+// ============================================================
+// SHARE (Web Share API = AirDrop on iOS)
+// ============================================================
+document.getElementById('shareToggle').addEventListener('click',()=>document.getElementById('shareOverlay').classList.add('visible'));
+document.getElementById('shareClose').addEventListener('click',()=>document.getElementById('shareOverlay').classList.remove('visible'));
+document.getElementById('shareOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)document.getElementById('shareOverlay').classList.remove('visible');});
+document.getElementById('shareConfirm').addEventListener('click',()=>{
+  const checks=document.querySelectorAll('#shareOptions input:checked');
+  const parts=[];
+  checks.forEach(c=>{
+    if(c.value==='briefing')parts.push('VOL SS 901 ORY\u2192RUN B787-9 F-OLRA STD 14:00');
+    if(c.value==='passengers'){let t='PASSAGERS:\n';Object.entries(passengers).forEach(([s,p])=>{t+=s+' '+p.name+(p.meal?' ['+p.meal+']':'')+(p.remark?' ('+p.remark+')':'')+'\n';});parts.push(t);}
+    if(c.value==='meals'){let t='REPAS SP\u00c9CIAUX:\n';Object.entries(passengers).filter(([,p])=>p.meal).forEach(([s,p])=>{t+=s+' '+p.name+' - '+p.meal+'\n';});parts.push(t);}
+    if(c.value==='checklist')parts.push('CHECKLISTS: '+Object.values(checklistState).filter(Boolean).length+' items valid\u00e9s');
+    if(c.value==='incidents'){let t='INCIDENTS:\n';incidents.forEach(i=>{t+=i.time+' ['+i.type+'] '+i.desc+'\n';});parts.push(t||'Aucun incident');}
+    if(c.value==='report')parts.push('RAPPORT: '+Object.values(cabinZones).filter(v=>v==='OK').length+'/11 zones OK');
+  });
+  const text=parts.join('\n\n');
+  if(navigator.share){navigator.share({title:'Cabin App \u2014 SS 901',text}).catch(()=>{});}
+  else{navigator.clipboard.writeText(text).then(()=>alert('Donn\u00e9es copi\u00e9es dans le presse-papier')).catch(()=>{});}
+  document.getElementById('shareOverlay').classList.remove('visible');
+});
 
 // ============================================================
 // BRIEFING
 // ============================================================
-function buildBriefing() {
-  // Pax counts
-  let biz=0, prem=0, eco=0;
-  Object.values(passengers).forEach(p => {
-    if (p.class==='business') biz++; else if (p.class==='premium') prem++; else eco++;
-  });
-  const total = biz+prem+eco;
-  const el = id => document.getElementById(id);
-  el('briefPaxTotal').textContent = total;
-  el('briefPaxBiz').textContent = biz;
-  el('briefPaxPrem').textContent = prem;
-  el('briefPaxEco').textContent = eco;
+const CREW=[
+  {name:'LEFEBVRE Sophie',role:'CCP',rank:'ccp',door:'1L'},
+  {name:'DUPONT Marc',role:'CC1 \u2014 Business',rank:'cc',door:'1R'},
+  {name:'PAYET Nathalie',role:'CC2 \u2014 Premium',rank:'cc',door:'2L'},
+  {name:'HOARAU Kevin',role:'CC3 \u2014 \u00c9co avant',rank:'cc',door:'2R'},
+  {name:'MARTIN Julie',role:'CC4 \u2014 \u00c9co centre',rank:'cc',door:'3L'},
+  {name:'RIVI\u00c8RE Paul',role:'CC5 \u2014 \u00c9co arri\u00e8re',rank:'cc',door:'3R'},
+  {name:'GRONDIN L\u00e9a',role:'CC6 \u2014 \u00c9co arri\u00e8re',rank:'cc',door:'4L'},
+  {name:'DIJOUX Sarah',role:'CC7 \u2014 Galley',rank:'cc',door:'4R'}
+];
+const DOORS=['1L','1R','2L','2R','3L','3R','4L','4R'];
+
+function buildBriefing(){
+  let biz=0,prem=0,eco=0;
+  Object.values(passengers).forEach(p=>{if(p.class==='business')biz++;else if(p.class==='premium')prem++;else eco++;});
+  const total=biz+prem+eco;
+  const el=id=>document.getElementById(id);
+  el('briefPaxTotal').textContent=total;el('briefPaxBiz').textContent=biz;el('briefPaxPrem').textContent=prem;el('briefPaxEco').textContent=eco;
 
   // Load bar
-  const allSeats = []; Object.values(CABIN_CONFIG).forEach(s => s.rows.forEach(r => s.layout.forEach(p => { if(p!=='.'&&p!=='|') allSeats.push(1); })));
-  const pct = Math.round(total/allSeats.length*100);
-  const bar = el('briefLoadBar');
-  bar.textContent = '';
-  const fill = document.createElement('div');
-  fill.className = 'brief-bar-fill';
-  fill.style.width = pct+'%';
-  fill.style.background = pct>90 ? '#4ade80' : pct>70 ? 'var(--corsair-bleu-economie)' : '#fbbf24';
-  bar.appendChild(fill);
+  const allSeats=[];Object.values(CABIN_CONFIG).forEach(s=>s.rows.forEach(r=>s.layout.forEach(p=>{if(p!=='.'&&p!=='|')allSeats.push(1);})));
+  const pct=Math.round(total/allSeats.length*100);
+  const bar=el('briefLoadBar');bar.textContent='';
+  const fill=document.createElement('div');fill.className='brief-bar-fill';fill.style.width=pct+'%';
+  fill.style.background=pct>90?'#4ade80':pct>70?'var(--corsair-bleu-economie)':'#fbbf24';bar.appendChild(fill);
+
+  // Pax tags (clickable particularit\u00e9s)
+  const tags=el('briefPaxTags');tags.textContent='';
+  const counts={um:0,wchr:0,vip:0,meal:0,inf:0,noboard:0};
+  Object.values(passengers).forEach(p=>{
+    if(p.remark==='UM')counts.um++;if(p.remark==='WCHR')counts.wchr++;if(p.remark==='VIP')counts.vip++;
+    if(p.meal)counts.meal++;if(p.infant)counts.inf++;if(!p.boarded)counts.noboard++;
+  });
+  [{k:'um',l:'UM',f:'um'},{k:'wchr',l:'WCHR',f:'wchr'},{k:'vip',l:'VIP',f:'occupied'},{k:'meal',l:'Repas sp\u00e9.',f:'special-meal'},{k:'inf',l:'Nourrissons',f:'occupied'},{k:'noboard',l:'Non embarqu\u00e9s',f:'not-boarded'}].forEach(t=>{
+    if(!counts[t.k])return;
+    const btn=document.createElement('button');btn.className='pax-tag '+t.k;
+    const cnt=document.createElement('span');cnt.className='tag-count';cnt.textContent=counts[t.k];
+    btn.appendChild(cnt);btn.appendChild(document.createTextNode(' '+t.l));
+    btn.addEventListener('click',()=>{switchToTab('passengers');
+      document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+      const fb=document.querySelector('.filter-btn[data-filter="'+t.f+'"]');if(fb)fb.classList.add('active');
+      activeFilter=t.f;applyFilters();});
+    tags.appendChild(btn);
+  });
+
+  // Flight profile
+  const fp=el('flightProfile');fp.textContent='';
+  const phases=[
+    {label:'D\u00e9part ORY',time:'14:00',pct:0},{label:'TOC (FL390)',time:'14:32',pct:25},
+    {label:'Croisi\u00e8re',time:'',pct:50},{label:'TOD',time:'00:38',pct:75},{label:'Arriv\u00e9e RUN',time:'01:15',pct:100}
+  ];
+  const fpSvg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+  fpSvg.setAttribute('viewBox','0 0 500 60');fpSvg.style.cssText='width:100%;height:60px;';
+  // Path
+  const path=document.createElementNS('http://www.w3.org/2000/svg','path');
+  path.setAttribute('d','M10,50 Q60,50 100,15 L250,12 L350,12 Q400,12 440,50 L490,50');
+  path.setAttribute('stroke','#52A7BE');path.setAttribute('stroke-width','2');path.setAttribute('fill','none');path.setAttribute('opacity','0.6');
+  fpSvg.appendChild(path);
+  // Fill
+  const fill2=document.createElementNS('http://www.w3.org/2000/svg','path');
+  fill2.setAttribute('d','M10,50 Q60,50 100,15 L250,12 L350,12 Q400,12 440,50 L490,50 L490,60 L10,60 Z');
+  fill2.setAttribute('fill','#52A7BE');fill2.setAttribute('opacity','0.05');fpSvg.appendChild(fill2);
+  // Points
+  const pts=[{x:10,y:50},{x:100,y:15},{x:250,y:12},{x:400,y:12},{x:490,y:50}];
+  phases.forEach((ph,i)=>{
+    const g=document.createElementNS('http://www.w3.org/2000/svg','g');
+    const circ=document.createElementNS('http://www.w3.org/2000/svg','circle');
+    circ.setAttribute('cx',pts[i].x);circ.setAttribute('cy',pts[i].y);circ.setAttribute('r','4');
+    circ.setAttribute('fill',i===0?'#355EAB':i===4?'#4ade80':'#52A7BE');g.appendChild(circ);
+    const lbl=document.createElementNS('http://www.w3.org/2000/svg','text');
+    lbl.setAttribute('x',pts[i].x);lbl.setAttribute('y',pts[i].y<30?pts[i].y+16:pts[i].y-8);
+    lbl.setAttribute('text-anchor','middle');lbl.setAttribute('font-size','7');lbl.setAttribute('fill','#9a9bb8');lbl.textContent=ph.label;g.appendChild(lbl);
+    if(ph.time){const tm=document.createElementNS('http://www.w3.org/2000/svg','text');
+      tm.setAttribute('x',pts[i].x);tm.setAttribute('y',pts[i].y<30?pts[i].y+24:pts[i].y-16);
+      tm.setAttribute('text-anchor','middle');tm.setAttribute('font-size','8');tm.setAttribute('font-weight','600');tm.setAttribute('fill','#52A7BE');tm.textContent=ph.time;g.appendChild(tm);}
+    fpSvg.appendChild(g);
+  });
+  fp.appendChild(fpSvg);
 
   // Crew
-  const crew = [
-    { name: 'LEFEBVRE Sophie', role: 'CCP', rank: 'ccp' },
-    { name: 'DUPONT Marc', role: 'CC1 — Business', rank: 'cc' },
-    { name: 'PAYET Nathalie', role: 'CC2 — Premium', rank: 'cc' },
-    { name: 'HOARAU Kevin', role: 'CC3 — Eco avant', rank: 'cc' },
-    { name: 'MARTIN Julie', role: 'CC4 — Eco centre', rank: 'cc' },
-    { name: 'RIVIERE Paul', role: 'CC5 — Eco arriere', rank: 'cc' },
-    { name: 'GRONDIN Lea', role: 'CC6 — Eco arriere', rank: 'cc' },
-    { name: 'DIJOUX Sarah', role: 'CC7 — Galley', rank: 'cc' }
-  ];
-  const crewEl = el('briefCrew');
-  crewEl.textContent = '';
-  crew.forEach(c => {
-    const row = document.createElement('div'); row.className = 'crew-member';
-    const av = document.createElement('div'); av.className = 'crew-avatar '+c.rank;
-    av.textContent = c.name.split(' ').map(w=>w[0]).join('');
-    const info = document.createElement('div');
-    const nm = document.createElement('div'); nm.className = 'crew-name'; nm.textContent = c.name;
-    const rl = document.createElement('div'); rl.className = 'crew-role'; rl.textContent = c.role;
-    info.appendChild(nm); info.appendChild(rl);
-    row.appendChild(av); row.appendChild(info); crewEl.appendChild(row);
+  const crewEl=el('briefCrew');crewEl.textContent='';
+  CREW.forEach(c=>{
+    const row=document.createElement('div');row.className='crew-member';
+    const av=document.createElement('div');av.className='crew-avatar '+c.rank;av.textContent=c.name.split(' ').map(w=>w[0]).join('');
+    const info=document.createElement('div');
+    const nm=document.createElement('div');nm.className='crew-name';
+    const door=doorAssignments[c.name]||c.door;
+    nm.textContent=c.name+' \u2014 Porte '+door;
+    const rl=document.createElement('div');rl.className='crew-role';rl.textContent=c.role;
+    info.appendChild(nm);info.appendChild(rl);row.appendChild(av);row.appendChild(info);crewEl.appendChild(row);
   });
 
-  // Alerts
-  const alerts = el('briefAlerts');
-  alerts.textContent = '';
-  const alertData = [];
-  Object.entries(passengers).forEach(([seat,p]) => {
-    if (p.remark==='UM') alertData.push({ seat, text: p.name+' — Mineur non accompagn\u00e9', type: 'warn', tag: 'UM' });
-    if (p.remark==='WCHR') alertData.push({ seat, text: p.name+' — Fauteuil roulant', type: 'info', tag: 'WCHR' });
-    if (p.remark==='VIP') alertData.push({ seat, text: p.name+' — Passager VIP', type: 'info', tag: 'VIP' });
-    if (p.remark==='DEAF'||p.remark==='BLND') alertData.push({ seat, text: p.name+' — '+p.remark, type: 'warn', tag: p.remark });
-    if (p.infant) alertData.push({ seat, text: p.name+' — Nourrisson \u00e0 bord', type: 'warn', tag: 'INF' });
-    if (!p.boarded) alertData.push({ seat, text: p.name+' — Non embarqu\u00e9', type: 'critical', tag: 'MANQ' });
-  });
-  alertData.sort((a,b) => { const o = {critical:0,warn:1,info:2}; return (o[a.type]||3)-(o[b.type]||3); });
-  alertData.slice(0, 20).forEach(a => {
-    const row = document.createElement('div'); row.className = 'brief-alert '+a.type;
-    const s = document.createElement('span'); s.className = 'brief-alert-seat'; s.textContent = a.seat;
-    const t = document.createElement('span'); t.className = 'brief-alert-text'; t.textContent = a.text;
-    const tag = document.createElement('span'); tag.className = 'brief-alert-tag'; tag.textContent = a.tag;
-    row.appendChild(s); row.appendChild(t); row.appendChild(tag); alerts.appendChild(row);
-  });
-
-  // Briefing notes persistence
-  const notesEl = el('briefingNotes');
-  notesEl.value = localStorage.getItem('cabin_briefing_notes') || '';
-  notesEl.addEventListener('input', () => localStorage.setItem('cabin_briefing_notes', notesEl.value));
+  // Briefing notes
+  const notesEl=el('briefingNotes');notesEl.value=localStorage.getItem('cabin_briefing_notes')||'';
+  notesEl.addEventListener('input',()=>localStorage.setItem('cabin_briefing_notes',notesEl.value));
 }
 
-// ============================================================
-// BUILD CABIN PLAN
-// ============================================================
-let activeFilter = 'all', searchQuery = '';
-
-function buildCabinPlan() {
-  const container = document.getElementById('cabinPlan');
-  container.textContent = '';
-  const labelsCol = document.createElement('div'); labelsCol.className = 'row-labels';
-  ALL_POSITIONS.forEach(pos => {
-    const l = document.createElement('div');
-    if(pos==='|'){l.className='row-label aisle-gap';}else{l.className='row-label';l.textContent=pos;}
-    labelsCol.appendChild(l);
+// Door assignment modal
+document.getElementById('assignDoorsBtn').addEventListener('click',()=>{
+  const grid=document.getElementById('doorGrid');grid.textContent='';
+  CREW.forEach(c=>{
+    const item=document.createElement('div');item.className='door-item';
+    const nm=document.createElement('div');nm.className='door-name';nm.textContent=c.name.split(' ')[0];
+    const sel=document.createElement('select');sel.className='door-select';sel.dataset.crew=c.name;
+    DOORS.forEach(d=>{const o=document.createElement('option');o.value=d;o.textContent=d;sel.appendChild(o);});
+    sel.value=doorAssignments[c.name]||c.door;
+    item.appendChild(nm);item.appendChild(sel);grid.appendChild(item);
   });
-  const ns = document.createElement('div'); ns.className='row-label'; ns.style.height='16px'; labelsCol.appendChild(ns);
-  container.appendChild(labelsCol);
-
-  const sections = ['business','premium','economy_front','economy_rear'];
-  sections.forEach((sk,si) => {
-    const cfg = CABIN_CONFIG[sk];
-    if(si>0){
-      const prevKey = sections[si-1];
-      if(GALLEY_AFTER[prevKey]){
-        const g = document.createElement('div'); g.className='galley-col';
-        const ic = document.createElementNS('http://www.w3.org/2000/svg','svg');
-        ic.setAttribute('viewBox','0 0 24 24'); ic.setAttribute('class','galley-icon');
-        const r = document.createElementNS('http://www.w3.org/2000/svg','rect');
-        r.setAttribute('x','4');r.setAttribute('y','2');r.setAttribute('width','16');r.setAttribute('height','20');r.setAttribute('rx','2');
-        ic.appendChild(r); g.appendChild(ic);
-        const lb = document.createElement('div'); lb.className='galley-label'; lb.textContent=GALLEY_AFTER[prevKey]; g.appendChild(lb);
-        container.appendChild(g);
-      } else {
-        const d = document.createElement('div'); d.className='section-divider'; container.appendChild(d);
-      }
-    }
-    const sec = document.createElement('div'); sec.className='cabin-section';
-    const sl = document.createElement('div'); sl.className='section-label '+cfg.cls; sl.textContent=cfg.label; sec.appendChild(sl);
-    const cols = document.createElement('div'); cols.className='cabin-columns';
-    cfg.rows.forEach(rn => {
-      const col = document.createElement('div'); col.className='cabin-col';
-      if(EXIT_ROWS.includes(rn)) col.classList.add('exit-row');
-      cfg.layout.forEach(pos => {
-        if(pos==='|'){const a=document.createElement('div');a.className='aisle';col.appendChild(a);}
-        else if(pos==='.'){const n=document.createElement('div');n.className='seat no-seat';col.appendChild(n);}
-        else {
-          const sid=rn+pos, se=document.createElement('div'); se.className='seat'; se.dataset.seat=sid; se.textContent=pos;
-          const pax=passengers[sid];
-          if(pax){se.classList.add('occupied',cfg.cls); if(pax.meal)se.classList.add('special-meal'); if(pax.remark==='WCHR')se.classList.add('wheelchair'); if(pax.remark==='UM')se.classList.add('um');}
-          else se.classList.add('empty');
-          if(bookmarks[sid])se.classList.add('bookmarked');
-          se.addEventListener('click',ev=>{ev.stopPropagation();openPaxPanel(sid,cfg.cls);});
-          col.appendChild(se);
-        }
-      });
-      const rne=document.createElement('div'); rne.className='row-num'; rne.textContent=rn;
-      rne.style.cssText='height:16px;display:flex;align-items:center;justify-content:center';
-      col.appendChild(rne); cols.appendChild(col);
-    });
-    sec.appendChild(cols); container.appendChild(sec);
-  });
-  applyFilters(); updateStats();
-}
-
-// Filters
-document.getElementById('filters').addEventListener('click',e=>{
-  const b=e.target.closest('.filter-btn'); if(!b)return;
-  document.querySelectorAll('.filter-btn').forEach(x=>x.classList.remove('active'));
-  b.classList.add('active'); activeFilter=b.dataset.filter; applyFilters();
+  document.getElementById('doorOverlay').classList.add('visible');
 });
+document.getElementById('doorClose').addEventListener('click',()=>document.getElementById('doorOverlay').classList.remove('visible'));
+document.getElementById('doorOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)document.getElementById('doorOverlay').classList.remove('visible');});
+document.getElementById('doorSave').addEventListener('click',()=>{
+  document.querySelectorAll('.door-select').forEach(s=>{doorAssignments[s.dataset.crew]=s.value;});
+  lsSet('cabin_doors',doorAssignments);document.getElementById('doorOverlay').classList.remove('visible');buildBriefing();
+});
+
+// ============================================================
+// CABIN PLAN
+// ============================================================
+let activeFilter='all',searchQuery='';
+function buildCabinPlan(){
+  const c=document.getElementById('cabinPlan');c.textContent='';
+  const lc=document.createElement('div');lc.className='row-labels';
+  ALL_POSITIONS.forEach(p=>{const l=document.createElement('div');if(p==='|'){l.className='row-label aisle-gap';}else{l.className='row-label';l.textContent=p;}lc.appendChild(l);});
+  const ns=document.createElement('div');ns.className='row-label';ns.style.height='16px';lc.appendChild(ns);c.appendChild(lc);
+  ['business','premium','economy_front','economy_rear'].forEach((sk,si)=>{
+    const cfg=CABIN_CONFIG[sk];
+    if(si>0){if(GALLEY_AFTER[['business','premium','economy_front','economy_rear'][si-1]]){
+      const g=document.createElement('div');g.className='galley-col';
+      const ic=document.createElementNS('http://www.w3.org/2000/svg','svg');ic.setAttribute('viewBox','0 0 24 24');ic.setAttribute('class','galley-icon');
+      const r=document.createElementNS('http://www.w3.org/2000/svg','rect');r.setAttribute('x','4');r.setAttribute('y','2');r.setAttribute('width','16');r.setAttribute('height','20');r.setAttribute('rx','2');
+      ic.appendChild(r);g.appendChild(ic);const lb=document.createElement('div');lb.className='galley-label';lb.textContent=GALLEY_AFTER[['business','premium','economy_front','economy_rear'][si-1]];g.appendChild(lb);c.appendChild(g);
+    }else{const d=document.createElement('div');d.className='section-divider';c.appendChild(d);}}
+    const sec=document.createElement('div');sec.className='cabin-section';
+    const sl=document.createElement('div');sl.className='section-label '+cfg.cls;sl.textContent=cfg.label;sec.appendChild(sl);
+    const cols=document.createElement('div');cols.className='cabin-columns';
+    cfg.rows.forEach(rn=>{const col=document.createElement('div');col.className='cabin-col';if(EXIT_ROWS.includes(rn))col.classList.add('exit-row');
+      cfg.layout.forEach(pos=>{if(pos==='|'){const a=document.createElement('div');a.className='aisle';col.appendChild(a);}
+        else if(pos==='.'){const n=document.createElement('div');n.className='seat no-seat';col.appendChild(n);}
+        else{const sid=rn+pos,se=document.createElement('div');se.className='seat';se.dataset.seat=sid;se.textContent=pos;
+          const pax=passengers[sid];if(pax){se.classList.add('occupied',cfg.cls);if(pax.meal)se.classList.add('special-meal');if(pax.remark==='WCHR')se.classList.add('wheelchair');if(pax.remark==='UM')se.classList.add('um');}else se.classList.add('empty');
+          if(bookmarks[sid])se.classList.add('bookmarked');se.addEventListener('click',ev=>{ev.stopPropagation();openPaxPanel(sid,cfg.cls);});col.appendChild(se);}});
+      const rne=document.createElement('div');rne.className='row-num';rne.textContent=rn;rne.style.cssText='height:16px;display:flex;align-items:center;justify-content:center';
+      col.appendChild(rne);cols.appendChild(col);});
+    sec.appendChild(cols);c.appendChild(sec);});applyFilters();updateStats();
+}
+document.getElementById('filters').addEventListener('click',e=>{const b=e.target.closest('.filter-btn');if(!b)return;document.querySelectorAll('.filter-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');activeFilter=b.dataset.filter;applyFilters();});
 document.getElementById('searchInput').addEventListener('input',e=>{searchQuery=e.target.value.toLowerCase().trim();applyFilters();});
+function applyFilters(){const has=activeFilter!=='all'||searchQuery.length>0;document.querySelectorAll('.seat:not(.no-seat)').forEach(el=>{const sid=el.dataset.seat,pax=passengers[sid];let m=true;
+  if(activeFilter==='occupied')m=!!pax;else if(activeFilter==='empty')m=!pax;else if(activeFilter==='special-meal')m=pax&&pax.meal;else if(activeFilter==='um')m=pax&&pax.remark==='UM';else if(activeFilter==='wchr')m=pax&&pax.remark==='WCHR';else if(activeFilter==='not-boarded')m=pax&&!pax.boarded;else if(activeFilter==='bookmarked')m=!!bookmarks[sid];
+  if(searchQuery&&m){if(pax)m=(pax.name+' '+pax.pnr+' '+sid+' '+pax.remark+' '+pax.meal).toLowerCase().includes(searchQuery);else m=sid.toLowerCase().includes(searchQuery);}
+  el.classList.toggle('dimmed',has&&!m);el.classList.toggle('highlighted',has&&m&&(activeFilter!=='all'||searchQuery));});}
+function updateStats(){const se=document.getElementById('cabinStats');se.textContent='';const biz=document.querySelectorAll('.seat.occupied.business').length,prem=document.querySelectorAll('.seat.occupied.premium').length,eco=document.querySelectorAll('.seat.occupied.economy').length,total=document.querySelectorAll('.seat:not(.no-seat)').length,occ=biz+prem+eco,pct=Math.round(occ/total*100),sm=document.querySelectorAll('.seat.special-meal').length;
+  [{v:pct+'%',l:'Remplissage'},null,{v:''+biz,l:'Business'},null,{v:''+prem,l:'Premium'},null,{v:''+eco,l:'Economy'},null,{v:''+sm,l:'Repas sp\u00e9.'},null,{v:''+Object.keys(bookmarks).length,l:'Marqu\u00e9s'}].forEach(i=>{if(!i){const d=document.createElement('div');d.className='stat-divider';se.appendChild(d);return;}const si=document.createElement('div');si.className='stat-item';const w=document.createElement('div');const v=document.createElement('div');v.className='stat-value';v.textContent=i.v;const l=document.createElement('div');l.className='stat-label';l.textContent=i.l;w.appendChild(v);w.appendChild(l);si.appendChild(w);se.appendChild(si);});}
 
-function applyFilters(){
-  const has=activeFilter!=='all'||searchQuery.length>0;
-  document.querySelectorAll('.seat:not(.no-seat)').forEach(el=>{
-    const sid=el.dataset.seat, pax=passengers[sid]; let m=true;
-    if(activeFilter==='occupied')m=!!pax;
-    else if(activeFilter==='empty')m=!pax;
-    else if(activeFilter==='special-meal')m=pax&&pax.meal;
-    else if(activeFilter==='um')m=pax&&pax.remark==='UM';
-    else if(activeFilter==='wchr')m=pax&&pax.remark==='WCHR';
-    else if(activeFilter==='not-boarded')m=pax&&!pax.boarded;
-    else if(activeFilter==='bookmarked')m=!!bookmarks[sid];
-    if(searchQuery&&m){
-      if(pax){m=(pax.name+' '+pax.pnr+' '+sid+' '+pax.remark+' '+pax.meal).toLowerCase().includes(searchQuery);}
-      else m=sid.toLowerCase().includes(searchQuery);
-    }
-    el.classList.toggle('dimmed',has&&!m);
-    el.classList.toggle('highlighted',has&&m&&(activeFilter!=='all'||searchQuery));
-  });
-}
-
-// Stats
-function updateStats(){
-  const se=document.getElementById('cabinStats'); se.textContent='';
-  const biz=document.querySelectorAll('.seat.occupied.business').length;
-  const prem=document.querySelectorAll('.seat.occupied.premium').length;
-  const eco=document.querySelectorAll('.seat.occupied.economy').length;
-  const total=document.querySelectorAll('.seat:not(.no-seat)').length;
-  const occ=biz+prem+eco, pct=Math.round(occ/total*100);
-  const sm=document.querySelectorAll('.seat.special-meal').length;
-  [{v:pct+'%',l:'Remplissage'},null,{v:''+biz,l:'Business'},null,{v:''+prem,l:'Premium'},null,{v:''+eco,l:'Economy'},null,{v:''+sm,l:'Repas sp\u00e9.'},null,{v:''+Object.keys(bookmarks).length,l:'Marqu\u00e9s'}].forEach(i=>{
-    if(!i){const d=document.createElement('div');d.className='stat-divider';se.appendChild(d);return;}
-    const si=document.createElement('div');si.className='stat-item';const w=document.createElement('div');
-    const v=document.createElement('div');v.className='stat-value';v.textContent=i.v;
-    const l=document.createElement('div');l.className='stat-label';l.textContent=i.l;
-    w.appendChild(v);w.appendChild(l);si.appendChild(w);se.appendChild(si);
-  });
-}
-
-// ============================================================
-// PAX DETAIL PANEL
-// ============================================================
-let currentPanelSeat = null;
-function openPaxPanel(seatId, secCls){
-  currentPanelSeat=seatId; const pax=passengers[seatId];
-  const badge=document.getElementById('panelSeatBadge');
-  badge.textContent=seatId; badge.className='pax-seat-badge '+(pax?secCls:'empty-seat');
-  document.getElementById('panelName').textContent=pax?pax.name:'Si\u00e8ge libre';
-  document.getElementById('panelClass').textContent=pax?(secCls+(pax.ffn?' | FFN '+pax.ffn:'')):secCls;
-  document.getElementById('panelBookmark').style.display=pax?'':'none';
-  const grid=document.getElementById('panelGrid'); grid.textContent='';
-  if(pax){
-    [{l:'PNR',v:pax.pnr},{l:'Nationalit\u00e9',v:pax.nationality},
-     {l:'Embarquement',v:pax.boarded?'\u00c0 bord':'En attente',c:pax.boarded?'ok':'warn'},
-     {l:'Check-in',v:pax.checkedIn?'Oui':'Non',c:pax.checkedIn?'ok':'warn'},
-     {l:'Repas',v:pax.meal||'Standard'},{l:'Remarque',v:pax.remark||'Aucune',c:pax.remark?'warn':''},
-     {l:'Bagages',v:pax.bags+' pcs'},{l:'Nourrisson',v:pax.infant?'Oui':'Non',c:pax.infant?'warn':''}
-    ].forEach(f=>{
-      const it=document.createElement('div');it.className='pax-info-item';
-      const lb=document.createElement('div');lb.className='pax-info-label';lb.textContent=f.l;
-      const vl=document.createElement('div');vl.className='pax-info-value'+(f.c?' '+f.c:'');vl.textContent=f.v;
-      it.appendChild(lb);it.appendChild(vl);grid.appendChild(it);
-    });
-  }
-  document.getElementById('panelBookmark').classList.toggle('bookmarked',!!bookmarks[seatId]);
-  document.getElementById('panelNotes').value=notes[seatId]||'';
+// === Pax Panel ===
+let currentPanelSeat=null;
+function openPaxPanel(sid,sc){currentPanelSeat=sid;const pax=passengers[sid];const badge=document.getElementById('panelSeatBadge');badge.textContent=sid;badge.className='pax-seat-badge '+(pax?sc:'empty-seat');
+  document.getElementById('panelName').textContent=pax?pax.name:'Si\u00e8ge libre';document.getElementById('panelClass').textContent=pax?(sc+(pax.ffn?' | FFN '+pax.ffn:'')):sc;
+  document.getElementById('panelBookmark').style.display=pax?'':'none';const grid=document.getElementById('panelGrid');grid.textContent='';
+  if(pax){[{l:'PNR',v:pax.pnr},{l:'Nationalit\u00e9',v:pax.nationality},{l:'Embarquement',v:pax.boarded?'\u00c0 bord':'En attente',c:pax.boarded?'ok':'warn'},{l:'Check-in',v:pax.checkedIn?'Oui':'Non',c:pax.checkedIn?'ok':'warn'},{l:'Repas',v:pax.meal||'Standard'},{l:'Remarque',v:pax.remark||'Aucune',c:pax.remark?'warn':''},{l:'Bagages',v:pax.bags+' pcs'},{l:'Nourrisson',v:pax.infant?'Oui':'Non',c:pax.infant?'warn':''}].forEach(f=>{
+    const it=document.createElement('div');it.className='pax-info-item';const lb=document.createElement('div');lb.className='pax-info-label';lb.textContent=f.l;const vl=document.createElement('div');vl.className='pax-info-value'+(f.c?' '+f.c:'');vl.textContent=f.v;it.appendChild(lb);it.appendChild(vl);grid.appendChild(it);});}
+  document.getElementById('panelBookmark').classList.toggle('bookmarked',!!bookmarks[sid]);document.getElementById('panelNotes').value=notes[sid]||'';
   [document.getElementById('panelNotes'),document.getElementById('panelSaveNote'),document.querySelector('.pax-notes-label')].forEach(e=>{if(e)e.style.display=pax?'':'none';});
-  document.querySelectorAll('.seat.selected').forEach(s=>s.classList.remove('selected'));
-  const se=document.querySelector('[data-seat="'+seatId+'"]'); if(se)se.classList.add('selected');
-  document.getElementById('paxOverlay').classList.add('visible');
-}
+  document.querySelectorAll('.seat.selected').forEach(s=>s.classList.remove('selected'));const se=document.querySelector('[data-seat="'+sid+'"]');if(se)se.classList.add('selected');
+  document.getElementById('paxOverlay').classList.add('visible');}
 function closePaxPanel(){document.getElementById('paxOverlay').classList.remove('visible');document.querySelectorAll('.seat.selected').forEach(s=>s.classList.remove('selected'));currentPanelSeat=null;}
 document.getElementById('panelClose').addEventListener('click',closePaxPanel);
 document.getElementById('paxOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closePaxPanel();});
-document.getElementById('panelBookmark').addEventListener('click',()=>{
-  if(!currentPanelSeat)return;
-  if(bookmarks[currentPanelSeat])delete bookmarks[currentPanelSeat];else bookmarks[currentPanelSeat]=true;
-  lsSet('cabin_bookmarks',bookmarks);
-  document.getElementById('panelBookmark').classList.toggle('bookmarked',!!bookmarks[currentPanelSeat]);
-  const se=document.querySelector('[data-seat="'+currentPanelSeat+'"]');if(se)se.classList.toggle('bookmarked',!!bookmarks[currentPanelSeat]);
-});
-document.getElementById('panelSaveNote').addEventListener('click',()=>{
-  if(!currentPanelSeat)return;
-  const v=document.getElementById('panelNotes').value.trim();
-  if(v)notes[currentPanelSeat]=v;else delete notes[currentPanelSeat];
-  lsSet('cabin_notes',notes);
-  const btn=document.getElementById('panelSaveNote');btn.textContent='Enregistr\u00e9 !';
-  setTimeout(()=>{btn.textContent='Enregistrer la note';},1500);
-});
+document.getElementById('panelBookmark').addEventListener('click',()=>{if(!currentPanelSeat)return;if(bookmarks[currentPanelSeat])delete bookmarks[currentPanelSeat];else bookmarks[currentPanelSeat]=true;lsSet('cabin_bookmarks',bookmarks);document.getElementById('panelBookmark').classList.toggle('bookmarked',!!bookmarks[currentPanelSeat]);const se=document.querySelector('[data-seat="'+currentPanelSeat+'"]');if(se)se.classList.toggle('bookmarked',!!bookmarks[currentPanelSeat]);});
+document.getElementById('panelSaveNote').addEventListener('click',()=>{if(!currentPanelSeat)return;const v=document.getElementById('panelNotes').value.trim();if(v)notes[currentPanelSeat]=v;else delete notes[currentPanelSeat];lsSet('cabin_notes',notes);const btn=document.getElementById('panelSaveNote');btn.textContent='Enregistr\u00e9 !';setTimeout(()=>{btn.textContent='Enregistrer la note';},1500);});
 
 // ============================================================
-// MEALS MODULE
+// MEALS
 // ============================================================
-function buildMeals(){
-  // Count meals by type
-  const mealCounts = {};
-  let specialTotal = 0;
-  Object.entries(passengers).forEach(([seat,p])=>{
-    const m = p.meal || 'STD';
-    mealCounts[m] = (mealCounts[m]||0)+1;
-    if(p.meal) specialTotal++;
-  });
-  document.getElementById('mealsBadge').textContent = specialTotal+' speciaux';
-
-  // KPI row
-  const row = document.getElementById('mealsCountRow'); row.textContent='';
-  Object.entries(mealCounts).sort((a,b)=>b[1]-a[1]).forEach(([type,count])=>{
-    const kpi=document.createElement('div');kpi.className='brief-kpi';
-    const v=document.createElement('div');v.className='brief-kpi-value';v.textContent=count;
-    const l=document.createElement('div');l.className='brief-kpi-label';l.textContent=type;
-    kpi.appendChild(v);kpi.appendChild(l);row.appendChild(kpi);
-  });
-
-  // Special meals list
-  const list=document.getElementById('mealsSpecialList');list.textContent='';
-  Object.entries(passengers).filter(([,p])=>p.meal).sort((a,b)=>a[0].localeCompare(b[0])).forEach(([seat,p])=>{
-    const r=document.createElement('div');r.className='meal-special-row';
-    const s=document.createElement('span');s.className='meal-seat';s.textContent=seat;
-    const n=document.createElement('span');n.className='meal-name';n.textContent=p.name;
-    const t=document.createElement('span');t.className='meal-type';t.textContent=p.meal;
-    r.appendChild(s);r.appendChild(n);r.appendChild(t);list.appendChild(r);
-  });
-
-  // Service trackers — click to increment
-  ['1','2'].forEach(svc=>{
-    ['Biz','Prem','Eco'].forEach(cls=>{
-      const bar=document.getElementById('svc'+svc+cls);
-      const pctEl=document.getElementById('svc'+svc+cls+'Pct');
-      const key=svc+'_'+cls.toLowerCase();
-      const val=serviceState['s'+svc][cls.toLowerCase()]||0;
-      const maxMap={Biz:document.querySelectorAll('.seat.occupied.business').length||1,
-                    Prem:document.querySelectorAll('.seat.occupied.premium').length||1,
-                    Eco:document.querySelectorAll('.seat.occupied.economy').length||1};
-      const max=maxMap[cls];
-      const pctVal=Math.min(100,Math.round(val/max*100));
-      bar.style.width=pctVal+'%';
-      pctEl.textContent=pctVal+'%';
-      bar.addEventListener('click',()=>{
-        let cur=serviceState['s'+svc][cls.toLowerCase()]||0;
-        cur=Math.min(max,cur+Math.ceil(max*0.1));
-        serviceState['s'+svc][cls.toLowerCase()]=cur;
-        lsSet('cabin_services',serviceState);
-        const p2=Math.min(100,Math.round(cur/max*100));
-        bar.style.width=p2+'%'; pctEl.textContent=p2+'%';
-      });
-    });
-  });
-}
+function buildMeals(){const mc={};let st=0;Object.entries(passengers).forEach(([,p])=>{const m=p.meal||'STD';mc[m]=(mc[m]||0)+1;if(p.meal)st++;});
+  document.getElementById('mealsBadge').textContent=st+' sp\u00e9ciaux';
+  const row=document.getElementById('mealsCountRow');row.textContent='';Object.entries(mc).sort((a,b)=>b[1]-a[1]).forEach(([t,c])=>{const k=document.createElement('div');k.className='brief-kpi';const v=document.createElement('div');v.className='brief-kpi-value';v.textContent=c;const l=document.createElement('div');l.className='brief-kpi-label';l.textContent=t;k.appendChild(v);k.appendChild(l);row.appendChild(k);});
+  const list=document.getElementById('mealsSpecialList');list.textContent='';Object.entries(passengers).filter(([,p])=>p.meal).sort((a,b)=>a[0].localeCompare(b[0])).forEach(([s,p])=>{const r=document.createElement('div');r.className='meal-special-row';const se=document.createElement('span');se.className='meal-seat';se.textContent=s;const n=document.createElement('span');n.className='meal-name';n.textContent=p.name;const t=document.createElement('span');t.className='meal-type';t.textContent=p.meal;r.appendChild(se);r.appendChild(n);r.appendChild(t);list.appendChild(r);});
+  ['1','2'].forEach(svc=>{['Biz','Prem','Eco'].forEach(cls=>{const bar=document.getElementById('svc'+svc+cls),pctEl=document.getElementById('svc'+svc+cls+'Pct');const key=svc+'_'+cls.toLowerCase();const val=serviceState['s'+svc][cls.toLowerCase()]||0;const maxMap={Biz:document.querySelectorAll('.seat.occupied.business').length||1,Prem:document.querySelectorAll('.seat.occupied.premium').length||1,Eco:document.querySelectorAll('.seat.occupied.economy').length||1};const max=maxMap[cls];const p=Math.min(100,Math.round(val/max*100));bar.style.width=p+'%';pctEl.textContent=p+'%';bar.addEventListener('click',()=>{let cur=serviceState['s'+svc][cls.toLowerCase()]||0;cur=Math.min(max,cur+Math.ceil(max*0.1));serviceState['s'+svc][cls.toLowerCase()]=cur;lsSet('cabin_services',serviceState);const p2=Math.min(100,Math.round(cur/max*100));bar.style.width=p2+'%';pctEl.textContent=p2+'%';});});});}
 
 // ============================================================
-// CHECKLIST MODULE
+// CHECKLISTS — Tiles layout
 // ============================================================
 const CHECKLISTS = {
-  'Pr\u00e9-vol \u2014 S\u00e9curit\u00e9 cabine': [
-    'V\u00e9rifier les \u00e9quipements de secours (gilets, masques O2)',
-    'V\u00e9rifier les extincteurs et leur date de validit\u00e9',
-    'V\u00e9rifier les issues de secours et leur signalisation',
-    'V\u00e9rifier les toboggans (armed/disarmed)',
-    'V\u00e9rifier le mat\u00e9riel m\u00e9dical (trousse, d\u00e9fibrillateur)',
-    'V\u00e9rifier les ceintures et accoudoirs des si\u00e8ges',
-    'V\u00e9rifier l\'\u00e9clairage de secours au sol',
-    'V\u00e9rifier les compartiments \u00e0 bagages',
-    'V\u00e9rifier la propret\u00e9 g\u00e9n\u00e9rale de la cabine'
-  ],
-  'Pr\u00e9-d\u00e9part \u2014 Avant fermeture portes': [
-    'Comptage passagers effectu\u00e9',
-    'Bagages cabine correctement rang\u00e9s',
-    'Tablettes et dossiers relev\u00e9s',
-    'Ceintures attach\u00e9es v\u00e9rifi\u00e9es',
-    'Hublots ouverts',
-    'Appareils \u00e9lectroniques en mode avion',
-    'Annonce bienvenue effectu\u00e9e',
-    'D\u00e9mo s\u00e9curit\u00e9 effectu\u00e9e / vid\u00e9o lanc\u00e9e',
-    'Portes arm\u00e9es et cross-check'
-  ],
-  'En vol \u2014 Turbulences': [
-    'Annonce ceintures attach\u00e9es',
-    'Service interrompu et galleys s\u00e9curis\u00e9es',
-    'V\u00e9rification attache ceintures passagers',
-    '\u00c9quipement galley arrim\u00e9',
-    'Chariots frein\u00e9s et bloqu\u00e9s'
-  ],
-  'Post-vol \u2014 Arriv\u00e9e': [
-    'Annonce atterrissage et consignes',
-    'V\u00e9rification cabine position atterrissage',
-    'Cabine s\u00e9curis\u00e9e pour atterrissage',
-    'Portes d\u00e9sarm\u00e9es apr\u00e8s arr\u00eat complet',
-    'Assistance passagers PMR/UM',
-    'Inspection finale des si\u00e8ges et poches',
-    'Objets trouv\u00e9s r\u00e9pertori\u00e9s',
-    'Rapport cabine compl\u00e9t\u00e9'
-  ]
+  'Pr\u00e9vol': {
+    icon: '\u2708\uFE0F', color: 'prevol',
+    subs: {
+      'Check pr\u00e9-vol': [
+        'V\u00e9rifier les \u00e9quipements de secours (gilets, masques O2)',
+        'V\u00e9rifier les extincteurs et leur date de validit\u00e9',
+        'V\u00e9rifier les issues de secours et leur signalisation',
+        'V\u00e9rifier les toboggans (armed/disarmed)',
+        'V\u00e9rifier le mat\u00e9riel m\u00e9dical (trousse, d\u00e9fibrillateur)',
+        'V\u00e9rifier les ceintures et accoudoirs des si\u00e8ges',
+        'V\u00e9rifier l\'\u00e9clairage de secours au sol',
+        'V\u00e9rifier les compartiments \u00e0 bagages',
+        'V\u00e9rifier la propret\u00e9 g\u00e9n\u00e9rale de la cabine'
+      ],
+      'Avant fermeture portes': [
+        'Comptage passagers effectu\u00e9',
+        'Bagages cabine correctement rang\u00e9s',
+        'Tablettes et dossiers relev\u00e9s',
+        'Ceintures attach\u00e9es v\u00e9rifi\u00e9es',
+        'Hublots ouverts',
+        'Appareils \u00e9lectroniques en mode avion',
+        'Portes arm\u00e9es et cross-check'
+      ]
+    }
+  },
+  'En vol': {
+    icon: '\u2601\uFE0F', color: 'envol',
+    subs: {
+      'Mont\u00e9e': [
+        'Consigne ceintures \u00e9teinte \u2014 service autoris\u00e9',
+        'Distribution serviettes chaudes (Business/Premium)',
+        'D\u00e9but service boissons',
+        'V\u00e9rification cabine post-d\u00e9collage'
+      ],
+      'Descente': [
+        'Annonce pr\u00e9paration atterrissage',
+        'Cabine s\u00e9curis\u00e9e pour atterrissage',
+        'Tablettes et dossiers relev\u00e9s',
+        'Ceintures attach\u00e9es v\u00e9rifi\u00e9es',
+        'Portes d\u00e9sarm\u00e9es apr\u00e8s arr\u00eat complet'
+      ],
+      'Turbulences': [
+        'Annonce ceintures attach\u00e9es',
+        'Service interrompu et galleys s\u00e9curis\u00e9es',
+        'V\u00e9rification attache ceintures passagers',
+        '\u00c9quipement galley arrim\u00e9',
+        'Chariots frein\u00e9s et bloqu\u00e9s'
+      ]
+    }
+  },
+  'Annonces': {
+    icon: '\uD83C\uDFA4', color: 'annonces',
+    subs: {
+      'Annonces commerciales': [
+        'Annonce bienvenue (fran\u00e7ais)',
+        'Annonce bienvenue (anglais)',
+        'D\u00e9mo s\u00e9curit\u00e9 / vid\u00e9o lanc\u00e9e',
+        'Annonce service repas',
+        'Annonce duty-free',
+        'Annonce pr\u00e9paration atterrissage',
+        'Annonce arriv\u00e9e et correspondances',
+        'Remerciements et au revoir'
+      ]
+    }
+  },
+  'M\u00e9mo': {
+    icon: '\u26A0\uFE0F', color: 'memo',
+    subs: {
+      'Descente d\'urgence': [
+        'Masques O2 tomb\u00e9s \u2014 assister les passagers',
+        'V\u00e9rifier la pression cabine',
+        'Position brace command\u00e9e si n\u00e9cessaire',
+        '\u00c9vacuation pr\u00e9par\u00e9e'
+      ],
+      'Feu cabine': [
+        'Localiser le feu',
+        'Alerter le CDB',
+        'Utiliser l\'extincteur adapt\u00e9',
+        '\u00c9vacuer la zone si n\u00e9cessaire',
+        'Surveiller apr\u00e8s extinction'
+      ],
+      'PAXI (passager indisciplin\u00e9)': [
+        '\u00c9valuer le niveau de menace',
+        'Tenter la d\u00e9-escalade verbale',
+        'Isoler le passager si possible',
+        'Informer le CDB',
+        'R\u00e9diger le PV'
+      ],
+      'FORDEC': [
+        'F \u2014 Faits : identifier la situation',
+        'O \u2014 Options : lister les alternatives',
+        'R \u2014 Risques : \u00e9valuer chaque option',
+        'D \u2014 D\u00e9cision : choisir',
+        'E \u2014 Ex\u00e9cution : appliquer',
+        'C \u2014 Contr\u00f4le : v\u00e9rifier le r\u00e9sultat'
+      ]
+    }
+  }
 };
 
 function buildChecklists(){
-  const container=document.getElementById('checklistSections');container.textContent='';
+  const tiles=document.getElementById('checklistTiles');tiles.textContent='';
   let totalItems=0,doneItems=0;
-  Object.entries(CHECKLISTS).forEach(([title,items])=>{
-    const group=document.createElement('div');group.className='checklist-group';
-    const header=document.createElement('div');header.className='checklist-group-header';
-    const gt=document.createElement('div');gt.className='checklist-group-title';gt.textContent=title;
-    const gc=document.createElement('div');gc.className='checklist-group-count';
-    const doneInGroup=items.filter((_,i)=>checklistState[title+'_'+i]).length;
-    gc.textContent=doneInGroup+'/'+items.length;
-    header.appendChild(gt);header.appendChild(gc);group.appendChild(header);
-
-    const list=document.createElement('div');list.className='checklist-items';
-    items.forEach((text,idx)=>{
-      totalItems++;
-      const key=title+'_'+idx;
-      const done=!!checklistState[key];
-      if(done)doneItems++;
-      const item=document.createElement('div');item.className='checklist-item'+(done?' done':'');
-      const check=document.createElement('div');check.className='cl-check';
-      const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 24 24');
-      const poly=document.createElementNS('http://www.w3.org/2000/svg','polyline');poly.setAttribute('points','20 6 9 17 4 12');
-      svg.appendChild(poly);check.appendChild(svg);
-      const txt=document.createElement('div');txt.className='cl-text';txt.textContent=text;
-      item.appendChild(check);item.appendChild(txt);
-      item.addEventListener('click',()=>{
-        if(checklistState[key])delete checklistState[key];else checklistState[key]=true;
-        lsSet('cabin_checklist',checklistState);
-        buildChecklists();
-      });
-      list.appendChild(item);
+  Object.entries(CHECKLISTS).forEach(([catName,cat])=>{
+    const tile=document.createElement('div');tile.className='cl-tile '+cat.color;
+    const icon=document.createElement('div');icon.className='cl-tile-icon';icon.textContent=cat.icon;
+    const title=document.createElement('div');title.className='cl-tile-title';title.textContent=catName;
+    tile.appendChild(icon);tile.appendChild(title);
+    // Sub-tiles
+    const subs=document.createElement('div');subs.className='cl-subtiles';
+    Object.entries(cat.subs).forEach(([subName,items])=>{
+      const subTile=document.createElement('div');subTile.className='cl-subtile';
+      const st=document.createElement('div');st.className='cl-subtile-title';st.textContent=subName;
+      const done=items.filter((_,i)=>checklistState[catName+'_'+subName+'_'+i]).length;
+      totalItems+=items.length;doneItems+=done;
+      const sc=document.createElement('div');sc.className='cl-subtile-count';sc.textContent=done+'/'+items.length;
+      subTile.appendChild(st);subTile.appendChild(sc);
+      subTile.addEventListener('click',()=>openChecklistDetail(catName,subName,items));
+      subs.appendChild(subTile);
     });
-    group.appendChild(list);container.appendChild(group);
+    tile.appendChild(subs);tiles.appendChild(tile);
   });
   document.getElementById('checklistBadge').textContent=doneItems+' / '+totalItems;
 }
 
-// ============================================================
-// REPORT MODULE
-// ============================================================
-const CABIN_ZONES_LIST = [
-  'Business','Premium','Economy avant','Economy centre','Economy arriere',
-  'Galley avant','Galley milieu','Galley arriere',
-  'Toilettes avant','Toilettes milieu','Toilettes arriere'
-];
-
-function buildReport(){
-  // Cabin zones
-  const grid=document.getElementById('reportCabinGrid');grid.textContent='';
-  CABIN_ZONES_LIST.forEach(zone=>{
-    const row=document.createElement('div');row.className='cabin-zone';
-    const nm=document.createElement('div');nm.className='cabin-zone-name';nm.textContent=zone;
-    const btns=document.createElement('div');btns.className='cabin-zone-status';
-    ['OK','ATT','KO'].forEach((label,i)=>{
-      const cls=['active-ok','active-warn','active-ko'][i];
-      const btn=document.createElement('button');btn.className='zone-btn';btn.textContent=label;
-      const cur=cabinZones[zone];
-      if(cur===label)btn.classList.add(cls);
-      btn.addEventListener('click',()=>{
-        cabinZones[zone]=label;lsSet('cabin_zones',cabinZones);buildReport();
-      });
-      btns.appendChild(btn);
-    });
-    row.appendChild(nm);row.appendChild(btns);grid.appendChild(row);
+function openChecklistDetail(cat,sub,items){
+  document.getElementById('checklistTiles').style.display='none';
+  const detail=document.getElementById('checklistDetail');detail.style.display='';
+  document.getElementById('checklistDetailTitle').textContent=cat+' \u2014 '+sub;
+  const list=document.getElementById('checklistDetailItems');list.textContent='';
+  items.forEach((text,idx)=>{
+    const key=cat+'_'+sub+'_'+idx;const done=!!checklistState[key];
+    const item=document.createElement('div');item.className='checklist-item'+(done?' done':'');
+    const check=document.createElement('div');check.className='cl-check';
+    const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 24 24');
+    const poly=document.createElementNS('http://www.w3.org/2000/svg','polyline');poly.setAttribute('points','20 6 9 17 4 12');
+    svg.appendChild(poly);check.appendChild(svg);
+    const txt=document.createElement('div');txt.className='cl-text';txt.textContent=text;
+    item.appendChild(check);item.appendChild(txt);
+    item.addEventListener('click',()=>{if(checklistState[key])delete checklistState[key];else checklistState[key]=true;lsSet('cabin_checklist',checklistState);openChecklistDetail(cat,sub,items);buildChecklists();});
+    list.appendChild(item);
   });
-
-  // Incidents
-  const list=document.getElementById('incidentsList');list.textContent='';
-  incidents.forEach((inc,idx)=>{
-    const row=document.createElement('div');row.className='incident-row';
-    const time=document.createElement('span');time.className='incident-time';time.textContent=inc.time;
-    const tag=document.createElement('span');tag.className='incident-type-tag '+inc.severity;tag.textContent=inc.type;
-    const desc=document.createElement('span');desc.className='incident-desc';desc.textContent=(inc.seat?'['+inc.seat+'] ':'')+inc.desc;
-    row.appendChild(time);row.appendChild(tag);row.appendChild(desc);list.appendChild(row);
-  });
-
-  // Summary
-  const summary=document.getElementById('reportSummary');summary.textContent='';
-  const occ=Object.keys(passengers).length;
-  const boarded=Object.values(passengers).filter(p=>p.boarded).length;
-  [{v:''+occ,l:'Passagers'},{v:''+boarded,l:'Embarqu\u00e9s'},{v:''+incidents.length,l:'Incidents'},
-   {v:''+Object.values(cabinZones).filter(v=>v==='OK').length+'/'+CABIN_ZONES_LIST.length,l:'Zones OK'},
-   {v:''+Object.values(checklistState).filter(Boolean).length,l:'Checks faits'},
-   {v:''+Object.values(passengers).filter(p=>p.meal).length,l:'Repas sp\u00e9.'}
-  ].forEach(s=>{
-    const d=document.createElement('div');d.className='report-stat';
-    const v=document.createElement('div');v.className='report-stat-value';v.textContent=s.v;
-    const l=document.createElement('div');l.className='report-stat-label';l.textContent=s.l;
-    d.appendChild(v);d.appendChild(l);summary.appendChild(d);
-  });
-
-  // Report notes persistence
-  const notesEl=document.getElementById('reportNotes');
-  notesEl.value=localStorage.getItem('cabin_report_notes')||'';
-  notesEl.addEventListener('input',()=>localStorage.setItem('cabin_report_notes',notesEl.value));
 }
-
-// Incident form
-document.getElementById('addIncidentBtn').addEventListener('click',()=>{
-  document.getElementById('incidentOverlay').classList.add('visible');
-});
-document.getElementById('incidentClose').addEventListener('click',()=>{
-  document.getElementById('incidentOverlay').classList.remove('visible');
-});
-document.getElementById('incidentOverlay').addEventListener('click',e=>{
-  if(e.target===e.currentTarget)document.getElementById('incidentOverlay').classList.remove('visible');
-});
-document.getElementById('severityBtns').addEventListener('click',e=>{
-  const b=e.target.closest('.sev-btn');if(!b)return;
-  document.querySelectorAll('.sev-btn').forEach(x=>x.classList.remove('active'));
-  b.classList.add('active');
-});
-document.getElementById('incidentSave').addEventListener('click',()=>{
-  const desc=document.getElementById('incidentDesc').value.trim();
-  if(!desc)return;
-  const now=new Date();
-  const sev=document.querySelector('.sev-btn.active');
-  incidents.push({
-    time:String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0'),
-    type:document.getElementById('incidentType').value,
-    seat:document.getElementById('incidentSeat').value.trim(),
-    desc:desc,
-    severity:sev?sev.dataset.sev:'low'
-  });
-  lsSet('cabin_incidents',incidents);
-  document.getElementById('incidentDesc').value='';
-  document.getElementById('incidentSeat').value='';
-  document.getElementById('incidentOverlay').classList.remove('visible');
-  buildReport();
-  updateAppBadge();
-});
+document.getElementById('checklistBack').addEventListener('click',()=>{document.getElementById('checklistTiles').style.display='';document.getElementById('checklistDetail').style.display='none';});
 
 // ============================================================
-// PONCTUALITE
+// REPORT
 // ============================================================
-const MILESTONES=[
-  {offset:-120,label:'Check-in ouvert',cat:'sol'},{offset:-120,label:'Security check',cat:'sol'},
-  {offset:-120,label:'Tow in',cat:'avion'},{offset:-110,label:'Crew pick up',cat:'equip'},
-  {offset:-110,label:'Security search',cat:'sol'},{offset:-100,label:'Crew at counter',cat:'equip'},
-  {offset:-100,label:'Cargo at aircraft',cat:'avion'},{offset:-90,label:'Crew bus',cat:'equip'},
-  {offset:-80,label:'Agent at gate',cat:'sol'},{offset:-80,label:'Crew at gate',cat:'equip'},
-  {offset:-70,label:'Cleaning',cat:'avion'},{offset:-70,label:'Catering',cat:'avion'},
-  {offset:-70,label:'Loading',cat:'avion'},{offset:-70,label:'Fueling',cat:'avion'},
-  {offset:-60,label:'LDS sent',cat:'sol'},{offset:-50,label:'Boarding',cat:'sol'},
-  {offset:-50,label:'OK Cabin',cat:'equip'},{offset:-40,label:'PMR / Remote',cat:'sol'},
-  {offset:-40,label:'Pax bus',cat:'sol'},{offset:-30,label:'Servicing',cat:'avion'},
-  {offset:-20,label:'Dep GPU',cat:'avion'},{offset:-20,label:'Bulk closed',cat:'avion'},
-  {offset:-20,label:'Bag search',cat:'sol'},{offset:-10,label:'Dep jetbridge',cat:'sol'},
-  {offset:-10,label:'Marshaller',cat:'avion'},{offset:-10,label:'Pushback ready',cat:'avion'},
-  {offset:0,label:'DEPART',cat:'depart'}
-];
+const CABIN_ZONES_LIST=['Business','Premium','\u00c9conomy avant','\u00c9conomy centre','\u00c9conomy arri\u00e8re','Galley avant','Galley milieu','Galley arri\u00e8re','Toilettes avant','Toilettes milieu','Toilettes arri\u00e8re'];
+function buildReport(){
+  const grid=document.getElementById('reportCabinGrid');grid.textContent='';
+  CABIN_ZONES_LIST.forEach(zone=>{const row=document.createElement('div');row.className='cabin-zone';const nm=document.createElement('div');nm.className='cabin-zone-name';nm.textContent=zone;const btns=document.createElement('div');btns.className='cabin-zone-status';
+    ['OK','ATT','KO'].forEach((label,i)=>{const cls=['active-ok','active-warn','active-ko'][i];const btn=document.createElement('button');btn.className='zone-btn';btn.textContent=label;if(cabinZones[zone]===label)btn.classList.add(cls);
+      btn.addEventListener('click',()=>{cabinZones[zone]=label;lsSet('cabin_zones',cabinZones);buildReport();});btns.appendChild(btn);});row.appendChild(nm);row.appendChild(btns);grid.appendChild(row);});
+  const list=document.getElementById('incidentsList');list.textContent='';incidents.forEach(inc=>{const row=document.createElement('div');row.className='incident-row';const time=document.createElement('span');time.className='incident-time';time.textContent=inc.time;const tag=document.createElement('span');tag.className='incident-type-tag '+inc.severity;tag.textContent=inc.type;const desc=document.createElement('span');desc.className='incident-desc';desc.textContent=(inc.seat?'['+inc.seat+'] ':'')+inc.desc;row.appendChild(time);row.appendChild(tag);row.appendChild(desc);list.appendChild(row);});
+  const summary=document.getElementById('reportSummary');summary.textContent='';const occ=Object.keys(passengers).length,boarded=Object.values(passengers).filter(p=>p.boarded).length;
+  [{v:''+occ,l:'Passagers'},{v:''+boarded,l:'Embarqu\u00e9s'},{v:''+incidents.length,l:'Incidents'},{v:Object.values(cabinZones).filter(v=>v==='OK').length+'/'+CABIN_ZONES_LIST.length,l:'Zones OK'},{v:''+Object.values(checklistState).filter(Boolean).length,l:'Checks faits'},{v:''+Object.values(passengers).filter(p=>p.meal).length,l:'Repas sp\u00e9.'}].forEach(s=>{const d=document.createElement('div');d.className='report-stat';const v=document.createElement('div');v.className='report-stat-value';v.textContent=s.v;const l=document.createElement('div');l.className='report-stat-label';l.textContent=s.l;d.appendChild(v);d.appendChild(l);summary.appendChild(d);});
+  const notesEl=document.getElementById('reportNotes');notesEl.value=localStorage.getItem('cabin_report_notes')||'';notesEl.addEventListener('input',()=>localStorage.setItem('cabin_report_notes',notesEl.value));
+}
+document.getElementById('addIncidentBtn').addEventListener('click',()=>document.getElementById('incidentOverlay').classList.add('visible'));
+document.getElementById('incidentClose').addEventListener('click',()=>document.getElementById('incidentOverlay').classList.remove('visible'));
+document.getElementById('incidentOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)document.getElementById('incidentOverlay').classList.remove('visible');});
+document.getElementById('severityBtns').addEventListener('click',e=>{const b=e.target.closest('.sev-btn');if(!b)return;document.querySelectorAll('.sev-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');});
+document.getElementById('incidentSave').addEventListener('click',()=>{const desc=document.getElementById('incidentDesc').value.trim();if(!desc)return;const now=new Date();const sev=document.querySelector('.sev-btn.active');
+  incidents.push({time:fmt(now),type:document.getElementById('incidentType').value,seat:document.getElementById('incidentSeat').value.trim(),desc,severity:sev?sev.dataset.sev:'low'});lsSet('cabin_incidents',incidents);
+  document.getElementById('incidentDesc').value='';document.getElementById('incidentSeat').value='';document.getElementById('incidentOverlay').classList.remove('visible');buildReport();updateAppBadge();});
 
+// ============================================================
+// OTP
+// ============================================================
+const MILESTONES=[{offset:-120,label:'Check-in ouvert'},{offset:-120,label:'Security check'},{offset:-120,label:'Tow in'},{offset:-110,label:'Crew pick up'},{offset:-110,label:'Security search'},{offset:-100,label:'Crew at counter'},{offset:-100,label:'Cargo at aircraft'},{offset:-90,label:'Crew bus'},{offset:-80,label:'Agent at gate'},{offset:-80,label:'Crew at gate'},{offset:-70,label:'Cleaning'},{offset:-70,label:'Catering'},{offset:-70,label:'Loading'},{offset:-70,label:'Fueling'},{offset:-60,label:'LDS sent'},{offset:-50,label:'Boarding'},{offset:-50,label:'OK Cabin'},{offset:-40,label:'PMR / Remote'},{offset:-40,label:'Pax bus'},{offset:-30,label:'Servicing'},{offset:-20,label:'Dep GPU'},{offset:-20,label:'Bulk closed'},{offset:-20,label:'Bag search'},{offset:-10,label:'Dep jetbridge'},{offset:-10,label:'Marshaller'},{offset:-10,label:'Pushback ready'},{offset:0,label:'D\u00c9PART'}];
 function getSTD(){const p=document.getElementById('stdInput').value.split(':');const d=new Date();d.setHours(+p[0],+p[1],0,0);return d;}
 function fmt(d){return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}
-
-function buildTimeline(){
-  const c=document.getElementById('timelineContainer');if(!c)return;c.textContent='';
-  const std=getSTD(),now=new Date();
-  const groups={};
-  MILESTONES.forEach((m,i)=>{if(!groups[m.offset])groups[m.offset]=[];groups[m.offset].push({...m,idx:i});});
-  Object.keys(groups).map(Number).sort((a,b)=>a-b).forEach(off=>{
-    const items=groups[off],target=new Date(std.getTime()+off*60000),diff=Math.round((target-now)/60000);
-    const ge=document.createElement('div');ge.className='timeline-group';
-    const gl=document.createElement('div');gl.className='timeline-group-label';
-    const hh=Math.floor(Math.abs(off)/60),mm=Math.abs(off)%60;
-    gl.textContent=off===0?'H - DEPART':'H - '+String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0');
-    ge.appendChild(gl);
-    items.forEach(m=>{
-      const row=document.createElement('div');row.className='timeline-item';
-      const chk=!!milestoneChecks[m.idx];
-      if(chk)row.classList.add('past');else if(diff>5)row.classList.add('upcoming');else if(diff>=-5)row.classList.add('current');else row.classList.add('overdue');
-      const te=document.createElement('div');te.className='timeline-time';te.textContent=off===0?'STD':'H'+off+'min';
-      const ae=document.createElement('div');ae.className='timeline-abs-time';ae.textContent=fmt(target);
-      const le=document.createElement('div');le.className='timeline-label';le.textContent=m.label;
-      const se=document.createElement('div');se.className='timeline-status';
-      if(chk){se.classList.add('done');se.textContent='Fait';}else if(diff>5){se.classList.add('waiting');se.textContent='A venir';}else if(diff>=-5){se.classList.add('now');se.textContent='En cours';}else{se.classList.add('late');se.textContent='Retard';}
-      const ce=document.createElement('div');ce.className='timeline-check'+(chk?' checked':'');
-      const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 24 24');
-      const poly=document.createElementNS('http://www.w3.org/2000/svg','polyline');poly.setAttribute('points','20 6 9 17 4 12');
-      svg.appendChild(poly);ce.appendChild(svg);
+function buildTimeline(){const c=document.getElementById('timelineContainer');if(!c)return;c.textContent='';const std=getSTD(),now=new Date();const groups={};MILESTONES.forEach((m,i)=>{if(!groups[m.offset])groups[m.offset]=[];groups[m.offset].push({...m,idx:i});});
+  Object.keys(groups).map(Number).sort((a,b)=>a-b).forEach(off=>{const items=groups[off],target=new Date(std.getTime()+off*60000),diff=Math.round((target-now)/60000);
+    const ge=document.createElement('div');ge.className='timeline-group';const gl=document.createElement('div');gl.className='timeline-group-label';const hh=Math.floor(Math.abs(off)/60),mm=Math.abs(off)%60;gl.textContent=off===0?'H - D\u00c9PART':'H - '+String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0');ge.appendChild(gl);
+    items.forEach(m=>{const row=document.createElement('div');row.className='timeline-item';const chk=!!milestoneChecks[m.idx];if(chk)row.classList.add('past');else if(diff>5)row.classList.add('upcoming');else if(diff>=-5)row.classList.add('current');else row.classList.add('overdue');
+      const te=document.createElement('div');te.className='timeline-time';te.textContent=off===0?'STD':'H'+off+'min';const ae=document.createElement('div');ae.className='timeline-abs-time';ae.textContent=fmt(target);const le=document.createElement('div');le.className='timeline-label';le.textContent=m.label;
+      const se=document.createElement('div');se.className='timeline-status';if(chk){se.classList.add('done');se.textContent='Fait';}else if(diff>5){se.classList.add('waiting');se.textContent='\u00c0 venir';}else if(diff>=-5){se.classList.add('now');se.textContent='En cours';}else{se.classList.add('late');se.textContent='Retard';}
+      const ce=document.createElement('div');ce.className='timeline-check'+(chk?' checked':'');const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 24 24');const poly=document.createElementNS('http://www.w3.org/2000/svg','polyline');poly.setAttribute('points','20 6 9 17 4 12');svg.appendChild(poly);ce.appendChild(svg);
       ce.addEventListener('click',()=>{if(milestoneChecks[m.idx])delete milestoneChecks[m.idx];else milestoneChecks[m.idx]=Date.now();lsSet('cabin_otp_checks',milestoneChecks);buildTimeline();});
-      row.appendChild(te);row.appendChild(ae);row.appendChild(le);row.appendChild(se);row.appendChild(ce);ge.appendChild(row);
-    });
-    c.appendChild(ge);
-  });
-}
-
-function updateClocks(){
-  const t=fmt(new Date());
-  const c1=document.getElementById('otpClock');if(c1)c1.textContent=t;
-  const c2=document.getElementById('briefingClock');if(c2)c2.textContent=t;
-}
+      row.appendChild(te);row.appendChild(ae);row.appendChild(le);row.appendChild(se);row.appendChild(ce);ge.appendChild(row);});c.appendChild(ge);});}
+function updateClocks(){const t=fmt(new Date());const c1=document.getElementById('otpClock');if(c1)c1.textContent=t;const c2=document.getElementById('briefingClock');if(c2)c2.textContent=t;}
 const stdIn=document.getElementById('stdInput');if(stdIn)stdIn.addEventListener('change',buildTimeline);
 setInterval(()=>{buildTimeline();updateClocks();},30000);
+
+// === App Badge ===
+function updateAppBadge(){if(!('setAppBadge' in navigator))return;let c=0;Object.values(passengers).forEach(p=>{if(!p.boarded)c++;});c+=incidents.length;if(c>0)navigator.setAppBadge(c).catch(()=>{});else navigator.clearAppBadge().catch(()=>{});}
 
 // ============================================================
 // INIT
 // ============================================================
-buildBriefing();
-buildCabinPlan();
-buildMeals();
-buildTimeline();
-buildChecklists();
-buildReport();
-updateClocks();
-updateAppBadge();
+buildBriefing();buildCabinPlan();buildMeals();buildTimeline();buildChecklists();buildReport();updateClocks();updateAppBadge();renderNotifCenter();updateNotifBadge();

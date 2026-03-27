@@ -20,11 +20,14 @@
     </div>
     <div class="header-right">
       <span class="flight-info" id="flightInfo">SS 901 &middot; ORY &rarr; RUN &middot; B787-9</span>
+      <button class="header-btn" id="shareToggle" title="Partager">
+        <svg viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+      </button>
       <button class="header-btn" id="notifToggle" title="Notifications">
         <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
         <span class="notif-badge" id="notifBadge"></span>
       </button>
-      <button class="header-btn" id="themeToggle" title="Changer de theme">
+      <button class="header-btn" id="themeToggle" title="Changer de th&egrave;me">
         <svg id="themeIcon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
       </button>
       <span class="sync-status" id="syncStatus" title="En ligne"></span>
@@ -37,6 +40,12 @@
         <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
       </svg>
       <span>Briefing</span>
+    </button>
+    <button class="tab" data-module="checklist">
+      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+        <path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+      </svg>
+      <span>Checklist</span>
     </button>
     <button class="tab" data-module="passengers">
       <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -58,12 +67,6 @@
       </svg>
       <span>OTP</span>
     </button>
-    <button class="tab" data-module="checklist">
-      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-        <path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
-      </svg>
-      <span>Checklist</span>
-    </button>
     <button class="tab" data-module="report">
       <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
@@ -83,7 +86,7 @@
       </div>
 
       <div class="briefing-grid">
-        <!-- Flight card -->
+        <!-- Flight info + profile -->
         <div class="brief-card wide">
           <div class="brief-card-title">Informations vol</div>
           <div class="brief-kpi-row">
@@ -91,40 +94,38 @@
             <div class="brief-kpi"><div class="brief-kpi-value">ORY &rarr; RUN</div><div class="brief-kpi-label">Route</div></div>
             <div class="brief-kpi"><div class="brief-kpi-value">B787-9</div><div class="brief-kpi-label">Appareil</div></div>
             <div class="brief-kpi"><div class="brief-kpi-value">F-OLRA</div><div class="brief-kpi-label">Immat.</div></div>
-            <div class="brief-kpi"><div class="brief-kpi-value">11h15</div><div class="brief-kpi-label">Duree</div></div>
+            <div class="brief-kpi"><div class="brief-kpi-value">11h15</div><div class="brief-kpi-label">Dur&eacute;e</div></div>
             <div class="brief-kpi"><div class="brief-kpi-value" id="briefSTD">14:00</div><div class="brief-kpi-label">STD</div></div>
           </div>
+          <!-- Vertical flight profile -->
+          <div class="flight-profile" id="flightProfile"></div>
         </div>
 
-        <!-- Pax summary -->
+        <!-- Pax summary + particularit&eacute;s -->
         <div class="brief-card">
           <div class="brief-card-title">Passagers</div>
           <div class="brief-kpi-row">
             <div class="brief-kpi"><div class="brief-kpi-value" id="briefPaxTotal">0</div><div class="brief-kpi-label">Total</div></div>
             <div class="brief-kpi"><div class="brief-kpi-value" id="briefPaxBiz">0</div><div class="brief-kpi-label">Business</div></div>
             <div class="brief-kpi"><div class="brief-kpi-value" id="briefPaxPrem">0</div><div class="brief-kpi-label">Premium</div></div>
-            <div class="brief-kpi"><div class="brief-kpi-value" id="briefPaxEco">0</div><div class="brief-kpi-label">Economy</div></div>
+            <div class="brief-kpi"><div class="brief-kpi-value" id="briefPaxEco">0</div><div class="brief-kpi-label">&Eacute;conomy</div></div>
           </div>
           <div class="brief-bar" id="briefLoadBar"></div>
+          <div class="brief-card-title" style="margin-top:12px">Particularit&eacute;s</div>
+          <div class="pax-tags" id="briefPaxTags"></div>
         </div>
 
         <!-- Crew -->
         <div class="brief-card">
-          <div class="brief-card-title">&Eacute;quipage cabine</div>
+          <div class="brief-card-title">&Eacute;quipage cabine <button class="inline-btn" id="assignDoorsBtn">Assigner aux portes</button></div>
           <div class="brief-crew-list" id="briefCrew"></div>
         </div>
 
-        <!-- Alerts -->
-        <div class="brief-card wide">
-          <div class="brief-card-title">Alertes &amp; passagers particuliers</div>
-          <div class="brief-alerts" id="briefAlerts"></div>
-        </div>
-
-        <!-- Meteo -->
+        <!-- M&eacute;t&eacute;o -->
         <div class="brief-card">
           <div class="brief-card-title">M&eacute;t&eacute;o destination (RUN)</div>
           <div class="brief-kpi-row">
-            <div class="brief-kpi"><div class="brief-kpi-value">28&deg;C</div><div class="brief-kpi-label">Temperature</div></div>
+            <div class="brief-kpi"><div class="brief-kpi-value">28&deg;C</div><div class="brief-kpi-label">Temp&eacute;rature</div></div>
             <div class="brief-kpi"><div class="brief-kpi-value">12 kt</div><div class="brief-kpi-label">Vent</div></div>
             <div class="brief-kpi"><div class="brief-kpi-value">FEW025</div><div class="brief-kpi-label">Plafond</div></div>
           </div>
@@ -144,6 +145,21 @@
       </div>
     </section>
 
+    <!-- ==================== CHECKLIST (2e position) ==================== -->
+    <section class="module" id="mod-checklist">
+      <div class="module-header">
+        <h2>Proc&eacute;dures &amp; Checklists</h2>
+        <span class="badge" id="checklistBadge">0 / 0</span>
+      </div>
+      <div class="checklist-tiles" id="checklistTiles"></div>
+      <!-- Checklist detail sub-view -->
+      <div class="checklist-detail" id="checklistDetail" style="display:none">
+        <button class="back-btn" id="checklistBack">&larr; Retour</button>
+        <h3 class="checklist-detail-title" id="checklistDetailTitle"></h3>
+        <div class="checklist-detail-items" id="checklistDetailItems"></div>
+      </div>
+    </section>
+
     <!-- ==================== PASSAGERS ==================== -->
     <section class="module" id="mod-passengers">
       <div class="toolbar">
@@ -153,13 +169,13 @@
         </div>
         <div class="filters" id="filters">
           <button class="filter-btn active" data-filter="all">Tous</button>
-          <button class="filter-btn" data-filter="occupied">Occupes</button>
+          <button class="filter-btn" data-filter="occupied">Occup&eacute;s</button>
           <button class="filter-btn" data-filter="empty">Libres</button>
-          <button class="filter-btn" data-filter="special-meal">Repas spe.</button>
+          <button class="filter-btn" data-filter="special-meal">Repas sp&eacute;.</button>
           <button class="filter-btn" data-filter="um">UM</button>
           <button class="filter-btn" data-filter="wchr">WCHR</button>
           <button class="filter-btn" data-filter="not-boarded">Non embarqu&eacute;s</button>
-          <button class="filter-btn" data-filter="bookmarked">Marques</button>
+          <button class="filter-btn" data-filter="bookmarked">Marqu&eacute;s</button>
         </div>
       </div>
       <div class="cabin-container">
@@ -172,41 +188,37 @@
     <section class="module" id="mod-meals">
       <div class="module-header">
         <h2>Service repas &amp; boissons</h2>
-        <span class="badge" id="mealsBadge">0 speciaux</span>
+        <span class="badge" id="mealsBadge">0 sp&eacute;ciaux</span>
       </div>
-
       <div class="meals-grid">
         <div class="brief-card wide">
           <div class="brief-card-title">Comptage repas</div>
           <div class="brief-kpi-row" id="mealsCountRow"></div>
         </div>
-
         <div class="brief-card wide">
-          <div class="brief-card-title">Repas speciaux &mdash; attribution par siege</div>
+          <div class="brief-card-title">Repas sp&eacute;ciaux &mdash; attribution par si&egrave;ge</div>
           <div class="meals-special-list" id="mealsSpecialList"></div>
         </div>
-
         <div class="brief-card">
           <div class="brief-card-title">Service 1 &mdash; Repas</div>
           <div class="service-tracker">
             <div class="service-row"><span>Business</span><div class="service-progress"><div class="service-bar" id="svc1Biz" style="width:0%"></div></div><span class="service-pct" id="svc1BizPct">0%</span></div>
             <div class="service-row"><span>Premium</span><div class="service-progress"><div class="service-bar prem" id="svc1Prem" style="width:0%"></div></div><span class="service-pct" id="svc1PremPct">0%</span></div>
-            <div class="service-row"><span>Economy</span><div class="service-progress"><div class="service-bar eco" id="svc1Eco" style="width:0%"></div></div><span class="service-pct" id="svc1EcoPct">0%</span></div>
+            <div class="service-row"><span>&Eacute;conomy</span><div class="service-progress"><div class="service-bar eco" id="svc1Eco" style="width:0%"></div></div><span class="service-pct" id="svc1EcoPct">0%</span></div>
           </div>
         </div>
-
         <div class="brief-card">
           <div class="brief-card-title">Service 2 &mdash; Collation</div>
           <div class="service-tracker">
             <div class="service-row"><span>Business</span><div class="service-progress"><div class="service-bar" id="svc2Biz" style="width:0%"></div></div><span class="service-pct" id="svc2BizPct">0%</span></div>
             <div class="service-row"><span>Premium</span><div class="service-progress"><div class="service-bar prem" id="svc2Prem" style="width:0%"></div></div><span class="service-pct" id="svc2PremPct">0%</span></div>
-            <div class="service-row"><span>Economy</span><div class="service-progress"><div class="service-bar eco" id="svc2Eco" style="width:0%"></div></div><span class="service-pct" id="svc2EcoPct">0%</span></div>
+            <div class="service-row"><span>&Eacute;conomy</span><div class="service-progress"><div class="service-bar eco" id="svc2Eco" style="width:0%"></div></div><span class="service-pct" id="svc2EcoPct">0%</span></div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- ==================== PONCTUALITE ==================== -->
+    <!-- ==================== PONCTUALIT&Eacute; ==================== -->
     <section class="module" id="mod-punctuality">
       <div class="module-header">
         <h2>Ponctualit&eacute; &mdash; D&eacute;part ORY</h2>
@@ -219,20 +231,9 @@
       <div class="timeline-container" id="timelineContainer"></div>
     </section>
 
-    <!-- ==================== CHECKLIST ==================== -->
-    <section class="module" id="mod-checklist">
-      <div class="module-header">
-        <h2>Checklists s&eacute;curit&eacute;</h2>
-        <span class="badge" id="checklistBadge">0 / 0</span>
-      </div>
-      <div class="checklist-sections" id="checklistSections"></div>
-    </section>
-
     <!-- ==================== RAPPORT ==================== -->
     <section class="module" id="mod-report">
-      <div class="module-header">
-        <h2>Rapport de vol</h2>
-      </div>
+      <div class="module-header"><h2>Rapport de vol</h2></div>
       <div class="report-sections">
         <div class="brief-card wide">
           <div class="brief-card-title">&Eacute;tat cabine</div>
@@ -296,23 +297,15 @@
         </div>
       </div>
       <div class="pax-panel-body">
-        <div class="form-group">
-          <label class="form-label">Type</label>
+        <div class="form-group"><label class="form-label">Type</label>
           <select class="form-select" id="incidentType">
             <option>M&eacute;dical</option><option>S&eacute;curit&eacute;</option><option>Comportement passager</option>
             <option>&Eacute;quipement cabine</option><option>Service</option><option>Autre</option>
           </select>
         </div>
-        <div class="form-group">
-          <label class="form-label">Si&egrave;ge concern&eacute; (optionnel)</label>
-          <input class="form-input" id="incidentSeat" placeholder="Ex: 14A">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Description</label>
-          <textarea class="brief-notes" id="incidentDesc" placeholder="D&eacute;crire l'incident..." style="min-height:80px"></textarea>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Gravit&eacute;</label>
+        <div class="form-group"><label class="form-label">Si&egrave;ge concern&eacute; (optionnel)</label><input class="form-input" id="incidentSeat" placeholder="Ex: 14A"></div>
+        <div class="form-group"><label class="form-label">Description</label><textarea class="brief-notes" id="incidentDesc" placeholder="D&eacute;crire l'incident..." style="min-height:80px"></textarea></div>
+        <div class="form-group"><label class="form-label">Gravit&eacute;</label>
           <div class="severity-btns" id="severityBtns">
             <button class="sev-btn low active" data-sev="low">Faible</button>
             <button class="sev-btn med" data-sev="med">Moyen</button>
@@ -320,6 +313,53 @@
           </div>
         </div>
         <button class="pax-save-note" id="incidentSave" style="width:100%;margin-top:12px">Enregistrer l'incident</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Share menu modal -->
+  <div class="pax-panel-overlay" id="shareOverlay">
+    <div class="pax-panel" style="max-width:400px">
+      <div class="pax-panel-header">
+        <div class="pax-panel-title"><div class="pax-name">Partager les donn&eacute;es</div></div>
+        <div class="pax-panel-actions">
+          <button class="pax-action-btn close-btn" id="shareClose">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="pax-panel-body">
+        <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px">S&eacute;lectionnez les donn&eacute;es &agrave; partager via AirDrop ou autre :</p>
+        <div class="share-options" id="shareOptions">
+          <label class="share-opt"><input type="checkbox" value="briefing" checked> Briefing vol</label>
+          <label class="share-opt"><input type="checkbox" value="passengers" checked> Liste passagers</label>
+          <label class="share-opt"><input type="checkbox" value="meals"> Repas sp&eacute;ciaux</label>
+          <label class="share-opt"><input type="checkbox" value="checklist"> Checklists</label>
+          <label class="share-opt"><input type="checkbox" value="incidents"> Incidents</label>
+          <label class="share-opt"><input type="checkbox" value="report"> Rapport cabine</label>
+        </div>
+        <button class="pax-save-note" id="shareConfirm" style="width:100%;margin-top:12px">
+          <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:white;stroke-width:1.75;fill:none;vertical-align:middle;margin-right:6px"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+          Partager
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Door assignment modal -->
+  <div class="pax-panel-overlay" id="doorOverlay">
+    <div class="pax-panel" style="max-width:480px">
+      <div class="pax-panel-header">
+        <div class="pax-panel-title"><div class="pax-name">Assignation aux portes</div></div>
+        <div class="pax-panel-actions">
+          <button class="pax-action-btn close-btn" id="doorClose">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="pax-panel-body">
+        <div class="door-grid" id="doorGrid"></div>
+        <button class="pax-save-note" id="doorSave" style="width:100%;margin-top:12px">Enregistrer</button>
       </div>
     </div>
   </div>
