@@ -19,7 +19,7 @@
       <h1 class="app-title">Cabin</h1>
     </div>
     <div class="header-right">
-      <span class="flight-info" id="flightInfo">SS 901 &middot; CDG &rarr; RUN &middot; B787-9</span>
+      <span class="flight-info" id="flightInfo">SS 901 &middot; ORY &rarr; RUN &middot; B787-9</span>
       <span class="sync-status" id="syncStatus" title="En ligne"></span>
     </div>
   </header>
@@ -27,36 +27,34 @@
   <nav class="tab-bar" id="tabBar">
     <button class="tab active" data-module="passengers">
       <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-        <circle cx="9" cy="7" r="4"/>
-        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
       </svg>
       <span>Passagers</span>
     </button>
+    <button class="tab" data-module="punctuality">
+      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+        <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+      </svg>
+      <span>Ponctualite</span>
+    </button>
     <button class="tab" data-module="meals">
       <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-        <path d="M18 8h1a4 4 0 0 1 0 8h-1"/>
-        <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/>
-        <line x1="6" y1="1" x2="6" y2="4"/>
-        <line x1="10" y1="1" x2="10" y2="4"/>
-        <line x1="14" y1="1" x2="14" y2="4"/>
+        <path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/>
+        <line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/>
       </svg>
       <span>Repas</span>
     </button>
     <button class="tab" data-module="checklist">
       <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-        <path d="M9 11l3 3L22 4"/>
-        <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+        <path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
       </svg>
       <span>Checklist</span>
     </button>
     <button class="tab" data-module="report">
       <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-        <polyline points="14 2 14 8 20 8"/>
-        <line x1="16" y1="13" x2="8" y2="13"/>
-        <line x1="16" y1="17" x2="8" y2="17"/>
+        <polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
       </svg>
       <span>Rapport</span>
     </button>
@@ -65,52 +63,87 @@
   <main class="content" id="content">
     <!-- Module Passagers -->
     <section class="module active" id="mod-passengers">
-      <div class="module-header">
-        <h2>Plan de cabine</h2>
-        <span class="badge" id="paxCount">0 / 0</span>
+      <div class="toolbar">
+        <div class="search-box">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="searchInput" placeholder="Rechercher un passager..." autocomplete="off">
+        </div>
+        <div class="filters" id="filters">
+          <button class="filter-btn active" data-filter="all">Tous</button>
+          <button class="filter-btn" data-filter="occupied">Occupes</button>
+          <button class="filter-btn" data-filter="empty">Libres</button>
+          <button class="filter-btn" data-filter="special-meal">Repas spe.</button>
+          <button class="filter-btn" data-filter="um">UM</button>
+          <button class="filter-btn" data-filter="wchr">WCHR</button>
+          <button class="filter-btn" data-filter="bookmarked">Marques</button>
+        </div>
       </div>
       <div class="cabin-container">
-        <div class="cabin-legend">
-          <div class="legend-item"><span class="legend-color business"></span> Business</div>
-          <div class="legend-item"><span class="legend-color premium"></span> Premium</div>
-          <div class="legend-item"><span class="legend-color economy"></span> Economy</div>
-        </div>
         <div class="cabin-plan" id="cabinPlan"></div>
         <div class="cabin-stats" id="cabinStats"></div>
       </div>
-      <div class="seat-info" id="seatInfo">
-        <span class="seat-info-id" id="seatInfoId"></span>
-        <div class="seat-info-details">
-          <span class="seat-info-name" id="seatInfoName"></span>
-          <span class="seat-info-meta" id="seatInfoMeta"></span>
-        </div>
+    </section>
+
+    <!-- Module Ponctualite -->
+    <section class="module" id="mod-punctuality">
+      <div class="module-header">
+        <h2>Ponctualite &mdash; Depart ORY</h2>
+        <div class="otp-clock" id="otpClock"></div>
       </div>
+      <div class="otp-dep-time">
+        <label>Heure de depart prevue (STD)</label>
+        <input type="time" id="stdInput" value="14:00">
+      </div>
+      <div class="timeline-container" id="timelineContainer"></div>
     </section>
 
     <!-- Module Repas -->
     <section class="module" id="mod-meals">
-      <div class="module-header">
-        <h2>Service repas</h2>
-      </div>
+      <div class="module-header"><h2>Service repas</h2></div>
       <p class="placeholder">Module en construction</p>
     </section>
 
     <!-- Module Checklist -->
     <section class="module" id="mod-checklist">
-      <div class="module-header">
-        <h2>Checklist securite</h2>
-      </div>
+      <div class="module-header"><h2>Checklist securite</h2></div>
       <p class="placeholder">Module en construction</p>
     </section>
 
     <!-- Module Rapport -->
     <section class="module" id="mod-report">
-      <div class="module-header">
-        <h2>Rapport de vol</h2>
-      </div>
+      <div class="module-header"><h2>Rapport de vol</h2></div>
       <p class="placeholder">Module en construction</p>
     </section>
   </main>
+
+  <!-- Pax detail panel (overlay) -->
+  <div class="pax-panel-overlay" id="paxOverlay">
+    <div class="pax-panel" id="paxPanel">
+      <div class="pax-panel-header">
+        <div class="pax-seat-badge" id="panelSeatBadge"></div>
+        <div class="pax-panel-title">
+          <div class="pax-name" id="panelName"></div>
+          <div class="pax-class" id="panelClass"></div>
+        </div>
+        <div class="pax-panel-actions">
+          <button class="pax-action-btn" id="panelBookmark" title="Marquer">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+          </button>
+          <button class="pax-action-btn close-btn" id="panelClose" title="Fermer">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="pax-panel-body">
+        <div class="pax-info-grid" id="panelGrid"></div>
+        <div class="pax-notes-section">
+          <label class="pax-notes-label">Notes PNC</label>
+          <textarea class="pax-notes" id="panelNotes" placeholder="Ajouter une note..."></textarea>
+          <button class="pax-save-note" id="panelSaveNote">Enregistrer la note</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script src="js/app.js"></script>
 </body>

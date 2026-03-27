@@ -7,144 +7,166 @@ if ('serviceWorker' in navigator) {
 
 // === Tab Navigation ===
 const tabBar = document.getElementById('tabBar');
-const tabs = tabBar.querySelectorAll('.tab');
-const modules = document.querySelectorAll('.module');
-
 tabBar.addEventListener('click', (e) => {
   const tab = e.target.closest('.tab');
   if (!tab) return;
   const target = tab.dataset.module;
-  tabs.forEach(t => t.classList.remove('active'));
+  tabBar.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   tab.classList.add('active');
-  modules.forEach(m => {
-    m.classList.toggle('active', m.id === `mod-${target}`);
+  document.querySelectorAll('.module').forEach(m => {
+    m.classList.toggle('active', m.id === 'mod-' + target);
   });
 });
 
 // ============================================================
-// CABIN PLAN — CORSAIR B787-9
-// Business 1-2-1 (rows 1-8)
-// Premium 2-3-2 (rows 9-14)
-// Economy 3-3-3 (rows 15-29, 30-47)
-// Seat letters: K J H | F E D | C B A
+// DATA: Bookmarks & Notes (persisted in localStorage)
 // ============================================================
+function loadBookmarks() {
+  try { return JSON.parse(localStorage.getItem('cabin_bookmarks') || '{}'); } catch { return {}; }
+}
+function saveBookmarks(bm) { localStorage.setItem('cabin_bookmarks', JSON.stringify(bm)); }
+function loadNotes() {
+  try { return JSON.parse(localStorage.getItem('cabin_notes') || '{}'); } catch { return {}; }
+}
+function saveNotes(n) { localStorage.setItem('cabin_notes', JSON.stringify(n)); }
 
+let bookmarks = loadBookmarks();
+let notes = loadNotes();
+
+// ============================================================
+// CABIN CONFIG — CORSAIR B787-9
+// ============================================================
 const CABIN_CONFIG = {
-  business: {
-    label: 'Business',
-    cls: 'business',
-    rows: [1, 2, 3, 4, 5, 6, 7, 8],
-    layout: ['K', '.', '.', '|', '.', 'F', 'E', '|', '.', '.', 'A']
-  },
-  premium: {
-    label: 'Premium',
-    cls: 'premium',
-    rows: [9, 10, 11, 12, 13, 14],
-    layout: ['K', 'J', '.', '|', 'F', 'E', 'D', '|', '.', 'B', 'A']
-  },
-  economy_front: {
-    label: 'Economy',
-    cls: 'economy',
-    rows: [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29],
-    layout: ['K', 'J', 'H', '|', 'F', 'E', 'D', '|', 'C', 'B', 'A']
-  },
-  economy_rear: {
-    label: '',
-    cls: 'economy',
-    rows: [30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47],
-    layout: ['K', 'J', 'H', '|', 'F', 'E', 'D', '|', 'C', 'B', 'A']
-  }
+  business: { label: 'Business', cls: 'business', rows: [1,2,3,4,5,6,7,8],
+    layout: ['K','.','.','|','.','F','E','|','.','.','A'] },
+  premium: { label: 'Premium', cls: 'premium', rows: [9,10,11,12,13,14],
+    layout: ['K','J','.','|','F','E','D','|','.','B','A'] },
+  economy_front: { label: 'Economy', cls: 'economy', rows: [15,16,17,18,19,20,21,22,23,24,25,26,27,28,29],
+    layout: ['K','J','H','|','F','E','D','|','C','B','A'] },
+  economy_rear: { label: '', cls: 'economy', rows: [30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47],
+    layout: ['K','J','H','|','F','E','D','|','C','B','A'] }
 };
 
-const ALL_POSITIONS = ['K', 'J', 'H', '|', 'F', 'E', 'D', '|', 'C', 'B', 'A'];
+const ALL_POSITIONS = ['K','J','H','|','F','E','D','|','C','B','A'];
+const EXIT_ROWS = [1, 9, 15, 30, 46];
+const GALLEY_POSITIONS = [
+  { after: 'business', label: 'GAL' },
+  { after: 'economy_front', label: 'GAL/LAV' }
+];
 
-// Mock passenger data
+// ============================================================
+// MOCK PASSENGERS
+// ============================================================
 function generateMockPassengers() {
-  const firstNames = [
-    'Marie', 'Thomas', 'Camille', 'Lucas', 'Lea', 'Hugo', 'Manon', 'Louis',
-    'Chloe', 'Nathan', 'Emma', 'Raphael', 'Sarah', 'Jules', 'Ines', 'Arthur',
-    'Jade', 'Adam', 'Lola', 'Gabriel', 'Alice', 'Paul', 'Louise', 'Noel',
-    'Fatima', 'Jean-Pierre', 'Aisha', 'Ravi', 'Chen', 'Yuki', 'Pierre', 'Sophie'
-  ];
-  const lastNames = [
-    'MARTIN', 'BERNARD', 'DUBOIS', 'THOMAS', 'ROBERT', 'PETIT', 'DURAND',
-    'MOREAU', 'LAURENT', 'SIMON', 'MICHEL', 'GARCIA', 'ROUX', 'LEROY',
-    'FONTAINE', 'CHEVALIER', 'BOYER', 'BLANC', 'NAIR', 'WONG', 'SUZUKI',
-    'PAYET', 'HOARAU', 'RIVIERE', 'GRONDIN', 'DIJOUX', 'CADET', 'MAILLOT'
-  ];
-  const specialMeals = ['', '', '', '', '', 'VGML', 'VLML', 'HNML', 'DBML', 'CHML', 'AVML'];
-  const remarks = ['', '', '', '', '', '', '', 'UM', 'WCHR', 'DEAF', 'BLND', 'PETC'];
+  const fn = ['Marie','Thomas','Camille','Lucas','Lea','Hugo','Manon','Louis','Chloe','Nathan',
+    'Emma','Raphael','Sarah','Jules','Ines','Arthur','Jade','Adam','Lola','Gabriel',
+    'Alice','Paul','Louise','Noel','Fatima','Jean-Pierre','Aisha','Ravi','Chen','Yuki','Sophie'];
+  const ln = ['MARTIN','BERNARD','DUBOIS','THOMAS','ROBERT','PETIT','DURAND','MOREAU','LAURENT',
+    'SIMON','MICHEL','GARCIA','ROUX','LEROY','FONTAINE','CHEVALIER','BOYER','BLANC',
+    'NAIR','WONG','SUZUKI','PAYET','HOARAU','RIVIERE','GRONDIN','DIJOUX','CADET','MAILLOT'];
+  const meals = ['','','','','','VGML','VLML','HNML','DBML','CHML','AVML','KSML','MOML'];
+  const remarks = ['','','','','','','','UM','WCHR','DEAF','BLND','PETC','VIP','MAAS'];
+  const nationalities = ['FR','FR','FR','FR','RE','RE','MU','MG','IN','CN','JP','GB','DE','US','SN'];
+  const pnrs = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
 
-  const passengers = {};
+  const pass = {};
   const allSeats = [];
-
-  Object.values(CABIN_CONFIG).forEach(section => {
-    section.rows.forEach(row => {
-      section.layout.forEach(pos => {
-        if (pos !== '.' && pos !== '|') {
-          allSeats.push({ seat: `${row}${pos}`, cls: section.cls });
-        }
+  Object.values(CABIN_CONFIG).forEach(sec => {
+    sec.rows.forEach(r => {
+      sec.layout.forEach(p => {
+        if (p !== '.' && p !== '|') allSeats.push({ seat: r + p, cls: sec.cls });
       });
     });
   });
 
-  const occupiedCount = Math.floor(allSeats.length * 0.82);
-  const shuffled = allSeats.sort(() => Math.random() - 0.5).slice(0, occupiedCount);
-
+  const count = Math.floor(allSeats.length * 0.82);
+  const shuffled = allSeats.sort(() => Math.random() - 0.5).slice(0, count);
   shuffled.forEach(({ seat, cls }) => {
-    const fn = firstNames[Math.floor(Math.random() * firstNames.length)];
-    const ln = lastNames[Math.floor(Math.random() * lastNames.length)];
-    const meal = specialMeals[Math.floor(Math.random() * specialMeals.length)];
-    const remark = remarks[Math.floor(Math.random() * remarks.length)];
-    passengers[seat] = {
-      name: `${ln} ${fn}`,
+    let pnr = '';
+    for (let i = 0; i < 6; i++) pnr += pnrs[Math.floor(Math.random() * pnrs.length)];
+    const rm = remarks[Math.floor(Math.random() * remarks.length)];
+    pass[seat] = {
+      name: ln[Math.floor(Math.random()*ln.length)] + ' ' + fn[Math.floor(Math.random()*fn.length)],
+      pnr: pnr,
       class: cls,
-      meal: meal,
-      remark: remark,
-      checkedIn: Math.random() > 0.08
+      meal: meals[Math.floor(Math.random()*meals.length)],
+      remark: rm,
+      nationality: nationalities[Math.floor(Math.random()*nationalities.length)],
+      checkedIn: Math.random() > 0.08,
+      boarded: Math.random() > 0.15,
+      bags: Math.floor(Math.random() * 3),
+      infant: Math.random() > 0.95,
+      ffn: Math.random() > 0.7 ? 'SS' + String(Math.floor(Math.random()*9000000+1000000)) : ''
     };
   });
-
-  return passengers;
+  return pass;
 }
 
 const passengers = generateMockPassengers();
 
-// === Build Cabin Plan ===
+// ============================================================
+// BUILD CABIN PLAN
+// ============================================================
+let activeFilter = 'all';
+let searchQuery = '';
+
 function buildCabinPlan() {
   const container = document.getElementById('cabinPlan');
   container.textContent = '';
 
-  // Row labels column
+  // Row labels column (left)
   const labelsCol = document.createElement('div');
   labelsCol.className = 'row-labels';
   ALL_POSITIONS.forEach(pos => {
     const label = document.createElement('div');
-    if (pos === '|') {
-      label.className = 'row-label aisle-gap';
-    } else {
-      label.className = 'row-label';
-      label.textContent = pos;
-    }
+    if (pos === '|') { label.className = 'row-label aisle-gap'; }
+    else { label.className = 'row-label'; label.textContent = pos; }
     labelsCol.appendChild(label);
   });
+  // Add empty space for row numbers alignment
+  const numSpacer = document.createElement('div');
+  numSpacer.className = 'row-label';
+  numSpacer.style.height = '16px';
+  labelsCol.appendChild(numSpacer);
   container.appendChild(labelsCol);
 
-  const sections = ['business', 'premium', 'economy_front', 'economy_rear'];
+  const sections = ['business','premium','economy_front','economy_rear'];
   sections.forEach((sectionKey, sIdx) => {
     const config = CABIN_CONFIG[sectionKey];
 
     if (sIdx > 0) {
-      const divider = document.createElement('div');
-      divider.className = 'section-divider';
-      container.appendChild(divider);
+      // Check if we need a galley divider
+      const prevKey = sections[sIdx - 1];
+      const galley = GALLEY_POSITIONS.find(g => g.after === prevKey);
+      if (galley) {
+        const galCol = document.createElement('div');
+        galCol.className = 'galley-col';
+        const gIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        gIcon.setAttribute('viewBox', '0 0 24 24');
+        gIcon.setAttribute('class', 'galley-icon');
+        const gPath = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        gPath.setAttribute('x', '4'); gPath.setAttribute('y', '2');
+        gPath.setAttribute('width', '16'); gPath.setAttribute('height', '20');
+        gPath.setAttribute('rx', '2');
+        gIcon.appendChild(gPath);
+        galCol.appendChild(gIcon);
+        const gLabel = document.createElement('div');
+        gLabel.className = 'galley-label';
+        gLabel.textContent = galley.label;
+        galCol.appendChild(gLabel);
+        container.appendChild(galCol);
+      } else {
+        const divider = document.createElement('div');
+        divider.className = 'section-divider';
+        container.appendChild(divider);
+      }
     }
 
     const sectionEl = document.createElement('div');
     sectionEl.className = 'cabin-section';
 
     const sLabel = document.createElement('div');
-    sLabel.className = `section-label ${config.cls}`;
+    sLabel.className = 'section-label ' + config.cls;
     sLabel.textContent = config.label;
     sectionEl.appendChild(sLabel);
 
@@ -154,6 +176,7 @@ function buildCabinPlan() {
     config.rows.forEach(rowNum => {
       const col = document.createElement('div');
       col.className = 'cabin-col';
+      if (EXIT_ROWS.includes(rowNum)) col.classList.add('exit-row');
 
       config.layout.forEach(pos => {
         if (pos === '|') {
@@ -165,12 +188,10 @@ function buildCabinPlan() {
           noSeat.className = 'seat no-seat';
           col.appendChild(noSeat);
         } else {
-          const seatId = `${rowNum}${pos}`;
+          const seatId = rowNum + pos;
           const seatEl = document.createElement('div');
           seatEl.className = 'seat';
           seatEl.dataset.seat = seatId;
-          seatEl.dataset.row = String(rowNum);
-          seatEl.dataset.letter = pos;
           seatEl.textContent = pos;
 
           const pax = passengers[seatId];
@@ -178,14 +199,26 @@ function buildCabinPlan() {
             seatEl.classList.add('occupied', config.cls);
             if (pax.meal) seatEl.classList.add('special-meal');
             if (pax.remark === 'WCHR') seatEl.classList.add('wheelchair');
+            if (pax.remark === 'UM') seatEl.classList.add('um');
           } else {
             seatEl.classList.add('empty');
           }
+          if (bookmarks[seatId]) seatEl.classList.add('bookmarked');
 
-          seatEl.addEventListener('click', () => showSeatInfo(seatId, config.cls));
+          seatEl.addEventListener('click', (ev) => { ev.stopPropagation(); openPaxPanel(seatId, config.cls); });
           col.appendChild(seatEl);
         }
       });
+
+      // Row number at bottom of column
+      const rowNumEl = document.createElement('div');
+      rowNumEl.className = 'row-num';
+      rowNumEl.textContent = rowNum;
+      rowNumEl.style.height = '16px';
+      rowNumEl.style.display = 'flex';
+      rowNumEl.style.alignItems = 'center';
+      rowNumEl.style.justifyContent = 'center';
+      col.appendChild(rowNumEl);
 
       colsContainer.appendChild(col);
     });
@@ -194,108 +227,362 @@ function buildCabinPlan() {
     container.appendChild(sectionEl);
   });
 
+  applyFilters();
   updateStats();
 }
 
-// === Seat Info Panel ===
-let selectedSeat = null;
-
-function showSeatInfo(seatId, sectionClass) {
-  const infoPanel = document.getElementById('seatInfo');
-  const pax = passengers[seatId];
-
-  if (selectedSeat) {
-    const prev = document.querySelector('.seat.selected');
-    if (prev) prev.classList.remove('selected');
-  }
-
-  const seatEl = document.querySelector(`[data-seat="${seatId}"]`);
-  if (seatEl) seatEl.classList.add('selected');
-  selectedSeat = seatId;
-
-  document.getElementById('seatInfoId').textContent = seatId;
-
-  if (pax) {
-    document.getElementById('seatInfoName').textContent = pax.name;
-    let meta = sectionClass.charAt(0).toUpperCase() + sectionClass.slice(1);
-    if (pax.meal) meta += ` | ${pax.meal}`;
-    if (pax.remark) meta += ` | ${pax.remark}`;
-    if (!pax.checkedIn) meta += ' | Non embarque';
-    document.getElementById('seatInfoMeta').textContent = meta;
-  } else {
-    document.getElementById('seatInfoName').textContent = 'Siege libre';
-    document.getElementById('seatInfoMeta').textContent =
-      sectionClass.charAt(0).toUpperCase() + sectionClass.slice(1);
-  }
-
-  infoPanel.classList.add('visible');
-}
-
-document.addEventListener('click', (e) => {
-  if (!e.target.closest('.seat') && !e.target.closest('.seat-info')) {
-    const infoPanel = document.getElementById('seatInfo');
-    infoPanel.classList.remove('visible');
-    if (selectedSeat) {
-      const prev = document.querySelector('.seat.selected');
-      if (prev) prev.classList.remove('selected');
-      selectedSeat = null;
-    }
-  }
+// ============================================================
+// FILTERS & SEARCH
+// ============================================================
+document.getElementById('filters').addEventListener('click', (e) => {
+  const btn = e.target.closest('.filter-btn');
+  if (!btn) return;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  activeFilter = btn.dataset.filter;
+  applyFilters();
 });
 
-// === Stats ===
+document.getElementById('searchInput').addEventListener('input', (e) => {
+  searchQuery = e.target.value.toLowerCase().trim();
+  applyFilters();
+});
+
+function applyFilters() {
+  const allSeatEls = document.querySelectorAll('.seat:not(.no-seat)');
+  const hasFilter = activeFilter !== 'all' || searchQuery.length > 0;
+
+  allSeatEls.forEach(el => {
+    const seatId = el.dataset.seat;
+    const pax = passengers[seatId];
+    let match = true;
+
+    // Filter logic
+    if (activeFilter === 'occupied') match = !!pax;
+    else if (activeFilter === 'empty') match = !pax;
+    else if (activeFilter === 'special-meal') match = pax && pax.meal;
+    else if (activeFilter === 'um') match = pax && pax.remark === 'UM';
+    else if (activeFilter === 'wchr') match = pax && pax.remark === 'WCHR';
+    else if (activeFilter === 'bookmarked') match = !!bookmarks[seatId];
+
+    // Search logic
+    if (searchQuery && match) {
+      if (pax) {
+        const haystack = (pax.name + ' ' + pax.pnr + ' ' + seatId + ' ' + pax.remark + ' ' + pax.meal).toLowerCase();
+        match = haystack.includes(searchQuery);
+      } else {
+        match = seatId.toLowerCase().includes(searchQuery);
+      }
+    }
+
+    el.classList.toggle('dimmed', hasFilter && !match);
+    el.classList.toggle('highlighted', hasFilter && match && (activeFilter !== 'all' || searchQuery));
+  });
+}
+
+// ============================================================
+// PAX DETAIL PANEL
+// ============================================================
+let currentPanelSeat = null;
+
+function openPaxPanel(seatId, sectionClass) {
+  currentPanelSeat = seatId;
+  const pax = passengers[seatId];
+  const overlay = document.getElementById('paxOverlay');
+  const badge = document.getElementById('panelSeatBadge');
+  const nameEl = document.getElementById('panelName');
+  const classEl = document.getElementById('panelClass');
+  const grid = document.getElementById('panelGrid');
+  const notesEl = document.getElementById('panelNotes');
+  const bmBtn = document.getElementById('panelBookmark');
+
+  badge.textContent = seatId;
+  badge.className = 'pax-seat-badge ' + (pax ? sectionClass : 'empty-seat');
+
+  if (pax) {
+    nameEl.textContent = pax.name;
+    classEl.textContent = sectionClass + (pax.ffn ? ' | FFN ' + pax.ffn : '');
+    bmBtn.style.display = '';
+
+    grid.textContent = '';
+    const fields = [
+      { label: 'PNR', value: pax.pnr },
+      { label: 'Nationalite', value: pax.nationality },
+      { label: 'Embarquement', value: pax.boarded ? 'A bord' : 'En attente', cls: pax.boarded ? 'ok' : 'warn' },
+      { label: 'Check-in', value: pax.checkedIn ? 'Oui' : 'Non', cls: pax.checkedIn ? 'ok' : 'warn' },
+      { label: 'Repas', value: pax.meal || 'Standard' },
+      { label: 'Remarque', value: pax.remark || 'Aucune', cls: pax.remark ? 'warn' : '' },
+      { label: 'Bagages', value: pax.bags + ' pcs' },
+      { label: 'Nourrisson', value: pax.infant ? 'Oui' : 'Non', cls: pax.infant ? 'warn' : '' }
+    ];
+    fields.forEach(f => {
+      const item = document.createElement('div');
+      item.className = 'pax-info-item';
+      const lab = document.createElement('div');
+      lab.className = 'pax-info-label';
+      lab.textContent = f.label;
+      const val = document.createElement('div');
+      val.className = 'pax-info-value' + (f.cls ? ' ' + f.cls : '');
+      val.textContent = f.value;
+      item.appendChild(lab);
+      item.appendChild(val);
+      grid.appendChild(item);
+    });
+  } else {
+    nameEl.textContent = 'Siege libre';
+    classEl.textContent = sectionClass;
+    bmBtn.style.display = 'none';
+    grid.textContent = '';
+  }
+
+  // Bookmark state
+  bmBtn.classList.toggle('bookmarked', !!bookmarks[seatId]);
+
+  // Notes
+  notesEl.value = notes[seatId] || '';
+  notesEl.style.display = pax ? '' : 'none';
+  document.getElementById('panelSaveNote').style.display = pax ? '' : 'none';
+  document.querySelector('.pax-notes-label').style.display = pax ? '' : 'none';
+
+  // Highlight seat
+  document.querySelectorAll('.seat.selected').forEach(s => s.classList.remove('selected'));
+  const seatEl = document.querySelector('[data-seat="' + seatId + '"]');
+  if (seatEl) seatEl.classList.add('selected');
+
+  overlay.classList.add('visible');
+}
+
+function closePaxPanel() {
+  document.getElementById('paxOverlay').classList.remove('visible');
+  document.querySelectorAll('.seat.selected').forEach(s => s.classList.remove('selected'));
+  currentPanelSeat = null;
+}
+
+document.getElementById('panelClose').addEventListener('click', closePaxPanel);
+document.getElementById('paxOverlay').addEventListener('click', (e) => {
+  if (e.target === e.currentTarget) closePaxPanel();
+});
+
+// Bookmark toggle
+document.getElementById('panelBookmark').addEventListener('click', () => {
+  if (!currentPanelSeat) return;
+  if (bookmarks[currentPanelSeat]) { delete bookmarks[currentPanelSeat]; }
+  else { bookmarks[currentPanelSeat] = true; }
+  saveBookmarks(bookmarks);
+  document.getElementById('panelBookmark').classList.toggle('bookmarked', !!bookmarks[currentPanelSeat]);
+  const seatEl = document.querySelector('[data-seat="' + currentPanelSeat + '"]');
+  if (seatEl) seatEl.classList.toggle('bookmarked', !!bookmarks[currentPanelSeat]);
+});
+
+// Save note
+document.getElementById('panelSaveNote').addEventListener('click', () => {
+  if (!currentPanelSeat) return;
+  const val = document.getElementById('panelNotes').value.trim();
+  if (val) { notes[currentPanelSeat] = val; } else { delete notes[currentPanelSeat]; }
+  saveNotes(notes);
+  document.getElementById('panelSaveNote').textContent = 'Enregistre !';
+  setTimeout(() => { document.getElementById('panelSaveNote').textContent = 'Enregistrer la note'; }, 1500);
+});
+
+// ============================================================
+// STATS
+// ============================================================
 function updateStats() {
   const statsEl = document.getElementById('cabinStats');
   statsEl.textContent = '';
-
   const allSeats = document.querySelectorAll('.seat:not(.no-seat)');
-  const occupied = document.querySelectorAll('.seat.occupied');
-  const specialMeals = document.querySelectorAll('.seat.special-meal');
-
   const biz = document.querySelectorAll('.seat.occupied.business').length;
   const prem = document.querySelectorAll('.seat.occupied.premium').length;
   const eco = document.querySelectorAll('.seat.occupied.economy').length;
-
+  const occ = biz + prem + eco;
   const total = allSeats.length;
-  const occ = occupied.length;
   const pct = Math.round((occ / total) * 100);
+  const sm = document.querySelectorAll('.seat.special-meal').length;
 
-  document.getElementById('paxCount').textContent = `${occ} / ${total}`;
-
-  const statsData = [
-    { value: `${pct}%`, label: 'Taux de remplissage' },
-    null,
-    { value: String(biz), label: 'Business' },
-    null,
-    { value: String(prem), label: 'Premium' },
-    null,
-    { value: String(eco), label: 'Economy' },
-    null,
-    { value: String(specialMeals.length), label: 'Repas speciaux' }
+  const data = [
+    { v: pct + '%', l: 'Remplissage' }, null,
+    { v: String(biz), l: 'Business' }, null,
+    { v: String(prem), l: 'Premium' }, null,
+    { v: String(eco), l: 'Economy' }, null,
+    { v: String(sm), l: 'Repas spe.' }, null,
+    { v: String(Object.keys(bookmarks).length), l: 'Marques' }
   ];
-
-  statsData.forEach(item => {
+  data.forEach(item => {
     if (item === null) {
-      const divider = document.createElement('div');
-      divider.className = 'stat-divider';
-      statsEl.appendChild(divider);
+      const d = document.createElement('div'); d.className = 'stat-divider'; statsEl.appendChild(d);
     } else {
-      const statItem = document.createElement('div');
-      statItem.className = 'stat-item';
-      const wrapper = document.createElement('div');
-      const val = document.createElement('div');
-      val.className = 'stat-value';
-      val.textContent = item.value;
-      const lab = document.createElement('div');
-      lab.className = 'stat-label';
-      lab.textContent = item.label;
-      wrapper.appendChild(val);
-      wrapper.appendChild(lab);
-      statItem.appendChild(wrapper);
-      statsEl.appendChild(statItem);
+      const si = document.createElement('div'); si.className = 'stat-item';
+      const w = document.createElement('div');
+      const v = document.createElement('div'); v.className = 'stat-value'; v.textContent = item.v;
+      const l = document.createElement('div'); l.className = 'stat-label'; l.textContent = item.l;
+      w.appendChild(v); w.appendChild(l); si.appendChild(w); statsEl.appendChild(si);
     }
   });
 }
 
-// === Init ===
+// ============================================================
+// PONCTUALITE — DEPART ORY MILESTONES
+// ============================================================
+const MILESTONES = [
+  { offset: -120, label: 'Check-in ouvert', category: 'sol' },
+  { offset: -120, label: 'Security check', category: 'sol' },
+  { offset: -120, label: 'Tow in', category: 'avion' },
+  { offset: -110, label: 'Crew pick up', category: 'equipage' },
+  { offset: -110, label: 'Security search', category: 'sol' },
+  { offset: -100, label: 'Crew at counter', category: 'equipage' },
+  { offset: -100, label: 'Cargo at aircraft', category: 'avion' },
+  { offset: -90, label: 'Crew bus', category: 'equipage' },
+  { offset: -80, label: 'Agent at gate', category: 'sol' },
+  { offset: -80, label: 'Crew at gate', category: 'equipage' },
+  { offset: -70, label: 'Cleaning', category: 'avion' },
+  { offset: -70, label: 'Catering', category: 'avion' },
+  { offset: -70, label: 'Loading', category: 'avion' },
+  { offset: -70, label: 'Fueling', category: 'avion' },
+  { offset: -60, label: 'LDS sent', category: 'sol' },
+  { offset: -50, label: 'Boarding', category: 'sol' },
+  { offset: -50, label: 'OK Cabin', category: 'equipage' },
+  { offset: -40, label: 'PMR / Remote', category: 'sol' },
+  { offset: -40, label: 'Pax bus', category: 'sol' },
+  { offset: -30, label: 'Servicing', category: 'avion' },
+  { offset: -20, label: 'Dep GPU', category: 'avion' },
+  { offset: -20, label: 'Bulk closed', category: 'avion' },
+  { offset: -20, label: 'Bag search', category: 'sol' },
+  { offset: -10, label: 'Dep jetbridge', category: 'sol' },
+  { offset: -10, label: 'Marshaller', category: 'avion' },
+  { offset: -10, label: 'Pushback ready', category: 'avion' },
+  { offset: 0, label: 'DEPART', category: 'depart' }
+];
+
+let milestoneChecks = {};
+try { milestoneChecks = JSON.parse(localStorage.getItem('cabin_otp_checks') || '{}'); } catch { milestoneChecks = {}; }
+
+function getSTD() {
+  const input = document.getElementById('stdInput');
+  if (!input) return null;
+  const parts = input.value.split(':');
+  const d = new Date();
+  d.setHours(parseInt(parts[0], 10), parseInt(parts[1], 10), 0, 0);
+  return d;
+}
+
+function formatTime(d) {
+  return String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+}
+
+function buildTimeline() {
+  const container = document.getElementById('timelineContainer');
+  if (!container) return;
+  container.textContent = '';
+
+  const std = getSTD();
+  if (!std) return;
+  const now = new Date();
+
+  // Group by offset
+  const groups = {};
+  MILESTONES.forEach((m, idx) => {
+    const key = m.offset;
+    if (!groups[key]) groups[key] = [];
+    groups[key].push({ ...m, idx });
+  });
+
+  const sortedKeys = Object.keys(groups).map(Number).sort((a, b) => a - b);
+
+  sortedKeys.forEach(offset => {
+    const items = groups[offset];
+    const targetTime = new Date(std.getTime() + offset * 60000);
+    const diffMin = Math.round((targetTime - now) / 60000);
+
+    const groupEl = document.createElement('div');
+    groupEl.className = 'timeline-group';
+
+    const groupLabel = document.createElement('div');
+    groupLabel.className = 'timeline-group-label';
+    const hh = Math.floor(Math.abs(offset) / 60);
+    const mm = Math.abs(offset) % 60;
+    groupLabel.textContent = offset === 0 ? 'H - DEPART' :
+      'H - ' + String(hh).padStart(2, '0') + ':' + String(mm).padStart(2, '0');
+    groupEl.appendChild(groupLabel);
+
+    items.forEach(m => {
+      const row = document.createElement('div');
+      row.className = 'timeline-item';
+
+      const isChecked = !!milestoneChecks[m.idx];
+
+      // Status
+      if (isChecked) { row.classList.add('past'); }
+      else if (diffMin > 5) { row.classList.add('upcoming'); }
+      else if (diffMin >= -5) { row.classList.add('current'); }
+      else { row.classList.add('overdue'); }
+
+      // Time label
+      const timeEl = document.createElement('div');
+      timeEl.className = 'timeline-time';
+      timeEl.textContent = offset === 0 ? 'STD' : 'H' + (offset > 0 ? '+' : '') + offset + 'min';
+      row.appendChild(timeEl);
+
+      // Absolute time
+      const absEl = document.createElement('div');
+      absEl.className = 'timeline-abs-time';
+      absEl.textContent = formatTime(targetTime);
+      row.appendChild(absEl);
+
+      // Label
+      const labelEl = document.createElement('div');
+      labelEl.className = 'timeline-label';
+      labelEl.textContent = m.label;
+      row.appendChild(labelEl);
+
+      // Status badge
+      const statusEl = document.createElement('div');
+      statusEl.className = 'timeline-status';
+      if (isChecked) { statusEl.classList.add('done'); statusEl.textContent = 'Fait'; }
+      else if (diffMin > 5) { statusEl.classList.add('waiting'); statusEl.textContent = 'A venir'; }
+      else if (diffMin >= -5) { statusEl.classList.add('now'); statusEl.textContent = 'En cours'; }
+      else { statusEl.classList.add('late'); statusEl.textContent = 'Retard'; }
+      row.appendChild(statusEl);
+
+      // Checkmark button
+      const checkEl = document.createElement('div');
+      checkEl.className = 'timeline-check' + (isChecked ? ' checked' : '');
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.setAttribute('viewBox', '0 0 24 24');
+      const polyline = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+      polyline.setAttribute('points', '20 6 9 17 4 12');
+      svg.appendChild(polyline);
+      checkEl.appendChild(svg);
+      checkEl.addEventListener('click', () => {
+        if (milestoneChecks[m.idx]) { delete milestoneChecks[m.idx]; }
+        else { milestoneChecks[m.idx] = Date.now(); }
+        localStorage.setItem('cabin_otp_checks', JSON.stringify(milestoneChecks));
+        buildTimeline();
+      });
+      row.appendChild(checkEl);
+
+      groupEl.appendChild(row);
+    });
+
+    container.appendChild(groupEl);
+  });
+}
+
+// Clock update
+function updateOTPClock() {
+  const el = document.getElementById('otpClock');
+  if (el) el.textContent = formatTime(new Date());
+}
+
+// STD change listener
+const stdInput = document.getElementById('stdInput');
+if (stdInput) stdInput.addEventListener('change', buildTimeline);
+
+// Refresh timeline every 30s
+setInterval(() => { buildTimeline(); updateOTPClock(); }, 30000);
+
+// ============================================================
+// INIT
+// ============================================================
 buildCabinPlan();
+buildTimeline();
+updateOTPClock();
