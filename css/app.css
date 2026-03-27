@@ -1,0 +1,187 @@
+/* === Reset & Base === */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg: #0f172a;
+  --bg-surface: #1e293b;
+  --bg-card: #334155;
+  --text: #f1f5f9;
+  --text-muted: #94a3b8;
+  --accent: #38bdf8;
+  --accent-hover: #7dd3fc;
+  --success: #4ade80;
+  --warning: #fbbf24;
+  --danger: #f87171;
+  --radius: 12px;
+  --tab-height: 72px;
+  --header-height: 56px;
+}
+
+html, body {
+  height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  overflow: hidden;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* === Header === */
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--header-height);
+  padding: 0 20px;
+  background: var(--bg-surface);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.app-title {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.flight-info {
+  font-size: 14px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.sync-status {
+  font-size: 12px;
+}
+
+/* === Tab Bar === */
+.tab-bar {
+  display: flex;
+  height: var(--tab-height);
+  background: var(--bg-surface);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0 8px;
+  gap: 4px;
+}
+
+.tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: var(--radius);
+  transition: all 0.2s ease;
+  padding: 8px;
+  min-width: 0;
+}
+
+.tab:active {
+  transform: scale(0.95);
+}
+
+.tab.active {
+  color: var(--accent);
+  background: rgba(56, 189, 248, 0.1);
+}
+
+.tab-icon {
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+}
+
+/* === Content === */
+.content {
+  height: calc(100% - var(--header-height) - var(--tab-height));
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 20px;
+}
+
+.module {
+  display: none;
+  animation: fadeIn 0.2s ease;
+}
+
+.module.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.module-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.module-header h2 {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.badge {
+  background: var(--accent);
+  color: var(--bg);
+  font-size: 13px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+
+.placeholder {
+  color: var(--text-muted);
+  font-size: 16px;
+  text-align: center;
+  padding: 60px 20px;
+  background: var(--bg-surface);
+  border-radius: var(--radius);
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+}
+
+/* === Cabin Plan (placeholder grid) === */
+.cabin-plan {
+  background: var(--bg-surface);
+  border-radius: var(--radius);
+  padding: 20px;
+  min-height: 300px;
+}
+
+/* === Touch-friendly === */
+button, [role="button"] {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* === Scrollbar === */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--bg-card);
+  border-radius: 4px;
+}
