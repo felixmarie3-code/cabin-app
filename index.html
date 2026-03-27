@@ -6,25 +6,27 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Cabin App">
+  <meta name="theme-color" content="#282B62">
   <title>Cabin App</title>
   <link rel="manifest" href="manifest.json">
-  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/icon-192.svg">
   <link rel="stylesheet" href="css/app.css">
 </head>
 <body>
   <header class="app-header">
     <div class="header-left">
-      <h1 class="app-title">Cabin App</h1>
+      <img src="icons/corsair_blanc.svg" alt="CORSAIR" class="app-logo">
+      <h1 class="app-title">Cabin</h1>
     </div>
     <div class="header-right">
-      <span class="flight-info" id="flightInfo">Vol CS 401 — CDG → RUN</span>
-      <span class="sync-status" id="syncStatus" title="Statut de synchronisation">&#x1f7e2;</span>
+      <span class="flight-info" id="flightInfo">SS 901 &middot; CDG &rarr; RUN &middot; B787-9</span>
+      <span class="sync-status" id="syncStatus" title="En ligne"></span>
     </div>
   </header>
 
   <nav class="tab-bar" id="tabBar">
     <button class="tab active" data-module="passengers">
-      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
         <circle cx="9" cy="7" r="4"/>
         <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
@@ -33,7 +35,7 @@
       <span>Passagers</span>
     </button>
     <button class="tab" data-module="meals">
-      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
         <path d="M18 8h1a4 4 0 0 1 0 8h-1"/>
         <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/>
         <line x1="6" y1="1" x2="6" y2="4"/>
@@ -43,19 +45,18 @@
       <span>Repas</span>
     </button>
     <button class="tab" data-module="checklist">
-      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
         <path d="M9 11l3 3L22 4"/>
         <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
       </svg>
       <span>Checklist</span>
     </button>
     <button class="tab" data-module="report">
-      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
         <polyline points="14 2 14 8 20 8"/>
         <line x1="16" y1="13" x2="8" y2="13"/>
         <line x1="16" y1="17" x2="8" y2="17"/>
-        <polyline points="10 9 9 9 8 9"/>
       </svg>
       <span>Rapport</span>
     </button>
@@ -65,22 +66,33 @@
     <!-- Module Passagers -->
     <section class="module active" id="mod-passengers">
       <div class="module-header">
-        <h2>Liste passagers</h2>
-        <span class="badge" id="paxCount">0/186</span>
+        <h2>Plan de cabine</h2>
+        <span class="badge" id="paxCount">0 / 0</span>
       </div>
-      <div class="cabin-plan" id="cabinPlan">
-        <p class="placeholder">Plan de cabine — chargement...</p>
+      <div class="cabin-container">
+        <div class="cabin-legend">
+          <div class="legend-item"><span class="legend-color business"></span> Business</div>
+          <div class="legend-item"><span class="legend-color premium"></span> Premium</div>
+          <div class="legend-item"><span class="legend-color economy"></span> Economy</div>
+        </div>
+        <div class="cabin-plan" id="cabinPlan"></div>
+        <div class="cabin-stats" id="cabinStats"></div>
+      </div>
+      <div class="seat-info" id="seatInfo">
+        <span class="seat-info-id" id="seatInfoId"></span>
+        <div class="seat-info-details">
+          <span class="seat-info-name" id="seatInfoName"></span>
+          <span class="seat-info-meta" id="seatInfoMeta"></span>
+        </div>
       </div>
     </section>
 
     <!-- Module Repas -->
     <section class="module" id="mod-meals">
       <div class="module-header">
-        <h2>Service repas & boissons</h2>
+        <h2>Service repas</h2>
       </div>
-      <div class="meals-content">
-        <p class="placeholder">Module repas — en construction</p>
-      </div>
+      <p class="placeholder">Module en construction</p>
     </section>
 
     <!-- Module Checklist -->
@@ -88,9 +100,7 @@
       <div class="module-header">
         <h2>Checklist securite</h2>
       </div>
-      <div class="checklist-content">
-        <p class="placeholder">Module checklist — en construction</p>
-      </div>
+      <p class="placeholder">Module en construction</p>
     </section>
 
     <!-- Module Rapport -->
@@ -98,9 +108,7 @@
       <div class="module-header">
         <h2>Rapport de vol</h2>
       </div>
-      <div class="report-content">
-        <p class="placeholder">Module rapport — en construction</p>
-      </div>
+      <p class="placeholder">Module en construction</p>
     </section>
   </main>
 
