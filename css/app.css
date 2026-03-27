@@ -1,3 +1,40 @@
+/* === CORSAIR Brand Fonts === */
+@font-face {
+  font-family: 'Gilroy';
+  src: url('../fonts/Gilroy-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Gilroy';
+  src: url('../fonts/Gilroy-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* === CORSAIR Brand Variables === */
+:root {
+  --corsair-bleu-business: #282B62;
+  --corsair-bleu-premium: #355EAB;
+  --corsair-bleu-economie: #52A7BE;
+  --corsair-rouge-vermillon: #DA3D32;
+  --corsair-beige-sable: #DEDBCE;
+  --corsair-noir-nuit: #252525;
+
+  --bg: var(--corsair-bleu-business);
+  --bg-surface: #1e2254;
+  --bg-card: #2a2d6b;
+  --text: #FFFFFF;
+  --text-muted: var(--corsair-beige-sable);
+  --accent: var(--corsair-bleu-economie);
+  --accent-secondary: var(--corsair-bleu-premium);
+  --radius: 8px;
+  --tab-height: 64px;
+  --header-height: 52px;
+}
+
 /* === Reset & Base === */
 *, *::before, *::after {
   box-sizing: border-box;
@@ -5,25 +42,9 @@
   padding: 0;
 }
 
-:root {
-  --bg: #0f172a;
-  --bg-surface: #1e293b;
-  --bg-card: #334155;
-  --text: #f1f5f9;
-  --text-muted: #94a3b8;
-  --accent: #38bdf8;
-  --accent-hover: #7dd3fc;
-  --success: #4ade80;
-  --warning: #fbbf24;
-  --danger: #f87171;
-  --radius: 12px;
-  --tab-height: 72px;
-  --header-height: 56px;
-}
-
 html, body {
   height: 100%;
-  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
+  font-family: 'Gilroy', Arial, sans-serif;
   background: var(--bg);
   color: var(--text);
   overflow: hidden;
@@ -39,30 +60,48 @@ html, body {
   justify-content: space-between;
   height: var(--header-height);
   padding: 0 20px;
-  background: var(--bg-surface);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--corsair-bleu-business);
+  border-bottom: 2px solid var(--corsair-rouge-vermillon);
 }
 
-.app-title {
-  font-size: 20px;
-  font-weight: 700;
-  letter-spacing: -0.3px;
-}
-
-.header-right {
+.header-left {
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
+.app-logo {
+  height: 22px;
+  width: auto;
+}
+
+.app-title {
+  font-size: 15px;
+  font-weight: 400;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: white;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
 .flight-info {
-  font-size: 14px;
-  color: var(--text-muted);
-  font-weight: 500;
+  font-size: 13px;
+  color: var(--corsair-beige-sable);
+  font-weight: 400;
+  letter-spacing: 0.5px;
 }
 
 .sync-status {
-  font-size: 12px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #4ade80;
+  display: inline-block;
 }
 
 /* === Tab Bar === */
@@ -70,9 +109,9 @@ html, body {
   display: flex;
   height: var(--tab-height);
   background: var(--bg-surface);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   padding: 0 8px;
-  gap: 4px;
+  gap: 2px;
 }
 
 .tab {
@@ -84,29 +123,45 @@ html, body {
   gap: 4px;
   background: none;
   border: none;
-  color: var(--text-muted);
-  font-size: 12px;
-  font-weight: 500;
+  color: var(--corsair-beige-sable);
+  font-family: 'Gilroy', Arial, sans-serif;
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 1px;
+  text-transform: uppercase;
   cursor: pointer;
   border-radius: var(--radius);
   transition: all 0.2s ease;
   padding: 8px;
   min-width: 0;
+  position: relative;
 }
 
 .tab:active {
-  transform: scale(0.95);
+  transform: scale(0.97);
 }
 
 .tab.active {
-  color: var(--accent);
-  background: rgba(56, 189, 248, 0.1);
+  color: white;
+  background: rgba(82, 167, 190, 0.12);
+}
+
+.tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 20%;
+  right: 20%;
+  height: 2px;
+  background: var(--corsair-bleu-economie);
+  border-radius: 2px 2px 0 0;
 }
 
 .tab-icon {
-  width: 26px;
-  height: 26px;
+  width: 22px;
+  height: 22px;
   flex-shrink: 0;
+  stroke-width: 1.75;
 }
 
 /* === Content === */
@@ -114,7 +169,7 @@ html, body {
   height: calc(100% - var(--header-height) - var(--tab-height));
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  padding: 20px;
+  padding: 16px 20px;
 }
 
 .module {
@@ -127,7 +182,7 @@ html, body {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
+  from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
@@ -135,39 +190,364 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 .module-header h2 {
-  font-size: 22px;
-  font-weight: 700;
+  font-size: 18px;
+  font-weight: 400;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--corsair-bleu-economie);
 }
 
 .badge {
-  background: var(--accent);
-  color: var(--bg);
-  font-size: 13px;
-  font-weight: 700;
-  padding: 4px 12px;
-  border-radius: 20px;
+  background: var(--corsair-bleu-economie);
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
 }
 
 .placeholder {
-  color: var(--text-muted);
-  font-size: 16px;
+  color: var(--corsair-beige-sable);
+  font-size: 14px;
   text-align: center;
   padding: 60px 20px;
   background: var(--bg-surface);
   border-radius: var(--radius);
-  border: 1px dashed rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-/* === Cabin Plan (placeholder grid) === */
-.cabin-plan {
+/* === Cabin Plan === */
+.cabin-container {
   background: var(--bg-surface);
   border-radius: var(--radius);
-  padding: 20px;
-  min-height: 300px;
+  padding: 12px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.cabin-legend {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 12px;
+  padding: 0 4px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--corsair-beige-sable);
+}
+
+.legend-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+}
+
+.legend-color.business { background: var(--corsair-bleu-premium); }
+.legend-color.premium { background: var(--corsair-bleu-economie); }
+.legend-color.economy { background: #3d4280; }
+
+.cabin-plan {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+  min-width: fit-content;
+  position: relative;
+}
+
+/* Row labels (A-K) */
+.row-labels {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding-top: 24px;
+  min-width: 18px;
+  flex-shrink: 0;
+}
+
+.row-label {
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--corsair-beige-sable);
+  letter-spacing: 0.5px;
+}
+
+.row-label.aisle-gap {
+  height: 12px;
+}
+
+/* Section wrapper */
+.cabin-section {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.section-label {
+  text-align: center;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 4px 0;
+  height: 24px;
+  line-height: 16px;
+}
+
+.section-label.business { color: var(--corsair-bleu-premium); }
+.section-label.premium { color: var(--corsair-bleu-economie); }
+.section-label.economy { color: var(--corsair-beige-sable); }
+
+/* Columns (one per row number) */
+.cabin-columns {
+  display: flex;
+  gap: 1px;
+}
+
+.cabin-col {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  align-items: center;
+}
+
+.col-number {
+  font-size: 9px;
+  color: var(--corsair-beige-sable);
+  opacity: 0.6;
+  height: 0;
+  text-align: center;
+  margin-bottom: 2px;
+  display: none;
+}
+
+/* Individual seat */
+.seat {
+  width: 26px;
+  height: 26px;
+  border-radius: 4px;
+  margin: 1px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 7px;
+  font-weight: 600;
+  color: transparent;
+  position: relative;
+  border: 1px solid transparent;
+}
+
+.seat:hover {
+  transform: scale(1.15);
+  z-index: 2;
+  color: white;
+}
+
+.seat:active {
+  transform: scale(0.95);
+}
+
+/* Seat states */
+.seat.empty {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.seat.occupied {
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.seat.occupied.business {
+  background: var(--corsair-bleu-premium);
+}
+
+.seat.occupied.premium {
+  background: var(--corsair-bleu-economie);
+}
+
+.seat.occupied.economy {
+  background: #3d4280;
+}
+
+.seat.selected {
+  border-color: white;
+  box-shadow: 0 0 0 1px white;
+  z-index: 3;
+  color: white;
+}
+
+/* Special seat states */
+.seat.special-meal {
+  position: relative;
+}
+
+.seat.special-meal::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #fbbf24;
+}
+
+.seat.wheelchair::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--corsair-bleu-economie);
+}
+
+.seat.no-seat {
+  visibility: hidden;
+}
+
+/* Aisle gap */
+.aisle {
+  height: 10px;
+  min-height: 10px;
+}
+
+/* Galley / Lavatory markers */
+.facility {
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 1px;
+}
+
+.facility svg {
+  width: 14px;
+  height: 14px;
+  stroke: var(--corsair-beige-sable);
+  opacity: 0.4;
+  stroke-width: 1.75;
+}
+
+/* Exit row indicators */
+.exit-marker {
+  width: 100%;
+  height: 3px;
+  display: flex;
+  gap: 1px;
+  margin: 4px 0;
+}
+
+.exit-marker span {
+  flex: 1;
+  background: #257A6C;
+  border-radius: 1px;
+  opacity: 0.5;
+}
+
+/* Section divider */
+.section-divider {
+  width: 6px;
+  flex-shrink: 0;
+}
+
+/* Seat info tooltip */
+.seat-info {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--corsair-bleu-business);
+  border: 1px solid var(--corsair-bleu-economie);
+  border-radius: var(--radius);
+  padding: 10px 20px;
+  display: none;
+  z-index: 100;
+  min-width: 240px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.seat-info.visible {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.seat-info-id {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--corsair-bleu-economie);
+}
+
+.seat-info-details {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.seat-info-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: white;
+}
+
+.seat-info-meta {
+  font-size: 11px;
+  color: var(--corsair-beige-sable);
+  letter-spacing: 0.5px;
+}
+
+/* Stats bar */
+.cabin-stats {
+  display: flex;
+  gap: 16px;
+  margin-top: 12px;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: var(--radius);
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.stat-value {
+  font-size: 18px;
+  font-weight: 600;
+  color: white;
+}
+
+.stat-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--corsair-beige-sable);
+}
+
+.stat-divider {
+  width: 1px;
+  height: 28px;
+  background: rgba(255, 255, 255, 0.08);
 }
 
 /* === Touch-friendly === */
@@ -178,10 +558,15 @@ button, [role="button"] {
 
 /* === Scrollbar === */
 ::-webkit-scrollbar {
-  width: 4px;
+  width: 3px;
+  height: 3px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--bg-card);
-  border-radius: 4px;
+  background: var(--corsair-bleu-premium);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
 }
