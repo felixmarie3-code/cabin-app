@@ -687,7 +687,12 @@ button, [role="button"] { min-height: 36px; min-width: 36px; }
   display: flex; flex-direction: column; justify-content: space-between;
 }
 .cl-tile:active { transform: scale(0.98); }
-.cl-tile-icon { font-size: 28px; margin-bottom: 8px; opacity: 0.8; }
+.cl-tile-icon { margin-bottom: 8px; opacity: 0.8; }
+.cl-tile-icon svg { width: 28px; height: 28px; }
+.cl-tile.prevol .cl-tile-icon svg { stroke: var(--corsair-bleu-premium); }
+.cl-tile.envol .cl-tile-icon svg { stroke: var(--corsair-bleu-economie); }
+.cl-tile.annonces .cl-tile-icon svg { stroke: #fbbf24; }
+.cl-tile.memo .cl-tile-icon svg { stroke: var(--corsair-rouge-vermillon); }
 .cl-tile-title { font-size: 13px; font-weight: 600; color: var(--text); letter-spacing: 0.5px; }
 .cl-tile-subtitle { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
 .cl-tile-count { font-size: 10px; color: var(--text-muted); margin-top: 8px; }
