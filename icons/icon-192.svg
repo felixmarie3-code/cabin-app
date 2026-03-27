@@ -1,7 +1,19 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 192 192">
   <rect width="192" height="192" rx="42" fill="#181A3B"/>
-  <g transform="translate(130,52) scale(0.95)">
-    <path transform="matrix(1,0,0,-1,0,73.76)" d="M0 0 11.758-14.61C-2.051-24.81-17.921-29.556-38.171-29.556-54.183-29.556-67.722-26.063-77.322-19.454-86.399-13.204-91.979-4.178-93.456 6.645-95.537 21.895-90.841 37.034-80.236 49.269-66.474 65.149-44.923 73.89-19.55 73.89-3.843 73.885 10.016 69.86 21.647 61.91 20.682 60.651 11.402 48.563 10.509 47.401 1.259 52.954-8.605 55.889-18.022 55.889-21.977 55.889-25.86 55.371-29.566 54.351-36.658 52.406-42.446 49.655-49.381 41.979-56.635 33.958-60.772 22.007-60.184 10.783-59.595-.477-50.406-9.077-37.846-10.123-36.521-10.235-35.141-10.29-33.755-10.29-22.139-10.29-9.534-6.447 0 0" fill="#FFFFFF"/>
+  <!-- Simplified airplane silhouette -->
+  <g transform="translate(96,88)">
+    <!-- Fuselage -->
+    <ellipse cx="0" cy="0" rx="52" ry="8" fill="#52A7BE" opacity="0.2"/>
+    <!-- Wings -->
+    <path d="M-12,-4 L-48,18 L-44,20 L-8,4 Z" fill="#52A7BE" opacity="0.35"/>
+    <path d="M12,-4 L48,18 L44,20 L8,4 Z" fill="#52A7BE" opacity="0.35"/>
+    <!-- Body -->
+    <path d="M-6,6 L0,-36 L6,6 Z" fill="white" opacity="0.9"/>
+    <!-- Tail -->
+    <path d="M-4,-30 L0,-42 L4,-30" fill="#52A7BE" opacity="0.6"/>
   </g>
-  <line x1="36" y1="152" x2="156" y2="152" stroke="#DA3D32" stroke-width="3" stroke-linecap="round"/>
+  <!-- CABIN text -->
+  <text x="96" y="136" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="20" font-weight="700" fill="white" letter-spacing="6" opacity="0.95">CABIN</text>
+  <!-- Neoline -->
+  <line x1="46" y1="148" x2="146" y2="148" stroke="#DA3D32" stroke-width="2.5" stroke-linecap="round"/>
 </svg>
