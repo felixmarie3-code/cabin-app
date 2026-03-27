@@ -1,12 +1,15 @@
-const CACHE_NAME = 'cabin-app-v1';
+const CACHE_NAME = 'cabin-app-v2';
 const ASSETS = [
   './',
   './index.html',
   './css/app.css',
   './js/app.js',
   './manifest.json',
-  './icons/icon-192.png',
-  './icons/icon-512.png'
+  './icons/icon-192.svg',
+  './icons/icon-512.png',
+  './icons/corsair_blanc.svg',
+  './fonts/Gilroy-Regular.ttf',
+  './fonts/Gilroy-SemiBold.ttf'
 ];
 
 // Install — cache all static assets
@@ -29,9 +32,15 @@ self.addEventListener('activate', (e) => {
   );
 });
 
-// Fetch — cache first, then network
+// Fetch — network first, fallback to cache (dev-friendly + offline support)
 self.addEventListener('fetch', (e) => {
   e.respondWith(
-    caches.match(e.request).then(cached => cached || fetch(e.request))
+    fetch(e.request)
+      .then(response => {
+        const clone = response.clone();
+        caches.open(CACHE_NAME).then(cache => cache.put(e.request, clone));
+        return response;
+      })
+      .catch(() => caches.match(e.request))
   );
 });
