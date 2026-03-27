@@ -250,6 +250,18 @@ function buildBriefing(){
     info.appendChild(nm);info.appendChild(rl);row.appendChild(av);row.appendChild(info);crewEl.appendChild(row);
   });
 
+  // Cabin defects
+  const defList=el('cabinDefects');defList.textContent='';
+  const defects=lsGet('cabin_defects',[]);
+  if(!defects.length){const nd=document.createElement('div');nd.className='no-defects';nd.textContent='Aucun d\u00e9faut signal\u00e9';defList.appendChild(nd);}
+  defects.forEach(d=>{
+    const row=document.createElement('div');row.className='defect-row';
+    const z=document.createElement('span');z.className='defect-zone';z.textContent=d.zone;
+    const ds=document.createElement('span');ds.className='defect-desc';ds.textContent=d.desc;
+    const im=document.createElement('span');im.className='defect-impact '+d.impact;im.textContent=d.impact.toUpperCase();
+    row.appendChild(z);row.appendChild(ds);row.appendChild(im);defList.appendChild(row);
+  });
+
   // Briefing notes
   const notesEl=el('briefingNotes');notesEl.value=localStorage.getItem('cabin_briefing_notes')||'';
   notesEl.addEventListener('input',()=>localStorage.setItem('cabin_briefing_notes',notesEl.value));
@@ -273,6 +285,86 @@ document.getElementById('doorOverlay').addEventListener('click',e=>{if(e.target=
 document.getElementById('doorSave').addEventListener('click',()=>{
   document.querySelectorAll('.door-select').forEach(s=>{doorAssignments[s.dataset.crew]=s.value;});
   lsSet('cabin_doors',doorAssignments);document.getElementById('doorOverlay').classList.remove('visible');buildBriefing();
+});
+
+// Cabin defect modal
+document.getElementById('addDefectBtn').addEventListener('click',()=>document.getElementById('defectOverlay').classList.add('visible'));
+document.getElementById('defectClose').addEventListener('click',()=>document.getElementById('defectOverlay').classList.remove('visible'));
+document.getElementById('defectOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)document.getElementById('defectOverlay').classList.remove('visible');});
+document.getElementById('defectImpact').addEventListener('click',e=>{const b=e.target.closest('.sev-btn');if(!b)return;document.querySelectorAll('#defectImpact .sev-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');});
+document.getElementById('defectSave').addEventListener('click',()=>{
+  const desc=document.getElementById('defectDesc').value.trim();if(!desc)return;
+  const defects=lsGet('cabin_defects',[]);const sev=document.querySelector('#defectImpact .sev-btn.active');
+  defects.push({zone:document.getElementById('defectZone').value,desc,impact:sev?sev.dataset.sev:'minor'});
+  lsSet('cabin_defects',defects);document.getElementById('defectDesc').value='';
+  document.getElementById('defectOverlay').classList.remove('visible');buildBriefing();
+});
+
+// ============================================================
+// PAX LIST (bottom panel under cabin)
+// ============================================================
+let selectedPaxSeat=null;
+
+function buildPaxList(){
+  const scroll=document.getElementById('paxListScroll');scroll.textContent='';
+  const hasFilter=activeFilter!=='all'||searchQuery.length>0;
+  let list=Object.entries(passengers);
+  // Apply current filter
+  if(activeFilter==='occupied')list=list.filter(([,p])=>true);
+  else if(activeFilter==='empty'){document.getElementById('paxListCount').textContent='0';return;}
+  else if(activeFilter==='special-meal')list=list.filter(([,p])=>p.meal);
+  else if(activeFilter==='um')list=list.filter(([,p])=>p.remark==='UM');
+  else if(activeFilter==='wchr')list=list.filter(([,p])=>p.remark==='WCHR');
+  else if(activeFilter==='not-boarded')list=list.filter(([,p])=>!p.boarded);
+  else if(activeFilter==='bookmarked')list=list.filter(([s])=>bookmarks[s]);
+  if(searchQuery)list=list.filter(([s,p])=>(p.name+' '+p.pnr+' '+s+' '+p.remark+' '+p.meal).toLowerCase().includes(searchQuery));
+  list.sort((a,b)=>a[0].localeCompare(b[0],undefined,{numeric:true}));
+  document.getElementById('paxListCount').textContent=list.length;
+  document.getElementById('paxListTitle').textContent=hasFilter?'R\u00e9sultat filtre':'Liste passagers';
+  list.forEach(([seat,p])=>{
+    const row=document.createElement('div');row.className='pax-list-row';if(seat===selectedPaxSeat)row.classList.add('selected');
+    const s=document.createElement('span');s.className='pax-list-seat';s.textContent=seat;
+    const n=document.createElement('span');n.className='pax-list-name';n.textContent=p.name;
+    const tags=document.createElement('span');tags.className='pax-list-tags';
+    if(p.meal){const t=document.createElement('span');t.className='pax-list-tag meal';t.textContent=p.meal;tags.appendChild(t);}
+    if(p.remark){const t=document.createElement('span');t.className='pax-list-tag remark';t.textContent=p.remark;tags.appendChild(t);}
+    row.appendChild(s);row.appendChild(n);row.appendChild(tags);
+    row.addEventListener('click',()=>showPaxDetail(seat));
+    scroll.appendChild(row);
+  });
+}
+
+function showPaxDetail(seatId){
+  selectedPaxSeat=seatId;const pax=passengers[seatId];if(!pax)return;
+  const sec=Object.values(CABIN_CONFIG).find(s=>s.rows.some(r=>seatId.startsWith(String(r))));
+  const cls=sec?sec.cls:'economy';
+  document.getElementById('paxListView').style.display='none';
+  document.getElementById('paxDetailView').style.display='';
+  const badge=document.getElementById('paxDetBadge');badge.textContent=seatId;badge.className='pax-seat-badge '+cls;
+  document.getElementById('paxDetName').textContent=pax.name;
+  document.getElementById('paxDetClass').textContent=cls+(pax.ffn?' | FFN '+pax.ffn:'');
+  document.getElementById('paxDetBookmark').classList.toggle('bookmarked',!!bookmarks[seatId]);
+  const grid=document.getElementById('paxDetGrid');grid.textContent='';
+  [{l:'PNR',v:pax.pnr},{l:'Nationalit\u00e9',v:pax.nationality},{l:'Embarquement',v:pax.boarded?'\u00c0 bord':'En attente',c:pax.boarded?'ok':'warn'},{l:'Check-in',v:pax.checkedIn?'Oui':'Non',c:pax.checkedIn?'ok':'warn'},{l:'Repas',v:pax.meal||'Standard'},{l:'Remarque',v:pax.remark||'Aucune',c:pax.remark?'warn':''},{l:'Bagages',v:pax.bags+' pcs'},{l:'Nourrisson',v:pax.infant?'Oui':'Non',c:pax.infant?'warn':''}].forEach(f=>{
+    const it=document.createElement('div');it.className='pax-info-item';const lb=document.createElement('div');lb.className='pax-info-label';lb.textContent=f.l;const vl=document.createElement('div');vl.className='pax-info-value'+(f.c?' '+f.c:'');vl.textContent=f.v;it.appendChild(lb);it.appendChild(vl);grid.appendChild(it);});
+  document.getElementById('paxDetNotes').value=notes[seatId]||'';
+  // Highlight seat in cabin
+  document.querySelectorAll('.seat.selected').forEach(s=>s.classList.remove('selected'));
+  const se=document.querySelector('[data-seat="'+seatId+'"]');if(se){se.classList.add('selected');se.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});}
+}
+document.getElementById('paxDetailBack').addEventListener('click',()=>{
+  document.getElementById('paxDetailView').style.display='none';document.getElementById('paxListView').style.display='';
+  document.querySelectorAll('.seat.selected').forEach(s=>s.classList.remove('selected'));selectedPaxSeat=null;
+});
+document.getElementById('paxDetBookmark').addEventListener('click',()=>{
+  if(!selectedPaxSeat)return;if(bookmarks[selectedPaxSeat])delete bookmarks[selectedPaxSeat];else bookmarks[selectedPaxSeat]=true;
+  lsSet('cabin_bookmarks',bookmarks);document.getElementById('paxDetBookmark').classList.toggle('bookmarked',!!bookmarks[selectedPaxSeat]);
+  const se=document.querySelector('[data-seat="'+selectedPaxSeat+'"]');if(se)se.classList.toggle('bookmarked',!!bookmarks[selectedPaxSeat]);
+});
+document.getElementById('paxDetSaveNote').addEventListener('click',()=>{
+  if(!selectedPaxSeat)return;const v=document.getElementById('paxDetNotes').value.trim();
+  if(v)notes[selectedPaxSeat]=v;else delete notes[selectedPaxSeat];lsSet('cabin_notes',notes);
+  const btn=document.getElementById('paxDetSaveNote');btn.textContent='Enregistr\u00e9 !';setTimeout(()=>{btn.textContent='Enregistrer la note';},1500);
 });
 
 // ============================================================
@@ -300,7 +392,7 @@ function buildCabinPlan(){
         else if(pos==='.'){const n=document.createElement('div');n.className='seat no-seat';col.appendChild(n);}
         else{const sid=rn+pos,se=document.createElement('div');se.className='seat';se.dataset.seat=sid;se.textContent=pos;
           const pax=passengers[sid];if(pax){se.classList.add('occupied',cfg.cls);if(pax.meal)se.classList.add('special-meal');if(pax.remark==='WCHR')se.classList.add('wheelchair');if(pax.remark==='UM')se.classList.add('um');}else se.classList.add('empty');
-          if(bookmarks[sid])se.classList.add('bookmarked');se.addEventListener('click',ev=>{ev.stopPropagation();openPaxPanel(sid,cfg.cls);});col.appendChild(se);}});
+          if(bookmarks[sid])se.classList.add('bookmarked');se.addEventListener('click',ev=>{ev.stopPropagation();showPaxDetail(sid);});col.appendChild(se);}});
       const rne=document.createElement('div');rne.className='row-num';rne.textContent=rn;rne.style.cssText='height:16px;display:flex;align-items:center;justify-content:center';
       col.appendChild(rne);cols.appendChild(col);});
     sec.appendChild(cols);c.appendChild(sec);});applyFilters();updateStats();
@@ -310,7 +402,10 @@ document.getElementById('searchInput').addEventListener('input',e=>{searchQuery=
 function applyFilters(){const has=activeFilter!=='all'||searchQuery.length>0;document.querySelectorAll('.seat:not(.no-seat)').forEach(el=>{const sid=el.dataset.seat,pax=passengers[sid];let m=true;
   if(activeFilter==='occupied')m=!!pax;else if(activeFilter==='empty')m=!pax;else if(activeFilter==='special-meal')m=pax&&pax.meal;else if(activeFilter==='um')m=pax&&pax.remark==='UM';else if(activeFilter==='wchr')m=pax&&pax.remark==='WCHR';else if(activeFilter==='not-boarded')m=pax&&!pax.boarded;else if(activeFilter==='bookmarked')m=!!bookmarks[sid];
   if(searchQuery&&m){if(pax)m=(pax.name+' '+pax.pnr+' '+sid+' '+pax.remark+' '+pax.meal).toLowerCase().includes(searchQuery);else m=sid.toLowerCase().includes(searchQuery);}
-  el.classList.toggle('dimmed',has&&!m);el.classList.toggle('highlighted',has&&m&&(activeFilter!=='all'||searchQuery));});}
+  el.classList.toggle('dimmed',has&&!m);el.classList.toggle('highlighted',has&&m&&(activeFilter!=='all'||searchQuery));});
+  // Update pax list below cabin
+  buildPaxList();
+}
 function updateStats(){const se=document.getElementById('cabinStats');se.textContent='';const biz=document.querySelectorAll('.seat.occupied.business').length,prem=document.querySelectorAll('.seat.occupied.premium').length,eco=document.querySelectorAll('.seat.occupied.economy').length,total=document.querySelectorAll('.seat:not(.no-seat)').length,occ=biz+prem+eco,pct=Math.round(occ/total*100),sm=document.querySelectorAll('.seat.special-meal').length;
   [{v:pct+'%',l:'Remplissage'},null,{v:''+biz,l:'Business'},null,{v:''+prem,l:'Premium'},null,{v:''+eco,l:'Economy'},null,{v:''+sm,l:'Repas sp\u00e9.'},null,{v:''+Object.keys(bookmarks).length,l:'Marqu\u00e9s'}].forEach(i=>{if(!i){const d=document.createElement('div');d.className='stat-divider';se.appendChild(d);return;}const si=document.createElement('div');si.className='stat-item';const w=document.createElement('div');const v=document.createElement('div');v.className='stat-value';v.textContent=i.v;const l=document.createElement('div');l.className='stat-label';l.textContent=i.l;w.appendChild(v);w.appendChild(l);si.appendChild(w);se.appendChild(si);});}
 
@@ -536,4 +631,4 @@ function updateAppBadge(){if(!('setAppBadge' in navigator))return;let c=0;Object
 // ============================================================
 // INIT
 // ============================================================
-buildBriefing();buildCabinPlan();buildMeals();buildTimeline();buildChecklists();buildReport();updateClocks();updateAppBadge();renderNotifCenter();updateNotifBadge();
+buildBriefing();buildCabinPlan();buildPaxList();buildMeals();buildTimeline();buildChecklists();buildReport();updateClocks();updateAppBadge();renderNotifCenter();updateNotifBadge();
