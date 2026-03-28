@@ -599,61 +599,106 @@ function buildCrewAvatar(crew){
 }
 
 // Galley facility SVG icons
-const GALLEY_ICONS={
-  crew:'<svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><circle cx="12" cy="7" r="3.5"/><path d="M4 21v-2a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v2"/><path d="M6.5 7.5h11" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M8 7.5c0-3 2-5 4-5s4 2 4 5" fill="none" stroke="currentColor" stroke-width="1"/></svg>',
-  galley:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="16" height="16"><rect x="4" y="3" width="16" height="18" rx="2"/><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><circle cx="12" cy="6" r="1.5"/><line x1="8" y1="12" x2="16" y2="12"/></svg>',
-  lav:'<svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M9 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6zm6 0a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM5 10h4.5v12h-2v-5h-.5v5H5V10zm7.5 0H17v12h-2v-5h-.5v5h-2V10z"/></svg>',
-  cart:'rect'
-};
-// Facilities per door: D side (top), G side (bottom), width class
-const GALLEY_FACILITIES={
-  1:{D:['crew','galley'],G:['lav','cart'],width:'wide'},
-  2:{D:['lav','crew'],G:['crew','cart','cart'],width:'x-wide'},
-  3:{D:['cart','cart','cart'],G:['galley'],width:'medium'},
-  4:{D:['crew','crew'],G:['lav','crew'],width:'wide'}
+const GALLEY_SVG={
+  crew:'<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="7" r="3.5"/><path d="M4 21v-2a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v2"/><path d="M6.5 7.5h11" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M8 7.5c0-3 2-5 4-5s4 2 4 5" fill="none" stroke="currentColor" stroke-width="1"/></svg>',
+  galley:'<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="3"/><path d="M18 22H6a2 2 0 0 1-2-2V12c0-1.1.9-2 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2zM6 14h12M6 18h12" stroke="currentColor" stroke-width="0.5" fill="none"/><rect x="5" y="11" width="14" height="10" rx="1.5" fill="currentColor" opacity="0.15"/></svg>',
+  lav:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6zm6 0a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM5 10h4.5v12h-2v-5h-.5v5H5V10zm7.5 0H17v12h-2v-5h-.5v5h-2V10z"/></svg>'
 };
 
-function buildFacilityIcons(doorNum,side){
-  const fac=(GALLEY_FACILITIES[doorNum]||{})[side]||[];
-  if(!fac.length)return null;
-  const wrap=document.createElement('div');wrap.className='galley-facilities';
-  fac.forEach(f=>{
-    if(f==='cart'){
-      // Grey rectangle container (like reference image)
-      const rect=document.createElement('div');rect.className='galley-cart-rect';
-      rect.title='Chariot / Conteneur';
-      wrap.appendChild(rect);
-    }else{
-      const ic=document.createElement('div');ic.className='galley-facility-icon';
-      ic.innerHTML=GALLEY_ICONS[f]||'';
-      ic.title=f==='crew'?'Poste équipage':f==='galley'?'Office':'Toilettes';
-      wrap.appendChild(ic);
-    }
-  });
-  return wrap;
+// Galley layout per door — each zone is a rectangle with optional icon inside
+// Zones arranged in a 2-column grid (left=D side/top, right=G side/bottom)
+// {type:'icon',icon:'crew'|'lav'|'galley'} or {type:'cart'} (grey container)
+const GALLEY_ZONES={
+  1:{
+    width:'wide',
+    left:[ // K side (top of plan)
+      {type:'icon',icon:'lav',h:1},
+      {type:'icon',icon:'crew',h:1}
+    ],
+    right:[ // A side (bottom of plan)
+      {type:'icon',icon:'crew',h:1},
+      {type:'icon',icon:'galley',h:1}
+    ]
+  },
+  2:{
+    width:'x-wide',
+    left:[
+      {type:'icon',icon:'lav',h:1},
+      {type:'icon',icon:'crew',h:1},
+      {type:'cart',h:1}
+    ],
+    right:[
+      {type:'icon',icon:'crew',h:1},
+      {type:'icon',icon:'galley',h:1},
+      {type:'cart',h:1}
+    ]
+  },
+  3:{
+    width:'medium',
+    left:[
+      {type:'icon',icon:'lav',h:1}
+    ],
+    right:[
+      {type:'icon',icon:'lav',h:1}
+    ]
+  },
+  4:{
+    width:'wide',
+    left:[
+      {type:'icon',icon:'crew',h:1},
+      {type:'icon',icon:'lav',h:1}
+    ],
+    right:[
+      {type:'icon',icon:'crew',h:1},
+      {type:'icon',icon:'galley',h:1}
+    ]
+  }
+};
+
+function buildZoneRect(zone){
+  const el=document.createElement('div');
+  if(zone.type==='cart'){
+    el.className='gz-cart';
+  }else{
+    el.className='gz-icon';
+    el.innerHTML=GALLEY_SVG[zone.icon]||'';
+  }
+  return el;
 }
 
-// Build a galley column with: galley box (full height, PN + facilities inside) → row-num space
+// Build a galley column with 2-column zone layout + crew avatars
 function buildGalleyCol(label,doorNum){
   const col=document.createElement('div');col.className='galley-col';
-  const fac=GALLEY_FACILITIES[doorNum];
-  if(fac&&fac.width)col.classList.add('galley-'+fac.width);
+  const zones=GALLEY_ZONES[doorNum];
+  if(zones&&zones.width)col.classList.add('galley-'+zones.width);
   const crewD=getCrewForDoor(doorNum,'D');
   const crewG=getCrewForDoor(doorNum,'G');
+
   // Galley box (full cabin height)
   const box=document.createElement('div');box.className='galley-box';
-  // D = top (A side): crew avatar + facility icons
+
+  // Crew D avatar at top
   if(crewD)box.appendChild(buildCrewAvatar(crewD));
-  const facD=buildFacilityIcons(doorNum,'D');
-  if(facD)box.appendChild(facD);
-  // Label in center
+
+  // Zone grid: 2 columns (left=K side, right=A side)
+  if(zones){
+    const grid=document.createElement('div');grid.className='gz-grid';
+    const colL=document.createElement('div');colL.className='gz-col';
+    const colR=document.createElement('div');colR.className='gz-col';
+    (zones.left||[]).forEach(z=>colL.appendChild(buildZoneRect(z)));
+    (zones.right||[]).forEach(z=>colR.appendChild(buildZoneRect(z)));
+    grid.appendChild(colL);grid.appendChild(colR);
+    box.appendChild(grid);
+  }
+
+  // Label
   const lbl=document.createElement('div');lbl.className='galley-box-label';lbl.textContent=label||'P'+doorNum;
   box.appendChild(lbl);
-  // G = bottom (K side): facility icons + crew avatar
-  const facG=buildFacilityIcons(doorNum,'G');
-  if(facG)box.appendChild(facG);
+
+  // Crew G avatar at bottom
   if(crewG)box.appendChild(buildCrewAvatar(crewG));
   col.appendChild(box);
+
   // Row number spacer
   const rns=document.createElement('div');rns.style.height='16px';col.appendChild(rns);
   return col;
