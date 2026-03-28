@@ -325,8 +325,16 @@ html, body {
 
 /* Galley column */
 .galley-col {
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  width: 20px; flex-shrink: 0; gap: 2px; padding-top: 20px;
+  display: flex; flex-direction: column; align-items: center;
+  width: 36px; flex-shrink: 0; padding-top: 20px; gap: 0;
+}
+.galley-box {
+  flex: 1; width: 100%; background: rgba(82,167,190,0.06); border: 1px solid rgba(82,167,190,0.15);
+  border-radius: 4px; display: flex; align-items: center; justify-content: center;
+}
+.galley-box-label {
+  font-size: 7px; color: var(--corsair-beige-sable); opacity: 0.5; letter-spacing: 0.5px;
+  text-transform: uppercase; writing-mode: vertical-lr; text-orientation: mixed; font-weight: 600;
 }
 .galley-icon {
   width: 14px; height: 14px; opacity: 0.3; stroke: var(--corsair-beige-sable); fill: none; stroke-width: 1.5;
@@ -779,18 +787,19 @@ button, [role="button"] { min-height: 36px; min-width: 36px; }
 
 /* === Crew markers on cabin plan (at galleys) === */
 .crew-door-col {
-  display: flex; flex-direction: column; align-items: center; justify-content: space-between;
-  width: 32px; flex-shrink: 0; padding: 20px 0 16px;
+  display: flex; flex-direction: column; align-items: center;
+  width: 36px; flex-shrink: 0; padding-top: 20px; gap: 3px;
 }
-.crew-door-spacer { flex: 1; display: flex; align-items: center; justify-content: center; }
-.crew-door-label { font-size: 7px; font-weight: 700; color: var(--text-muted); letter-spacing: 0.5px; opacity: 0.5; }
+.crew-door-col .galley-box {
+  flex: 1; width: 100%; background: rgba(82,167,190,0.06); border: 1px solid rgba(82,167,190,0.15);
+  border-radius: 4px; display: flex; align-items: center; justify-content: center;
+}
+.crew-door-label { font-size: 7px; font-weight: 700; color: var(--text-muted); letter-spacing: 0.5px; opacity: 0.5; writing-mode: vertical-lr; }
 .cabin-crew-marker {
   width: 28px !important; height: 28px !important; font-size: 8px !important;
   cursor: pointer; flex-shrink: 0; transition: transform 0.15s;
 }
 .cabin-crew-marker:active { transform: scale(0.9); }
-/* Widen galley cols to fit crew avatars */
-.galley-col { width: 32px; justify-content: space-between; }
 
 /* === Door assignment === */
 .door-cabin-layout { display: flex; flex-direction: column; gap: 12px; }

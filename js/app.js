@@ -511,12 +511,16 @@ function buildCabinPlan(){
   const ns=document.createElement('div');ns.className='row-label';ns.style.height='16px';lc.appendChild(ns);c.appendChild(lc);
   ['business','premium','economy_front','economy_rear'].forEach((sk,si)=>{
     const cfg=CABIN_CONFIG[sk];
-    if(si>0){if(GALLEY_AFTER[['business','premium','economy_front','economy_rear'][si-1]]){
-      const g=document.createElement('div');g.className='galley-col';
-      const ic=document.createElementNS('http://www.w3.org/2000/svg','svg');ic.setAttribute('viewBox','0 0 24 24');ic.setAttribute('class','galley-icon');
-      const r=document.createElementNS('http://www.w3.org/2000/svg','rect');r.setAttribute('x','4');r.setAttribute('y','2');r.setAttribute('width','16');r.setAttribute('height','20');r.setAttribute('rx','2');
-      ic.appendChild(r);g.appendChild(ic);const lb=document.createElement('div');lb.className='galley-label';lb.textContent=GALLEY_AFTER[['business','premium','economy_front','economy_rear'][si-1]];g.appendChild(lb);c.appendChild(g);
-    }else{const d=document.createElement('div');d.className='section-divider';c.appendChild(d);}}
+    if(si>0){
+      const prevKey=['business','premium','economy_front','economy_rear'][si-1];
+      const galleyLabel=GALLEY_AFTER[prevKey];
+      // Galley between sections: door number is si+1 (biz→prem=door2, eco_f→eco_r=door3)
+      const doorNum=si===1?'2':si===3?'3':null;
+      if(galleyLabel||doorNum){
+        const g=buildGalleyCol(galleyLabel||'',doorNum||String(si+1));
+        c.appendChild(g);
+      }else{const d=document.createElement('div');d.className='section-divider';c.appendChild(d);}
+    }
     const sec=document.createElement('div');sec.className='cabin-section';
     const sl=document.createElement('div');sl.className='section-label '+cfg.cls;sl.textContent=cfg.label;sec.appendChild(sl);
     const cols=document.createElement('div');cols.className='cabin-columns';
@@ -529,31 +533,10 @@ function buildCabinPlan(){
       const rne=document.createElement('div');rne.className='row-num';rne.textContent=rn;rne.style.cssText='height:16px;display:flex;align-items:center;justify-content:center';
       col.appendChild(rne);cols.appendChild(col);});
     sec.appendChild(cols);c.appendChild(sec);});
-  // Add crew pastilles at galley positions (not on pax seats)
-  // Door mapping to galley insert points: 1=before biz, 2=galley after biz, 3=between eco_front/rear, 4=after eco_rear
-  // G=bottom (K side), D=top (A side)
-  const galleyCols=c.querySelectorAll('.galley-col, .crew-door-col');
-  // Insert crew door columns at positions 1 (before biz) and 4 (after eco_rear)
-  // Position 1: before the first cabin-section
+  // Add door 1 (before business) and door 4 (after economy rear)
   const firstSection=c.querySelector('.cabin-section');
-  if(firstSection){
-    const col1=buildCrewDoorCol('1');
-    c.insertBefore(col1,firstSection);
-  }
-  // Position 4: after last element
-  const col4=buildCrewDoorCol('4');
-  c.appendChild(col4);
-  // Position 2 & 3: find existing galley-cols and append crew markers
-  const galleys=c.querySelectorAll('.galley-col');
-  if(galleys[0])appendCrewToGalley(galleys[0],'2');
-  // Position 3: section-divider between eco_front and eco_rear — replace with a crew door col
-  const dividers=c.querySelectorAll('.section-divider');
-  dividers.forEach(div=>{
-    const col3=buildCrewDoorCol('3');
-    col3.classList.add('galley-col');
-    div.replaceWith(col3);
-  });
-  if(galleys[1])appendCrewToGalley(galleys[1],'3');
+  if(firstSection)c.insertBefore(buildGalleyCol('',1),firstSection);
+  c.appendChild(buildGalleyCol('',4));
 
   applyFilters();updateStats();
 }
@@ -565,27 +548,24 @@ function buildCrewAvatar(crew){
   return av;
 }
 
-function buildCrewDoorCol(doorNum){
-  const col=document.createElement('div');col.className='crew-door-col';
+// Build a galley column with: PN-D (top) → galley box (full height) → PN-G (bottom) → row-num space
+function buildGalleyCol(label,doorNum){
+  const col=document.createElement('div');col.className='galley-col';
   const crewD=CREW.find(c=>{const d=doorAssignments[c.name]||c.door;return d===doorNum+'D';});
   const crewG=CREW.find(c=>{const d=doorAssignments[c.name]||c.door;return d===doorNum+'G';});
-  // D = top (A side), G = bottom (K side)
+  // D = top (A side), outside galley box
   if(crewD)col.appendChild(buildCrewAvatar(crewD));
-  const spacer=document.createElement('div');spacer.className='crew-door-spacer';
-  const lbl=document.createElement('div');lbl.className='crew-door-label';lbl.textContent='P'+doorNum;
-  spacer.appendChild(lbl);col.appendChild(spacer);
+  else{const sp=document.createElement('div');sp.style.height='28px';sp.style.flexShrink='0';col.appendChild(sp);}
+  // Galley box (full cabin height)
+  const box=document.createElement('div');box.className='galley-box';
+  const lbl=document.createElement('div');lbl.className='galley-box-label';lbl.textContent=label||'P'+doorNum;
+  box.appendChild(lbl);col.appendChild(box);
+  // G = bottom (K side), outside galley box
   if(crewG)col.appendChild(buildCrewAvatar(crewG));
+  else{const sp=document.createElement('div');sp.style.height='28px';sp.style.flexShrink='0';col.appendChild(sp);}
+  // Row number spacer
+  const rns=document.createElement('div');rns.style.height='16px';col.appendChild(rns);
   return col;
-}
-
-function appendCrewToGalley(galleyEl,doorNum){
-  const crewD=CREW.find(c=>{const d=doorAssignments[c.name]||c.door;return d===doorNum+'D';});
-  const crewG=CREW.find(c=>{const d=doorAssignments[c.name]||c.door;return d===doorNum+'G';});
-  // Remove existing markers
-  galleyEl.querySelectorAll('.cabin-crew-marker').forEach(m=>m.remove());
-  // Insert D at top, G at bottom
-  if(crewD)galleyEl.insertBefore(buildCrewAvatar(crewD),galleyEl.firstChild);
-  if(crewG)galleyEl.appendChild(buildCrewAvatar(crewG));
 }
 document.getElementById('filters').addEventListener('click',e=>{const b=e.target.closest('.filter-btn');if(!b)return;document.querySelectorAll('.filter-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');activeFilter=b.dataset.filter;applyFilters();});
 document.getElementById('searchInput').addEventListener('input',e=>{searchQuery=e.target.value.toLowerCase().trim();applyFilters();});
