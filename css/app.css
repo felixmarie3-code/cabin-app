@@ -639,7 +639,7 @@ button, [role="button"] { min-height: 36px; min-width: 36px; }
 
 /* === Flight Profile === */
 .flight-profile {
-  margin-top: 12px; padding: 16px; position: relative;
+  margin-top: 12px; padding: 16px 0; position: relative;
   display: flex; align-items: stretch; justify-content: space-between;
 }
 .fp-point {
@@ -647,12 +647,12 @@ button, [role="button"] { min-height: 36px; min-width: 36px; }
 }
 .fp-time { font-size: 13px; font-weight: 700; letter-spacing: 0.3px; margin-bottom: 8px; color: var(--corsair-bleu-economie); }
 .fp-dot {
-  width: 16px; height: 16px; border-radius: 50%; flex-shrink: 0;
-  background: var(--corsair-bleu-economie); box-shadow: 0 0 0 5px rgba(82,167,190,0.2);
+  width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+  background: var(--corsair-bleu-economie); box-shadow: 0 0 0 4px rgba(82,167,190,0.2);
 }
-.fp-label { font-size: 10px; letter-spacing: 0.5px; text-transform: uppercase; font-weight: 600; margin-top: 8px; color: var(--corsair-bleu-economie); }
+.fp-label { font-size: 13px; letter-spacing: 0.5px; text-transform: uppercase; font-weight: 700; margin-top: 8px; color: var(--corsair-bleu-economie); }
 .fp-line {
-  position: absolute; left: 40px; right: 40px; height: 3px; border-radius: 2px;
+  position: absolute; left: 26px; right: 26px; height: 3px; border-radius: 2px;
   background: rgba(82,167,190,0.4); z-index: 0;
   top: 50%; /* JS will recalculate exact position */
 }
