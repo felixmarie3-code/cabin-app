@@ -551,21 +551,21 @@ function buildCrewAvatar(crew){
   return av;
 }
 
-// Build a galley column with: PN-D (top) → galley box (full height) → PN-G (bottom) → row-num space
+// Build a galley column with: galley box (full height, PN inside at top/bottom) → row-num space
 function buildGalleyCol(label,doorNum){
   const col=document.createElement('div');col.className='galley-col';
   const crewD=CREW.find(c=>{const d=doorAssignments[c.name]||c.door;return d===doorNum+'D';});
   const crewG=CREW.find(c=>{const d=doorAssignments[c.name]||c.door;return d===doorNum+'G';});
-  // D = top (A side), outside galley box
-  if(crewD)col.appendChild(buildCrewAvatar(crewD));
-  else{const sp=document.createElement('div');sp.style.height='28px';sp.style.flexShrink='0';col.appendChild(sp);}
-  // Galley box (full cabin height)
+  // Galley box (full cabin height, PN inside)
   const box=document.createElement('div');box.className='galley-box';
+  // D = top (A side), inside box
+  if(crewD)box.appendChild(buildCrewAvatar(crewD));
+  // Label in center
   const lbl=document.createElement('div');lbl.className='galley-box-label';lbl.textContent=label||'P'+doorNum;
-  box.appendChild(lbl);col.appendChild(box);
-  // G = bottom (K side), outside galley box
-  if(crewG)col.appendChild(buildCrewAvatar(crewG));
-  else{const sp=document.createElement('div');sp.style.height='28px';sp.style.flexShrink='0';col.appendChild(sp);}
+  box.appendChild(lbl);
+  // G = bottom (K side), inside box
+  if(crewG)box.appendChild(buildCrewAvatar(crewG));
+  col.appendChild(box);
   // Row number spacer
   const rns=document.createElement('div');rns.style.height='16px';col.appendChild(rns);
   return col;
