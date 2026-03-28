@@ -66,7 +66,7 @@ const ROW_LAVS={
 };
 const ALL_POSITIONS=['K','J','H','|','F','E','D','|','C','B','A'];
 const EXIT_ROWS=[1,6,9,30,46];
-const GALLEY_AFTER={business:'GAL',economy_front:'GAL/LAV'};
+const GALLEY_AFTER={premium:'GAL',economy_front:'GAL/LAV'};
 
 // === Mock Passengers ===
 function genPax(){
@@ -579,8 +579,8 @@ function buildCabinPlan(){
     if(si>0){
       const prevKey=['business','premium','economy_front','economy_rear'][si-1];
       const galleyLabel=GALLEY_AFTER[prevKey];
-      // Galley between sections: biz→prem=door2, eco_f→eco_r=door3
-      const doorNum=si===1?2:si===3?3:null;
+      // Galley between sections: prem→eco=door2, eco_f→eco_r=door3
+      const doorNum=si===2?2:si===3?3:null;
       if(galleyLabel||doorNum){
         const g=buildGalleyCol(galleyLabel||'',doorNum||(si+1));
         c.appendChild(g);
