@@ -541,15 +541,6 @@ function buildCabinPlan(){
   if(firstSection)c.insertBefore(buildGalleyCol('',1),firstSection);
   c.appendChild(buildGalleyCol('',4));
 
-  // Match galley column heights to seat columns
-  requestAnimationFrame(()=>{
-    const seatCol=c.querySelector('.cabin-col');
-    if(seatCol){
-      const h=seatCol.offsetHeight;
-      c.querySelectorAll('.galley-col').forEach(g=>{g.style.height=h+'px';});
-    }
-  });
-
   applyFilters();updateStats();
 }
 
