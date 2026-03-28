@@ -236,9 +236,14 @@ function buildBriefing(){
     }
   });
 
-  // Crew
+  // Crew — sorted by assigned door
   const crewEl=el('briefCrew');crewEl.textContent='';
-  CREW.forEach(c=>{
+  const sortedCrew=[...CREW].sort((a,b)=>{
+    const da=doorAssignments[a.name]||a.door;
+    const db=doorAssignments[b.name]||b.door;
+    return da.localeCompare(db);
+  });
+  sortedCrew.forEach(c=>{
     const row=document.createElement('div');row.className='crew-member';
     const av=document.createElement('div');av.className='crew-avatar '+c.rankCls;
     av.textContent=c.trigramme;
@@ -300,7 +305,11 @@ function buildDoorSlot(doorName){
   const label=document.createElement('div');label.style.cssText='font-size:9px;color:var(--text-muted);letter-spacing:0.3px;';label.textContent=doorName;
   const sel=document.createElement('select');sel.className='door-assign-select';sel.dataset.door=doorName;
   const emptyOpt=document.createElement('option');emptyOpt.value='';emptyOpt.textContent='— Libre —';sel.appendChild(emptyOpt);
-  CREW.forEach(c=>{const o=document.createElement('option');o.value=c.name;o.textContent=c.trigramme+' — '+c.rank;sel.appendChild(o);});
+  CREW.forEach(c=>{
+    const o=document.createElement('option');o.value=c.name;
+    o.textContent=c.trigramme+' — '+c.rank;
+    sel.appendChild(o);
+  });
   // Find who's assigned to this door
   const assigned=Object.entries(doorAssignments).find(([,d])=>d===doorName);
   if(assigned)sel.value=assigned[0];
@@ -320,13 +329,17 @@ function validateDoorAssignments(){
   // Check unassigned doors
   const unassigned=[];
   selects.forEach(s=>{if(!s.value)unassigned.push(s.dataset.door);});
-  if(unassigned.length)issues.push(unassigned.length+' porte'+(unassigned.length>1?'s':'')+' non assignée'+(unassigned.length>1?'s':'')+' : '+unassigned.join(', '));
+  if(unassigned.length)issues.push('Portes non assignées : '+unassigned.join(', '));
   // Check duplicates
   const crewCount={};
   selects.forEach(s=>{if(s.value){crewCount[s.value]=(crewCount[s.value]||0)+1;}});
   Object.entries(crewCount).forEach(([name,count])=>{
     if(count>1){const c=CREW.find(cr=>cr.name===name);issues.push((c?c.trigramme:name)+' assigné(e) à '+count+' portes');}
   });
+  // Check unassigned crew
+  const assignedNames=new Set();selects.forEach(s=>{if(s.value)assignedNames.add(s.value);});
+  const unassignedCrew=CREW.filter(c=>!assignedNames.has(c.name));
+  if(unassignedCrew.length)issues.push('PN non assignés : '+unassignedCrew.map(c=>c.trigramme).join(', '));
   if(issues.length){warn.textContent=issues.join(' · ');warn.style.display='';}
   else{warn.style.display='none';warn.textContent='';}
 }
