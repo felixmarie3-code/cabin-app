@@ -116,19 +116,19 @@ html, body {
 .clock-btn svg { width: 14px !important; height: 14px !important; }
 .utc-label { font-size: 11px; font-weight: 700; color: white; letter-spacing: 0.3px; }
 .timer-btn .utc-label { font-variant-numeric: tabular-nums; min-width: 42px; text-align: center; display: inline-block; }
-.clock-dropdown {
-  position: fixed; top: calc(var(--header-height) + 4px); background: var(--bg-surface);
-  border-radius: 14px; padding: 4px; min-width: 200px; z-index: 10000;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.5); display: none;
-  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+/* Header panels — same pattern as notif-center */
+.header-panel {
+  position: fixed; top: var(--header-height); right: 8px; width: 280px; max-width: 90vw;
+  background: var(--bg-surface);
+  border-radius: 14px; box-shadow: 0 12px 40px rgba(0,0,0,0.35); margin-top: 6px;
+  z-index: 500; display: none; flex-direction: column; overflow: hidden; padding: 12px;
+  gap: 10px;
 }
-.clock-dropdown.visible { display: block; }
-.header-dropdown-backdrop {
-  position: fixed; inset: 0; z-index: 9999; display: none;
+.header-panel.visible { display: flex; }
+.header-panel-title {
+  font-size: 10px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--corsair-bleu-economie); padding-bottom: 4px;
 }
-.header-dropdown-backdrop.visible { display: block; }
-#timerDropdown { right: 16px; min-width: 260px; }
-#clockDropdown { right: 16px; min-width: 200px; }
 .clock-option {
   display: flex; justify-content: space-between; align-items: center;
   width: 100%; padding: 10px 14px; border: none; background: none;
