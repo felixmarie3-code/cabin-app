@@ -592,37 +592,32 @@ function buildCabinPlan(){
     cfg.rows.forEach(rn=>{const col=document.createElement('div');col.className='cabin-col';if(EXIT_ROWS.includes(rn))col.classList.add('exit-row');
       const rowLayout=ROW_OVERRIDES[rn]||cfg.layout;
       const lavPositions=ROW_LAVS[rn]?ROW_LAVS[rn].positions:[];
-      // Pre-compute lav groups (consecutive lav positions between aisles)
-      let lavConsumed=new Set();
-      if(lavPositions.length){
-        let group=[];
-        for(let pi=0;pi<rowLayout.length;pi++){
-          const pos=rowLayout[pi];const origPos=ALL_POSITIONS[pi];
-          if(pos==='.'&&lavPositions.includes(origPos)){group.push(pi);}
-          else{if(group.length>0){group.forEach(g=>lavConsumed.add(g));group=[];}}}
-        if(group.length>0)group.forEach(g=>lavConsumed.add(g));
-      }
-      // Build merged lav groups
-      const lavGroups=[];let curGroup=[];
+      // Pre-compute lav groups for merged rendering
+      const lavSet=new Set();
+      lavPositions.forEach(p=>{const idx=ALL_POSITIONS.indexOf(p);if(idx>=0)lavSet.add(idx);});
+      // Build lav groups (consecutive lav indices between aisles)
+      const lavGroups=[];let curLavGrp=[];
       for(let pi=0;pi<rowLayout.length;pi++){
-        if(lavConsumed.has(pi)){curGroup.push(pi);}
-        else{if(curGroup.length){lavGroups.push([...curGroup]);curGroup=[];}}}
-      if(curGroup.length)lavGroups.push(curGroup);
-      const lavGroupStarts=new Set(lavGroups.map(g=>g[0]));
-      const lavGroupMap={};lavGroups.forEach(g=>{lavGroupMap[g[0]]=g.length;});
+        if(lavSet.has(pi)){curLavGrp.push(pi);}
+        else{if(curLavGrp.length){lavGroups.push([...curLavGrp]);curLavGrp=[];}}}
+      if(curLavGrp.length)lavGroups.push(curLavGrp);
+      const lavGroupOf={};// pi → {start, count, isFirst, isLast}
+      lavGroups.forEach(g=>{g.forEach((pi,i)=>{lavGroupOf[pi]={start:g[0],count:g.length,isFirst:i===0,isLast:i===g.length-1,isMid:i>0&&i<g.length-1};});});
 
       rowLayout.forEach((pos,pi)=>{if(pos==='|'){const a=document.createElement('div');a.className='aisle';col.appendChild(a);}
         else if(pos==='.'){
-          if(lavConsumed.has(pi)){
-            if(lavGroupStarts.has(pi)){
-              // Merged lav rectangle
-              const count=lavGroupMap[pi];
-              const lv=document.createElement('div');lv.className='seat-lav-merged';lv.title='Toilettes';
-              lv.style.height=(count*28-2)+'px';
-              lv.innerHTML='<svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-1-1v-4H7l5-6v4h2l-4 7z" fill="none"/><circle cx="8" cy="6" r="2"/><path d="M5 10h6v1.5H8.5v2H11V15H8.5v3h-3v-3H5v-1.5h.5v-2H5V10z"/><circle cx="16" cy="6" r="2"/><path d="M19 10v5h-1.5v3h-3v-3H13v-5h6z"/></svg>';
-              col.appendChild(lv);
+          if(lavGroupOf[pi]){
+            const info=lavGroupOf[pi];
+            const lv=document.createElement('div');lv.className='seat seat-lav';lv.title='Toilettes';
+            // Visual merging via CSS classes
+            if(info.isFirst)lv.classList.add('lav-first');
+            if(info.isLast)lv.classList.add('lav-last');
+            if(info.isMid)lv.classList.add('lav-mid');
+            // Icon only on middle or single cell
+            if(info.count===1||(info.count<=3&&info.isFirst)||(info.count>3&&Math.floor(info.count/2)===lavGroups.find(g=>g[0]===info.start).indexOf(pi))){
+              lv.innerHTML='<svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><circle cx="8" cy="6" r="2"/><path d="M5 10h6v1.5H8.5v2H11V15H8.5v3h-3v-3H5v-1.5h.5v-2H5V10z"/><circle cx="16" cy="6" r="2"/><path d="M19 10v5h-1.5v3h-3v-3H13v-5h6z"/></svg>';
             }
-            // else: skip (already covered by merged block)
+            col.appendChild(lv);
           }else{const n=document.createElement('div');n.className='seat no-seat';col.appendChild(n);}
         }
         else{const sid=rn+pos,se=document.createElement('div');se.className='seat';se.dataset.seat=sid;se.textContent=pos;
