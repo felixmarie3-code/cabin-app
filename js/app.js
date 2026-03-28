@@ -758,4 +758,6 @@ function updateAppBadge(){if(!('setAppBadge' in navigator))return;let c=0;Object
 // ============================================================
 // INIT
 // ============================================================
+// Header date (28MAR26 format)
+(function(){const d=new Date();const m=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];document.getElementById('headerDate').textContent=String(d.getDate()).padStart(2,'0')+m[d.getMonth()]+String(d.getFullYear()).slice(-2);})();
 buildBriefing();buildCabinPlan();buildPaxList();buildMeals();buildTimeline();buildChecklists();buildReport();updateClocks();updateAppBadge();renderNotifCenter();updateNotifBadge();
