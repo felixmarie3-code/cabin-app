@@ -598,19 +598,51 @@ function buildCrewAvatar(crew){
   return av;
 }
 
-// Build a galley column with: galley box (full height, PN inside at top/bottom) → row-num space
+// Galley facility SVG icons
+const GALLEY_ICONS={
+  crew:'<svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><circle cx="12" cy="7" r="3.5"/><path d="M4 21v-2a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v2"/><path d="M6.5 7.5h11" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M8 7.5c0-3 2-5 4-5s4 2 4 5" fill="none" stroke="currentColor" stroke-width="1"/></svg>',
+  galley:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="16" height="16"><rect x="4" y="3" width="16" height="18" rx="2"/><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><circle cx="12" cy="6" r="1.5"/><line x1="8" y1="12" x2="16" y2="12"/></svg>',
+  lav:'<svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M9 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6zm6 0a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM5 10h4.5v12h-2v-5h-.5v5H5V10zm7.5 0H17v12h-2v-5h-.5v5h-2V10z"/></svg>',
+  cart:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="16" height="16"><rect x="6" y="4" width="12" height="14" rx="1.5"/><line x1="6" y1="8" x2="18" y2="8"/><line x1="6" y1="12" x2="18" y2="12"/><circle cx="8.5" cy="21" r="1.5"/><circle cx="15.5" cy="21" r="1.5"/><line x1="8.5" y1="18" x2="8.5" y2="19.5"/><line x1="15.5" y1="18" x2="15.5" y2="19.5"/></svg>'
+};
+// Facilities per door: D side (top), G side (bottom)
+const GALLEY_FACILITIES={
+  1:{D:['crew','galley'],G:['lav','cart']},
+  2:{D:['galley','cart'],G:['galley','cart']},
+  3:{D:['lav'],G:['lav']},
+  4:{D:['crew','galley'],G:['lav','cart']}
+};
+
+function buildFacilityIcons(doorNum,side){
+  const fac=(GALLEY_FACILITIES[doorNum]||{})[side]||[];
+  if(!fac.length)return null;
+  const wrap=document.createElement('div');wrap.className='galley-facilities';
+  fac.forEach(f=>{
+    const ic=document.createElement('div');ic.className='galley-facility-icon';
+    ic.innerHTML=GALLEY_ICONS[f]||'';
+    ic.title=f==='crew'?'Poste équipage':f==='galley'?'Office':f==='lav'?'Toilettes':'Chariot';
+    wrap.appendChild(ic);
+  });
+  return wrap;
+}
+
+// Build a galley column with: galley box (full height, PN + facilities inside) → row-num space
 function buildGalleyCol(label,doorNum){
   const col=document.createElement('div');col.className='galley-col';
   const crewD=getCrewForDoor(doorNum,'D');
   const crewG=getCrewForDoor(doorNum,'G');
-  // Galley box (full cabin height, PN inside)
+  // Galley box (full cabin height)
   const box=document.createElement('div');box.className='galley-box';
-  // D = top (A side), inside box
+  // D = top (A side): crew avatar + facility icons
   if(crewD)box.appendChild(buildCrewAvatar(crewD));
+  const facD=buildFacilityIcons(doorNum,'D');
+  if(facD)box.appendChild(facD);
   // Label in center
   const lbl=document.createElement('div');lbl.className='galley-box-label';lbl.textContent=label||'P'+doorNum;
   box.appendChild(lbl);
-  // G = bottom (K side), inside box
+  // G = bottom (K side): facility icons + crew avatar
+  const facG=buildFacilityIcons(doorNum,'G');
+  if(facG)box.appendChild(facG);
   if(crewG)box.appendChild(buildCrewAvatar(crewG));
   col.appendChild(box);
   // Row number spacer

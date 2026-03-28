@@ -353,6 +353,16 @@ html, body {
 }
 .galley-label { font-size: 6px; color: var(--corsair-beige-sable); opacity: 0.4; letter-spacing: 0.5px; text-transform: uppercase; writing-mode: vertical-lr; text-orientation: mixed; }
 
+/* Galley facility pictograms */
+.galley-facilities { display: flex; flex-wrap: wrap; gap: 2px; justify-content: center; align-items: center; padding: 2px 0; }
+.galley-facility-icon {
+  width: 22px; height: 22px; display: flex; align-items: center; justify-content: center;
+  color: var(--corsair-beige-sable); opacity: 0.35;
+  background: rgba(255,255,255,0.03); border-radius: 4px;
+}
+.galley-facility-icon svg { width: 14px; height: 14px; }
+[data-theme="light"] .galley-facility-icon { color: var(--corsair-bleu-premium); opacity: 0.3; background: rgba(0,0,0,0.02); }
+
 /* Individual seat */
 .seat {
   width: 26px; height: 26px; border-radius: 4px; margin: 1px; cursor: pointer;
