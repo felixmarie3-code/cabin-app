@@ -238,10 +238,13 @@ function buildBriefing(){
 
   // Crew — sorted by assigned door
   const crewEl=el('briefCrew');crewEl.textContent='';
+  const doorOrder={'G':0,'D':1};
   const sortedCrew=[...CREW].sort((a,b)=>{
     const da=doorAssignments[a.name]||a.door;
     const db=doorAssignments[b.name]||b.door;
-    return da.localeCompare(db);
+    const na=parseInt(da),nb=parseInt(db);
+    if(na!==nb)return na-nb;
+    return (doorOrder[da.slice(-1)]||0)-(doorOrder[db.slice(-1)]||0);
   });
   sortedCrew.forEach(c=>{
     const row=document.createElement('div');row.className='crew-member';
