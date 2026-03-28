@@ -922,6 +922,10 @@ button, [role="button"] { min-height: 36px; min-width: 36px; }
   background: var(--corsair-bleu-economie); box-shadow: 0 0 0 4px rgba(82,167,190,0.2);
 }
 .fp-label { font-size: 13px; letter-spacing: 0.5px; text-transform: uppercase; font-weight: 700; margin-top: 8px; color: var(--corsair-bleu-economie); }
+.fp-kpi-value { font-size: 18px; font-weight: 600; color: white; }
+.fp-kpi-label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--corsair-beige-sable); margin-bottom: 10px; }
+[data-theme="light"] .fp-kpi-value { color: var(--text); }
+[data-theme="light"] .fp-kpi-label { color: var(--text-muted); }
 .fp-line {
   position: absolute; left: 26px; right: 26px; height: 3px; border-radius: 2px;
   background: rgba(82,167,190,0.4); z-index: 0;

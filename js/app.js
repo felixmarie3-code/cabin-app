@@ -344,8 +344,13 @@ function buildBriefing(){
   // Flight profile — horizontal line with dots (IATA only, hours top, labels bottom)
   const fp=el('flightProfile');fp.textContent='';
   const line=document.createElement('div');line.className='fp-line';fp.appendChild(line);
-  [{label:'ORY',time:'10:10',cls:'dep'},{label:'TOC',time:'12:44',cls:'cruise'},{label:'TOD',time:'18:29',cls:'tod'},{label:'PTP',time:'18:53',cls:'arr'}].forEach(ph=>{
+  [{label:'ORY',time:'10:10',cls:'dep',kpiLabel:'Vol',kpiValue:'SS 901'},{label:'TOC',time:'12:44',cls:'cruise'},{label:'TOD',time:'18:29',cls:'tod'},{label:'PTP',time:'18:53',cls:'arr',kpiLabel:'STD',kpiValue:'14:00'}].forEach(ph=>{
     const pt=document.createElement('div');pt.className='fp-point';
+    if(ph.kpiValue){
+      const kv=document.createElement('div');kv.className='fp-kpi-value';kv.textContent=ph.kpiValue;
+      const kl=document.createElement('div');kl.className='fp-kpi-label';kl.textContent=ph.kpiLabel;
+      pt.appendChild(kv);pt.appendChild(kl);
+    }
     const tm=document.createElement('div');tm.className='fp-time';tm.textContent=ph.time;
     const dot=document.createElement('div');dot.className='fp-dot'+(ph.cls?' '+ph.cls:'');
     const lb=document.createElement('div');lb.className='fp-label';lb.textContent=ph.label;
