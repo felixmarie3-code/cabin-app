@@ -219,12 +219,21 @@ function buildBriefing(){
   // Flight profile — horizontal line with dots (IATA only, hours top, labels bottom)
   const fp=el('flightProfile');fp.textContent='';
   const line=document.createElement('div');line.className='fp-line';fp.appendChild(line);
-  [{label:'ORY',time:'10:10',cls:'dep'},{label:'E.ENT',time:'12:44',cls:''},{label:'TOD',time:'18:29',cls:''},{label:'PTP',time:'18:53',cls:'arr'}].forEach(ph=>{
+  [{label:'ORY',time:'10:10',cls:'dep'},{label:'E.ENT',time:'12:44',cls:'cruise'},{label:'TOD',time:'18:29',cls:'tod'},{label:'PTP',time:'18:53',cls:'arr'}].forEach(ph=>{
     const pt=document.createElement('div');pt.className='fp-point';
     const tm=document.createElement('div');tm.className='fp-time';tm.textContent=ph.time;
     const dot=document.createElement('div');dot.className='fp-dot'+(ph.cls?' '+ph.cls:'');
     const lb=document.createElement('div');lb.className='fp-label';lb.textContent=ph.label;
     pt.appendChild(tm);pt.appendChild(dot);pt.appendChild(lb);fp.appendChild(pt);
+  });
+  // Align line through dot centers after render
+  requestAnimationFrame(()=>{
+    const firstDot=fp.querySelector('.fp-dot');
+    if(firstDot&&line){
+      const fpRect=fp.getBoundingClientRect();
+      const dotRect=firstDot.getBoundingClientRect();
+      line.style.top=(dotRect.top-fpRect.top+dotRect.height/2-1)+'px';
+    }
   });
 
   // Crew
