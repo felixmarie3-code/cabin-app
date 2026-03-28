@@ -344,25 +344,33 @@ function buildBriefing(){
   // Flight profile — horizontal line with dots (IATA only, hours top, labels bottom)
   const fp=el('flightProfile');fp.textContent='';
   const line=document.createElement('div');line.className='fp-line';fp.appendChild(line);
-  [{label:'ORY',time:'10:10',cls:'dep',kpiLabel:'Vol',kpiValue:'SS 901'},{label:'TOC',time:'12:44',cls:'cruise'},{label:'TOD',time:'18:29',cls:'tod'},{label:'PTP',time:'18:53',cls:'arr',kpiLabel:'STD',kpiValue:'14:00'}].forEach(ph=>{
+  [{label:'ORY',time:'10:10',cls:'dep'},{label:'TOC',time:'12:44',cls:'cruise'},{label:'TOD',time:'18:29',cls:'tod'},{label:'PTP',time:'18:53',cls:'arr'}].forEach(ph=>{
     const pt=document.createElement('div');pt.className='fp-point';
-    if(ph.kpiValue){
-      const kv=document.createElement('div');kv.className='fp-kpi-value';kv.textContent=ph.kpiValue;
-      const kl=document.createElement('div');kl.className='fp-kpi-label';kl.textContent=ph.kpiLabel;
-      pt.appendChild(kv);pt.appendChild(kl);
-    }
     const tm=document.createElement('div');tm.className='fp-time';tm.textContent=ph.time;
     const dot=document.createElement('div');dot.className='fp-dot'+(ph.cls?' '+ph.cls:'');
     const lb=document.createElement('div');lb.className='fp-label';lb.textContent=ph.label;
     pt.appendChild(tm);pt.appendChild(dot);pt.appendChild(lb);fp.appendChild(pt);
   });
-  // Align line through dot centers after render
+  // Align departure dot under "Vol" (1st KPI) and arrival dot under "STD" (6th KPI)
   requestAnimationFrame(()=>{
+    const kpiRow=el('briefKpiRow');
+    if(kpiRow){
+      const kpis=kpiRow.querySelectorAll('.brief-kpi');
+      const fpRect=fp.getBoundingClientRect();
+      if(kpis.length>=6){
+        const volRect=kpis[0].getBoundingClientRect();
+        const stdRect=kpis[5].getBoundingClientRect();
+        const leftPad=volRect.left+volRect.width/2-fpRect.left;
+        const rightPad=fpRect.right-(stdRect.left+stdRect.width/2);
+        fp.style.paddingLeft=Math.max(0,leftPad)+'px';
+        fp.style.paddingRight=Math.max(0,rightPad)+'px';
+      }
+    }
     const firstDot=fp.querySelector('.fp-dot');
     if(firstDot&&line){
-      const fpRect=fp.getBoundingClientRect();
+      const fpRect2=fp.getBoundingClientRect();
       const dotRect=firstDot.getBoundingClientRect();
-      line.style.top=(dotRect.top-fpRect.top+dotRect.height/2-1)+'px';
+      line.style.top=(dotRect.top-fpRect2.top+dotRect.height/2-1)+'px';
     }
   });
 
