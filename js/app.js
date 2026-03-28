@@ -554,8 +554,8 @@ function buildCrewAvatar(crew){
 // Build a galley column with: galley box (full height, PN inside at top/bottom) → row-num space
 function buildGalleyCol(label,doorNum){
   const col=document.createElement('div');col.className='galley-col';
-  const crewD=CREW.find(c=>{const d=doorAssignments[c.name]||c.door;return d===doorNum+'D';});
-  const crewG=CREW.find(c=>{const d=doorAssignments[c.name]||c.door;return d===doorNum+'G';});
+  const crewD=getCrewForDoor(doorNum,'D');
+  const crewG=getCrewForDoor(doorNum,'G');
   // Galley box (full cabin height, PN inside)
   const box=document.createElement('div');box.className='galley-box';
   // D = top (A side), inside box
@@ -579,22 +579,30 @@ function applyFilters(){const has=activeFilter!=='all'||searchQuery.length>0;doc
   // Update pax list below cabin
   buildPaxList();
 }
+// Cached references for performance
+let cachedTotalSeats=0;
+const filterBadgeRefs={};
+function cacheTotalSeats(){cachedTotalSeats=document.querySelectorAll('.seat:not(.no-seat)').length;}
+function cacheFilterBadges(){document.querySelectorAll('.filter-btn').forEach(btn=>{const f=btn.dataset.filter;let badge=btn.querySelector('.filter-count');if(!badge){badge=document.createElement('span');badge.className='filter-count';btn.appendChild(badge);}filterBadgeRefs[f]=badge;});}
+
+function getCrewForDoor(doorNum,side){return CREW.find(c=>{const d=doorAssignments[c.name]||c.door;return d===doorNum+side;});}
+
 function updateStats(){
-  const occ=Object.keys(passengers).length;
-  const total=document.querySelectorAll('.seat:not(.no-seat)').length;
-  const empty=total-occ;
-  const sm=Object.values(passengers).filter(p=>p.meal).length;
-  const um=Object.values(passengers).filter(p=>p.remark==='UM').length;
-  const wchr=Object.values(passengers).filter(p=>p.remark==='WCHR').length;
-  const nb=Object.values(passengers).filter(p=>!p.boarded).length;
+  // Single pass over passengers
+  let occ=0,sm=0,um=0,wchr=0,nb=0;
+  for(const id in passengers){
+    const p=passengers[id];occ++;
+    if(p.meal)sm++;
+    if(p.remark==='UM')um++;
+    if(p.remark==='WCHR')wchr++;
+    if(!p.boarded)nb++;
+  }
   const bk=Object.keys(bookmarks).length;
+  const empty=cachedTotalSeats-occ;
   const counts={all:occ,occupied:occ,empty:empty,'special-meal':sm,um:um,wchr:wchr,'not-boarded':nb,bookmarked:bk};
-  document.querySelectorAll('.filter-btn').forEach(btn=>{
-    const f=btn.dataset.filter;
-    let badge=btn.querySelector('.filter-count');
-    if(!badge){badge=document.createElement('span');badge.className='filter-count';btn.appendChild(badge);}
-    badge.textContent=counts[f]!=null?counts[f]:'';
-  });
+  for(const f in filterBadgeRefs){
+    filterBadgeRefs[f].textContent=counts[f]!=null?counts[f]:'';
+  }
 }
 
 // === Pax Panel ===
@@ -974,4 +982,4 @@ function tickTimer(){
 
 // Header date (28MAR26 format)
 (function(){const d=new Date();const m=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];document.getElementById('headerDate').textContent=String(d.getDate()).padStart(2,'0')+m[d.getMonth()]+String(d.getFullYear()).slice(-2);})();
-buildBriefing();buildCabinPlan();buildPaxList();buildMeals();buildTimeline();buildChecklists();buildReport();updateClocks();updateAppBadge();renderNotifCenter();updateNotifBadge();
+buildBriefing();buildCabinPlan();cacheFilterBadges();cacheTotalSeats();buildPaxList();buildMeals();buildTimeline();buildChecklists();buildReport();updateClocks();updateAppBadge();renderNotifCenter();updateNotifBadge();
