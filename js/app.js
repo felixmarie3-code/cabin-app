@@ -592,14 +592,37 @@ function buildCabinPlan(){
     cfg.rows.forEach(rn=>{const col=document.createElement('div');col.className='cabin-col';if(EXIT_ROWS.includes(rn))col.classList.add('exit-row');
       const rowLayout=ROW_OVERRIDES[rn]||cfg.layout;
       const lavPositions=ROW_LAVS[rn]?ROW_LAVS[rn].positions:[];
+      // Pre-compute lav groups (consecutive lav positions between aisles)
+      let lavConsumed=new Set();
+      if(lavPositions.length){
+        let group=[];
+        for(let pi=0;pi<rowLayout.length;pi++){
+          const pos=rowLayout[pi];const origPos=ALL_POSITIONS[pi];
+          if(pos==='.'&&lavPositions.includes(origPos)){group.push(pi);}
+          else{if(group.length>0){group.forEach(g=>lavConsumed.add(g));group=[];}}}
+        if(group.length>0)group.forEach(g=>lavConsumed.add(g));
+      }
+      // Build merged lav groups
+      const lavGroups=[];let curGroup=[];
+      for(let pi=0;pi<rowLayout.length;pi++){
+        if(lavConsumed.has(pi)){curGroup.push(pi);}
+        else{if(curGroup.length){lavGroups.push([...curGroup]);curGroup=[];}}}
+      if(curGroup.length)lavGroups.push(curGroup);
+      const lavGroupStarts=new Set(lavGroups.map(g=>g[0]));
+      const lavGroupMap={};lavGroups.forEach(g=>{lavGroupMap[g[0]]=g.length;});
+
       rowLayout.forEach((pos,pi)=>{if(pos==='|'){const a=document.createElement('div');a.className='aisle';col.appendChild(a);}
         else if(pos==='.'){
-          // Check if this position should show a lav icon
-          const origPos=ALL_POSITIONS[pi];
-          if(lavPositions.includes(origPos)){
-            const lv=document.createElement('div');lv.className='seat seat-lav';lv.title='Toilettes';
-            lv.innerHTML='<svg viewBox="0 0 24 24" fill="currentColor" width="12" height="12" opacity="0.3"><path d="M9 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6zm6 0a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM5 10h4.5v12h-2v-5h-.5v5H5V10zm7.5 0H17v12h-2v-5h-.5v5h-2V10z"/></svg>';
-            col.appendChild(lv);
+          if(lavConsumed.has(pi)){
+            if(lavGroupStarts.has(pi)){
+              // Merged lav rectangle
+              const count=lavGroupMap[pi];
+              const lv=document.createElement('div');lv.className='seat-lav-merged';lv.title='Toilettes';
+              lv.style.height=(count*28)+'px';
+              lv.innerHTML='<svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-1-1v-4H7l5-6v4h2l-4 7z" fill="none"/><circle cx="8" cy="6" r="2"/><path d="M5 10h6v1.5H8.5v2H11V15H8.5v3h-3v-3H5v-1.5h.5v-2H5V10z"/><circle cx="16" cy="6" r="2"/><path d="M19 10v5h-1.5v3h-3v-3H13v-5h6z"/></svg>';
+              col.appendChild(lv);
+            }
+            // else: skip (already covered by merged block)
           }else{const n=document.createElement('div');n.className='seat no-seat';col.appendChild(n);}
         }
         else{const sid=rn+pos,se=document.createElement('div');se.className='seat';se.dataset.seat=sid;se.textContent=pos;
