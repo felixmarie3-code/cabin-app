@@ -11,7 +11,7 @@
   const FADE_IN = 600;        // plane fade-in ms
 
   // Clip follows wing sweep at ~30° angle
-  var WING_MID = 0.47; // clip level at fuselage center (% of plane height)
+  var WING_MID = 0.38; // clip level at fuselage center (% of plane height) — above wing mid-chord so wings cover the line
 
   // Park plane below viewport (translate3d for GPU compositing)
   splashPlane.style.transform = 'translate3d(0,' + (window.innerHeight + 60) + 'px,0)';
