@@ -923,9 +923,9 @@ button, [role="button"] { min-height: 36px; min-width: 36px; }
 }
 .fp-label { font-size: 13px; letter-spacing: 0.5px; text-transform: uppercase; font-weight: 700; margin-top: 8px; color: var(--corsair-bleu-economie); }
 .fp-line {
-  position: absolute; left: 26px; right: 26px; height: 3px; border-radius: 2px;
+  position: absolute; height: 3px; border-radius: 2px;
   background: rgba(82,167,190,0.4); z-index: 0;
-  top: 50%; /* JS will recalculate exact position */
+  top: 50%; /* JS will recalculate exact position, left and right */
 }
 [data-theme="light"] .flight-profile { background: var(--bg-card); }
 /* light theme: fp colors are per-point, no override needed */
