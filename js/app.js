@@ -172,16 +172,16 @@ document.getElementById('shareConfirm').addEventListener('click',()=>{
 // BRIEFING
 // ============================================================
 const CREW=[
-  {name:'LEFEBVRE Sophie',role:'CCP',rank:'ccp',door:'1L'},
-  {name:'DUPONT Marc',role:'CC1 \u2014 Business',rank:'cc',door:'1R'},
-  {name:'PAYET Nathalie',role:'CC2 \u2014 Premium',rank:'cc',door:'2L'},
-  {name:'HOARAU Kevin',role:'CC3 \u2014 \u00c9co avant',rank:'cc',door:'2R'},
-  {name:'MARTIN Julie',role:'CC4 \u2014 \u00c9co centre',rank:'cc',door:'3L'},
-  {name:'RIVI\u00c8RE Paul',role:'CC5 \u2014 \u00c9co arri\u00e8re',rank:'cc',door:'3R'},
-  {name:'GRONDIN L\u00e9a',role:'CC6 \u2014 \u00c9co arri\u00e8re',rank:'cc',door:'4L'},
-  {name:'DIJOUX Sarah',role:'CC7 \u2014 Galley',rank:'cc',door:'4R'}
+  {name:'LEFEBVRE Sophie',role:'CCP',rank:'ccp',door:'1G'},
+  {name:'DUPONT Marc',role:'CC1 \u2014 Business',rank:'cc',door:'1D'},
+  {name:'PAYET Nathalie',role:'CC2 \u2014 Premium',rank:'cc',door:'2G'},
+  {name:'HOARAU Kevin',role:'CC3 \u2014 \u00c9co avant',rank:'cc',door:'2D'},
+  {name:'MARTIN Julie',role:'CC4 \u2014 \u00c9co centre',rank:'cc',door:'3G'},
+  {name:'RIVI\u00c8RE Paul',role:'CC5 \u2014 \u00c9co arri\u00e8re',rank:'cc',door:'3D'},
+  {name:'GRONDIN L\u00e9a',role:'CC6 \u2014 \u00c9co arri\u00e8re',rank:'cc',door:'4G'},
+  {name:'DIJOUX Sarah',role:'CC7 \u2014 Galley',rank:'cc',door:'4D'}
 ];
-const DOORS=['1L','1R','2L','2R','3L','3R','4L','4R'];
+const DOORS=['1G','1D','2G','2D','3G','3D','4G','4D'];
 
 function buildBriefing(){
   let biz=0,prem=0,eco=0;
@@ -234,7 +234,8 @@ function buildBriefing(){
     const av=document.createElement('div');av.className='crew-avatar '+c.rank;av.textContent=c.name.split(' ').map(w=>w[0]).join('');
     const info=document.createElement('div');
     const nm=document.createElement('div');nm.className='crew-name';
-    const door=doorAssignments[c.name]||c.door;
+    const saved=doorAssignments[c.name];
+    const door=(saved&&DOORS.includes(saved))?saved:c.door;
     nm.textContent=c.name+' \u2014 Porte '+door;
     const rl=document.createElement('div');rl.className='crew-role';rl.textContent=c.role;
     info.appendChild(nm);info.appendChild(rl);row.appendChild(av);row.appendChild(info);crewEl.appendChild(row);
@@ -264,8 +265,9 @@ document.getElementById('assignDoorsBtn').addEventListener('click',()=>{
     const item=document.createElement('div');item.className='door-item';
     const nm=document.createElement('div');nm.className='door-name';nm.textContent=c.name.split(' ')[0];
     const sel=document.createElement('select');sel.className='door-select';sel.dataset.crew=c.name;
+    const emptyOpt=document.createElement('option');emptyOpt.value='';emptyOpt.textContent='— Non assigné —';sel.appendChild(emptyOpt);
     DOORS.forEach(d=>{const o=document.createElement('option');o.value=d;o.textContent=d;sel.appendChild(o);});
-    sel.value=doorAssignments[c.name]||c.door;
+    const saved=doorAssignments[c.name];sel.value=saved&&DOORS.includes(saved)?saved:c.door;
     item.appendChild(nm);item.appendChild(sel);grid.appendChild(item);
   });
   document.getElementById('doorOverlay').classList.add('visible');
