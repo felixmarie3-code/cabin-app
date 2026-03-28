@@ -10,11 +10,11 @@
   const RISE_DURATION = 2800; // 2.8s plane traversal
   const FADE_IN = 600;        // plane fade-in ms
 
-  // Wing geometry ratios (from airplane-icon-png-2503.png)
-  // Wing trailing edge at fuselage: ~50% from top
-  // Wing trailing edge at tips:     ~56% from top
-  var WING_CENTER = 0.50;
-  var WING_TIP = 0.56;
+  // Wing geometry ratios (from airplane-icon-png-2503.png scaled 130%)
+  // Clip at wing mid-chord so the wing body fully covers the line
+  // Trailing edge is ~49-50% from image top, mid-chord ~46-47%
+  var WING_CENTER = 0.46;
+  var WING_TIP = 0.47;
 
   // Park plane below viewport (translate3d for GPU compositing)
   splashPlane.style.transform = 'translate3d(0,' + (window.innerHeight + 60) + 'px,0)';
