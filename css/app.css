@@ -302,7 +302,7 @@ html, body {
 
 /* === Cabin Plan === */
 .cabin-container { background: var(--bg-surface); border-radius: 14px; padding: 10px; overflow-x: auto; -webkit-overflow-scrolling: touch; box-shadow: 0 1px 3px rgba(0,0,0,0.12); }
-.cabin-plan { display: flex; align-items: flex-start; gap: 0; min-width: fit-content; position: relative; }
+.cabin-plan { display: flex; align-items: stretch; gap: 0; min-width: fit-content; position: relative; }
 
 /* Row labels (A-K) */
 .row-labels { display: flex; flex-direction: column; gap: 0; padding-top: 20px; min-width: 16px; flex-shrink: 0; }
@@ -326,7 +326,8 @@ html, body {
 /* Galley column */
 .galley-col {
   display: flex; flex-direction: column; align-items: center;
-  width: 44px; flex-shrink: 0; padding-top: 20px; gap: 3px;
+  width: 44px; flex-shrink: 0; gap: 2px;
+  padding: 0;
 }
 .galley-box {
   flex: 1; width: 100%; background: rgba(82,167,190,0.06); border: 1px solid rgba(82,167,190,0.15);
@@ -787,10 +788,7 @@ button, [role="button"] { min-height: 36px; min-width: 36px; }
 .pax-seat-badge.crew-badge.hst { background: #7a5a8a; }
 
 /* === Crew markers on cabin plan (at galleys) === */
-.crew-door-col {
-  display: flex; flex-direction: column; align-items: center;
-  width: 44px; flex-shrink: 0; padding-top: 20px; gap: 3px;
-}
+/* crew-door-col uses galley-col styles */
 .crew-door-label { font-size: 7px; font-weight: 700; color: var(--text-muted); letter-spacing: 0.5px; opacity: 0.5; writing-mode: vertical-lr; }
 .cabin-crew-marker {
   width: 28px !important; height: 28px !important; font-size: 8px !important;
