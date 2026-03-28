@@ -10,11 +10,8 @@
   const RISE_DURATION = 2800; // 2.8s plane traversal
   const FADE_IN = 600;        // plane fade-in ms
 
-  // Wing geometry ratios (from airplane-icon-png-2503.png scaled 130%)
-  // Clip at wing mid-chord so the wing body fully covers the line
-  // Trailing edge is ~49-50% from image top, mid-chord ~46-47%
-  var WING_CENTER = 0.46;
-  var WING_TIP = 0.47;
+  // Clip follows wing sweep at ~30° angle
+  var WING_MID = 0.47; // clip level at fuselage center (% of plane height)
 
   // Park plane below viewport (translate3d for GPU compositing)
   splashPlane.style.transform = 'translate3d(0,' + (window.innerHeight + 60) + 'px,0)';
@@ -25,6 +22,7 @@
     splashPlane.style.transition = 'opacity ' + FADE_IN + 'ms ease-out';
     var planeH = splashPlane.getBoundingClientRect().height || window.innerHeight * 0.9;
     var vh = window.innerHeight;
+    var vw = window.innerWidth;
     var startY = vh + 60;
     var endY = -(planeH + 60);
     var brandFaded = false;
@@ -38,19 +36,16 @@
       var curY = startY + (endY - startY) * eased;
       splashPlane.style.transform = 'translate3d(0,' + curY + 'px,0)';
 
-      // Clip at wing trailing edge level (plane body hides the boundary)
-      var centerPct = ((curY + planeH * WING_CENTER) / vh) * 100;
-      var edgePct = ((curY + planeH * WING_TIP) / vh) * 100;
-      var cY = Math.max(-5, Math.min(105, centerPct));
-      var eY = Math.max(-5, Math.min(105, edgePct));
-      // Simplified 7-point polygon following wing sweep
-      var mid = eY - (eY - cY) * 0.55;
+      // Clip with 30° angled V-shape following wing sweep
+      var centerPct = ((curY + planeH * WING_MID) / vh) * 100;
+      // 30° angle: offset = tan(30°) * half-viewport-width / vh * 100
+      var angleOff = (0.577 * vw * 0.5) / vh * 100;
+      var cY = Math.max(-5, Math.min(110, centerPct));
+      var eY = Math.max(-5, Math.min(110, cY + angleOff));
       splashBg.style.clipPath = 'polygon(' +
         '0% 0%,100% 0%,' +
         '100% ' + eY + '%,' +
-        '75% ' + mid + '%,' +
         '50% ' + cY + '%,' +
-        '25% ' + mid + '%,' +
         '0% ' + eY + '%)';
 
       // Brand is inside splash-bg, so it gets clipped with it automatically
