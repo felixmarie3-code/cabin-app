@@ -16,8 +16,8 @@
   var WING_CENTER = 0.482;
   var WING_TIP = 0.555;
 
-  // Park plane below viewport
-  splashPlane.style.transform = 'translateY(' + (window.innerHeight + 60) + 'px)';
+  // Park plane below viewport (translate3d for GPU compositing)
+  splashPlane.style.transform = 'translate3d(0,' + (window.innerHeight + 60) + 'px,0)';
 
   setTimeout(function() {
     // Measure plane height after layout
@@ -36,25 +36,21 @@
       // Ease-out cubic (smooth deceleration)
       var eased = 1 - Math.pow(1 - raw, 3);
       var curY = startY + (endY - startY) * eased;
-      splashPlane.style.transform = 'translateY(' + curY + 'px)';
+      splashPlane.style.transform = 'translate3d(0,' + curY + 'px,0)';
 
       // Clip at wing trailing edge level (plane body hides the boundary)
       var centerPct = ((curY + planeH * WING_CENTER) / vh) * 100;
       var edgePct = ((curY + planeH * WING_TIP) / vh) * 100;
       var cY = Math.max(-5, Math.min(105, centerPct));
       var eY = Math.max(-5, Math.min(105, edgePct));
-      // Interpolated points following wing sweep
-      var p1 = eY - (eY - cY) * 0.35;
-      var p2 = eY - (eY - cY) * 0.70;
+      // Simplified 7-point polygon following wing sweep
+      var mid = eY - (eY - cY) * 0.55;
       splashBg.style.clipPath = 'polygon(' +
-        '0% 0%, 100% 0%, ' +
-        '100% ' + eY + '%, ' +
-        '85% ' + p1 + '%, ' +
-        '70% ' + p2 + '%, ' +
-        '57% ' + cY + '%, ' +
-        '43% ' + cY + '%, ' +
-        '30% ' + p2 + '%, ' +
-        '15% ' + p1 + '%, ' +
+        '0% 0%,100% 0%,' +
+        '100% ' + eY + '%,' +
+        '75% ' + mid + '%,' +
+        '50% ' + cY + '%,' +
+        '25% ' + mid + '%,' +
         '0% ' + eY + '%)';
 
       // Brand is inside splash-bg, so it gets clipped with it automatically

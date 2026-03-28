@@ -26,15 +26,7 @@
     <div id="splash-plane">
       <!-- Vectorized from airplane-icon-png-2503.png — clean flat top-down icon -->
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 220" preserveAspectRatio="xMidYMid meet">
-        <defs>
-          <filter id="plane-glow" x="-10%" y="-10%" width="120%" height="120%">
-            <feGaussianBlur in="SourceAlpha" stdDeviation="4" result="shadow"/>
-            <feFlood flood-color="rgba(82,167,190,0.45)"/>
-            <feComposite in2="shadow" operator="in"/>
-            <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
-          </filter>
-        </defs>
-        <path filter="url(#plane-glow)" d="
+        <path d="
           M100,12
           C108,12 114,26 114,44
           L114,82

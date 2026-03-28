@@ -79,6 +79,7 @@
   position: absolute; inset: 0;
   background: linear-gradient(160deg, #1c1f5e 0%, #282B62 45%, #1a4a7a 100%);
   will-change: clip-path;
+  contain: layout style;
 }
 
 #splash-brand {
@@ -119,6 +120,8 @@
   opacity: 0;
   will-change: transform, opacity;
   pointer-events: none;
+  filter: drop-shadow(0 0 12px rgba(82,167,190,0.35));
+  contain: layout style;
 }
 
 #splash-plane svg {
