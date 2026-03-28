@@ -46,17 +46,16 @@
         <div class="timer-setup">
           <div class="timer-display" id="timerDisplay">00:00</div>
           <div class="timer-presets">
-            <button class="timer-preset" data-min="1">1 min</button>
-            <button class="timer-preset" data-min="3">3 min</button>
-            <button class="timer-preset" data-min="5">5 min</button>
-            <button class="timer-preset" data-min="10">10 min</button>
-            <button class="timer-preset" data-min="15">15 min</button>
-            <button class="timer-preset" data-min="30">30 min</button>
+            <button class="timer-preset" data-sec="60">1 min</button>
+            <button class="timer-preset" data-sec="180">3 min</button>
+            <button class="timer-preset" data-sec="300">5 min</button>
+            <button class="timer-preset" data-sec="600">10 min</button>
+            <button class="timer-preset" data-sec="900">15 min</button>
+            <button class="timer-preset" data-sec="1800">30 min</button>
+            <button class="timer-preset flight-time" data-sec="40500">Temps de vol (11h15)</button>
           </div>
           <div class="timer-custom">
-            <input type="number" id="timerCustomMin" min="0" max="120" placeholder="min" class="timer-input">
-            <span style="color:var(--text-muted)">:</span>
-            <input type="number" id="timerCustomSec" min="0" max="59" placeholder="sec" class="timer-input">
+            <input type="time" id="timerPicker" value="00:00" step="60" class="timer-wheel">
           </div>
           <div class="timer-actions">
             <button class="timer-action-btn start" id="timerStart">D&eacute;marrer</button>

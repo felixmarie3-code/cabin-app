@@ -830,35 +830,35 @@ document.getElementById('timerToggle').addEventListener('click',e=>{
 });
 document.addEventListener('click',e=>{if(!e.target.closest('#timerDropdown')&&!e.target.closest('#timerToggle'))document.getElementById('timerDropdown').classList.remove('visible');});
 
-// Presets
-document.querySelectorAll('.timer-preset').forEach(btn=>{
-  btn.addEventListener('click',()=>{
-    document.querySelectorAll('.timer-preset').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    timerTotalSec=parseInt(btn.dataset.min)*60;
-    document.getElementById('timerCustomMin').value='';
-    document.getElementById('timerCustomSec').value='';
-    updateTimerDisplay(timerTotalSec);
-  });
+// Presets — click selects and updates timerTotalSec
+document.getElementById('timerDropdown').addEventListener('click',e=>{
+  const btn=e.target.closest('.timer-preset');if(!btn)return;
+  e.stopPropagation();
+  document.querySelectorAll('.timer-preset').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  timerTotalSec=parseInt(btn.dataset.sec);
+  const picker=document.getElementById('timerPicker');
+  const h=Math.floor(timerTotalSec/3600),m=Math.floor((timerTotalSec%3600)/60);
+  picker.value=String(h).padStart(2,'0')+':'+String(m).padStart(2,'0');
+  updateTimerDisplay(timerTotalSec);
 });
-// Custom input
-['timerCustomMin','timerCustomSec'].forEach(id=>{
-  document.getElementById(id).addEventListener('input',()=>{
-    document.querySelectorAll('.timer-preset').forEach(b=>b.classList.remove('active'));
-    const m=parseInt(document.getElementById('timerCustomMin').value)||0;
-    const s=parseInt(document.getElementById('timerCustomSec').value)||0;
-    timerTotalSec=m*60+s;
-    updateTimerDisplay(timerTotalSec);
-  });
+
+// iOS wheel picker (type="time" triggers native wheel on iOS)
+document.getElementById('timerPicker').addEventListener('change',function(){
+  document.querySelectorAll('.timer-preset').forEach(b=>b.classList.remove('active'));
+  const parts=this.value.split(':');
+  timerTotalSec=(parseInt(parts[0])||0)*3600+(parseInt(parts[1])||0)*60;
+  updateTimerDisplay(timerTotalSec);
 });
 
 function updateTimerDisplay(sec){
-  const m=Math.floor(Math.abs(sec)/60),s=Math.abs(sec)%60;
-  const t=(sec<0?'-':'')+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+  const h=Math.floor(Math.abs(sec)/3600),m=Math.floor((Math.abs(sec)%3600)/60),s=Math.abs(sec)%60;
+  const t=(sec<0?'-':'')+(h>0?String(h)+':':'')+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
   timerDisplay.textContent=t;
 }
 
-document.getElementById('timerStart').addEventListener('click',()=>{
+document.getElementById('timerStart').addEventListener('click',e=>{
+  e.stopPropagation();
   if(timerTotalSec<=0)return;
   timerEndTime=Date.now()+timerTotalSec*1000;
   timerBtn.classList.add('running');timerBtn.classList.remove('expired');
@@ -866,11 +866,13 @@ document.getElementById('timerStart').addEventListener('click',()=>{
   document.getElementById('timerStart').style.display='none';
   document.getElementById('timerStop').style.display='';
   document.getElementById('timerReset').style.display='';
+  if(timerInterval)clearInterval(timerInterval);
   timerInterval=setInterval(tickTimer,500);
   tickTimer();
 });
 
-document.getElementById('timerStop').addEventListener('click',()=>{
+document.getElementById('timerStop').addEventListener('click',e=>{
+  e.stopPropagation();
   clearInterval(timerInterval);timerInterval=null;
   timerBtn.classList.remove('running');
   document.getElementById('timerStart').style.display='';
@@ -879,7 +881,8 @@ document.getElementById('timerStop').addEventListener('click',()=>{
   timerTotalSec=remaining;timerEndTime=null;
 });
 
-document.getElementById('timerReset').addEventListener('click',()=>{
+document.getElementById('timerReset').addEventListener('click',e=>{
+  e.stopPropagation();
   clearInterval(timerInterval);timerInterval=null;timerEndTime=null;timerTotalSec=0;
   timerBtn.classList.remove('running','expired');
   timerLabel.style.display='none';timerLabel.textContent='';
