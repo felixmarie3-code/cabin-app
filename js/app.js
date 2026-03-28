@@ -117,10 +117,22 @@ function renderNotifCenter(){
   list.appendChild(empty);
 }
 function removeNotif(idx){appNotifications.splice(idx,1);lsSet('cabin_notifications',appNotifications);renderNotifCenter();updateNotifBadge();}
-function updateNotifBadge(){const b=document.getElementById('notifBadge');b.textContent=appNotifications.length>0?String(appNotifications.length):'';}
+function updateNotifBadge(){const b=document.getElementById('notifBadge');const c=appNotifications.length;b.textContent=c>0?String(c):'';b.style.display=c>0?'':'none';if('setAppBadge' in navigator){if(c>0)navigator.setAppBadge(c).catch(()=>{});else navigator.clearAppBadge().catch(()=>{});}}
 document.getElementById('notifToggle').addEventListener('click',()=>document.getElementById('notifCenter').classList.toggle('visible'));
 document.addEventListener('click',e=>{if(!e.target.closest('#notifCenter')&&!e.target.closest('#notifToggle'))document.getElementById('notifCenter').classList.remove('visible');});
 document.getElementById('notifClearAll').addEventListener('click',()=>{appNotifications=[];lsSet('cabin_notifications',appNotifications);renderNotifCenter();updateNotifBadge();});
+
+// Prepared notification types
+const NOTIF_TYPES=[
+  {title:'Embarquement débuté',body:'Le boarding du vol SS 901 a commencé. Porte 42A ouverte.',type:'info'},
+  {title:'Boarding clos — 4 passagers annulés',body:'Fermeture des portes imminente. 4 PAX no-show retirés du manifeste. Bagages en cours de déchargement.',type:'alert'},
+  {title:'ALERTE MÉDICALE — Siège 22K',body:'MARTIN Thomas demande une assistance en Économy. Vérifiez la trousse de premiers secours et le défibrillateur.',type:'alert'},
+  {title:'Changement de porte',body:'Le vol SS 901 est transféré de la porte 42A vers la porte 38B. Informer les passagers.',type:'info'},
+  {title:'Turbulences prévues',body:'Zone de turbulences modérées dans 15 minutes. Sécuriser la cabine et les galleys.',type:'alert'},
+  {title:'Service 1er service terminé',body:'Le premier service repas est terminé en Economy. 3 repas spéciaux non distribués.',type:'info'},
+  {title:'Retard au départ — +25 min',body:'Nouveau STD : 14:25. Cause : attente bagages correspondance. Informer les passagers.',type:'alert'}
+];
+let notifTypeIdx=0;
 
 // Notif test button
 document.getElementById('notifTestBtn').addEventListener('click',function(){
@@ -128,8 +140,9 @@ document.getElementById('notifTestBtn').addEventListener('click',function(){
   if('Notification' in window&&Notification.permission==='default')Notification.requestPermission();
   let c=5;tn.textContent=' Envoi dans '+c+'s...';
   const ti=setInterval(()=>{c--;if(c>0){tn.textContent=' Envoi dans '+c+'s...';}else{clearInterval(ti);
-    addNotification('ALERTE M\u00c9DICALE \u2014 Si\u00e8ge 22K','MARTIN Thomas demande une assistance en \u00c9conomy. V\u00e9rifiez la trousse de premiers secours et le d\u00e9fibrillateur.','alert');
-    tn.textContent=' Notification envoy\u00e9e !';setTimeout(()=>{btn.disabled=false;tn.textContent=' Tester une notification';},3000);}},1000);
+    const n=NOTIF_TYPES[notifTypeIdx%NOTIF_TYPES.length];notifTypeIdx++;
+    addNotification(n.title,n.body,n.type);
+    tn.textContent=' Notification envoyée !';setTimeout(()=>{btn.disabled=false;tn.textContent=' Tester une notification';},3000);}},1000);
 });
 
 // ============================================================
@@ -150,7 +163,7 @@ document.getElementById('shareConfirm').addEventListener('click',()=>{
     if(c.value==='report')parts.push('RAPPORT: '+Object.values(cabinZones).filter(v=>v==='OK').length+'/11 zones OK');
   });
   const text=parts.join('\n\n');
-  if(navigator.share){navigator.share({title:'Cabin App \u2014 SS 901',text}).catch(()=>{});}
+  if(navigator.share){navigator.share({title:'CabinReady \u2014 SS 901',text}).catch(()=>{});}
   else{navigator.clipboard.writeText(text).then(()=>alert('Donn\u00e9es copi\u00e9es dans le presse-papier')).catch(()=>{});}
   document.getElementById('shareOverlay').classList.remove('visible');
 });
@@ -203,12 +216,12 @@ function buildBriefing(){
     tags.appendChild(btn);
   });
 
-  // Flight profile — horizontal line with dots
+  // Flight profile — horizontal line with dots (IATA only, hours top, labels bottom)
   const fp=el('flightProfile');fp.textContent='';
   const line=document.createElement('div');line.className='fp-line';fp.appendChild(line);
-  [{label:'D\u00e9part ORY',time:'14:00',cls:'dep'},{label:'TOC (FL390)',time:'14:32',cls:''},{label:'Croisi\u00e8re',time:'',cls:''},{label:'TOD',time:'00:38',cls:''},{label:'Arriv\u00e9e RUN',time:'01:15',cls:'arr'}].forEach(ph=>{
+  [{label:'ORY',time:'10:10',cls:'dep'},{label:'E.ENT',time:'12:44',cls:''},{label:'TOD',time:'18:29',cls:''},{label:'PTP',time:'18:53',cls:'arr'}].forEach(ph=>{
     const pt=document.createElement('div');pt.className='fp-point';
-    const tm=document.createElement('div');tm.className='fp-time';tm.textContent=ph.time||'\u00b7';
+    const tm=document.createElement('div');tm.className='fp-time';tm.textContent=ph.time;
     const dot=document.createElement('div');dot.className='fp-dot'+(ph.cls?' '+ph.cls:'');
     const lb=document.createElement('div');lb.className='fp-label';lb.textContent=ph.label;
     pt.appendChild(tm);pt.appendChild(dot);pt.appendChild(lb);fp.appendChild(pt);
