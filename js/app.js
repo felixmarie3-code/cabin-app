@@ -1029,3 +1029,21 @@ function tickTimer(){
 // Header date (28MAR26 format)
 (function(){const d=new Date();const m=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];document.getElementById('headerDate').textContent=String(d.getDate()).padStart(2,'0')+m[d.getMonth()]+String(d.getFullYear()).slice(-2);})();
 buildBriefing();buildCabinPlan();cacheFilterBadges();cacheTotalSeats();buildPaxList();buildMeals();buildTimeline();buildChecklists();buildReport();updateClocks();updateAppBadge();renderNotifCenter();updateNotifBadge();
+
+// Notification permission prompt on launch
+(function(){
+  if(!('Notification' in window))return; // no support
+  if(Notification.permission!=='default')return; // already granted or denied
+  if(localStorage.getItem('cabin_notif_prompt_dismissed'))return; // user said "later"
+  setTimeout(()=>{
+    document.getElementById('notifPromptOverlay').classList.add('visible');
+  },1500);
+  document.getElementById('notifPromptAllow').addEventListener('click',()=>{
+    document.getElementById('notifPromptOverlay').classList.remove('visible');
+    Notification.requestPermission();
+  });
+  document.getElementById('notifPromptLater').addEventListener('click',()=>{
+    document.getElementById('notifPromptOverlay').classList.remove('visible');
+    localStorage.setItem('cabin_notif_prompt_dismissed','1');
+  });
+})();
