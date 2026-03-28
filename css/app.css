@@ -118,13 +118,17 @@ html, body {
 .timer-btn .utc-label { font-variant-numeric: tabular-nums; min-width: 42px; text-align: center; display: inline-block; }
 .clock-dropdown {
   position: fixed; top: calc(var(--header-height) + 4px); background: var(--bg-surface);
-  border-radius: 14px; padding: 4px; min-width: 200px; z-index: 999;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.4); display: none;
+  border-radius: 14px; padding: 4px; min-width: 200px; z-index: 10000;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.5); display: none;
   backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
 }
 .clock-dropdown.visible { display: block; }
-#timerDropdown { right: 120px; min-width: 240px; }
-#clockDropdown { right: 160px; }
+.header-dropdown-backdrop {
+  position: fixed; inset: 0; z-index: 9999; display: none;
+}
+.header-dropdown-backdrop.visible { display: block; }
+#timerDropdown { right: 16px; min-width: 260px; }
+#clockDropdown { right: 16px; min-width: 200px; }
 .clock-option {
   display: flex; justify-content: space-between; align-items: center;
   width: 100%; padding: 10px 14px; border: none; background: none;
@@ -163,11 +167,7 @@ html, body {
   min-width: 120px; -webkit-appearance: none; appearance: none;
 }
 .timer-wheel:focus { outline: none; border-color: var(--corsair-bleu-economie); }
-.timer-preset.flight-time {
-  width: 100%; background: rgba(53,94,171,0.15); color: var(--corsair-bleu-premium);
-  border: 1px solid rgba(53,94,171,0.2);
-}
-.timer-preset.flight-time.active { background: var(--corsair-bleu-premium); color: white; }
+/* flight-time preset same style as others */
 .timer-actions { display: flex; gap: 8px; width: 100%; }
 .timer-action-btn {
   flex: 1; padding: 10px; border: none; border-radius: 10px; font-family: 'Gilroy', Arial, sans-serif;
