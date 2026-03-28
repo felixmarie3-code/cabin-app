@@ -267,7 +267,8 @@ html, body {
   overflow-y: auto; -webkit-overflow-scrolling: touch; padding-left: 14px; padding-right: 14px; padding-top: 10px;
 }
 .module { display: none; animation: fadeIn 0.2s ease; }
-.module.active { display: block; }
+.module.active { display: flex; flex-direction: column; }
+.module[data-module="pax"].active { height: calc(100vh - 130px); overflow: hidden; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 
 .module-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
@@ -894,7 +895,7 @@ button, [role="button"] { min-height: 36px; min-width: 36px; }
 /* === Pax bottom panel (list + detail under cabin) === */
 .pax-bottom-panel {
   margin-top: 10px; background: var(--bg-surface); border-radius: 14px;
-  max-height: 260px; overflow: hidden; display: flex; flex-direction: column;
+  flex: 1; min-height: 0; overflow: hidden; display: flex; flex-direction: column;
   box-shadow: 0 1px 3px rgba(0,0,0,0.12);
 }
 .pax-list-header {
