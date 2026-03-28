@@ -618,7 +618,7 @@ function buildCabinPlan(){
               // Merged lav rectangle
               const count=lavGroupMap[pi];
               const lv=document.createElement('div');lv.className='seat-lav-merged';lv.title='Toilettes';
-              lv.style.height=(count*28)+'px';
+              lv.style.height=(count*28-2)+'px';
               lv.innerHTML='<svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-1-1v-4H7l5-6v4h2l-4 7z" fill="none"/><circle cx="8" cy="6" r="2"/><path d="M5 10h6v1.5H8.5v2H11V15H8.5v3h-3v-3H5v-1.5h.5v-2H5V10z"/><circle cx="16" cy="6" r="2"/><path d="M19 10v5h-1.5v3h-3v-3H13v-5h6z"/></svg>';
               col.appendChild(lv);
             }
