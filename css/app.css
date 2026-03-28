@@ -299,6 +299,12 @@ html, body {
 }
 .filter-btn:active { transform: scale(0.95); }
 .filter-btn.active { background: var(--corsair-bleu-economie); color: white; }
+.filter-count {
+  display: inline-block; min-width: 16px; height: 16px; line-height: 16px;
+  border-radius: 8px; font-size: 9px; font-weight: 700; text-align: center;
+  background: rgba(255,255,255,0.15); margin-left: 4px; padding: 0 4px;
+}
+.filter-btn.active .filter-count { background: rgba(255,255,255,0.25); }
 
 /* === Cabin Plan === */
 .cabin-container { background: var(--bg-surface); border-radius: 14px; padding: 10px; overflow-x: auto; -webkit-overflow-scrolling: touch; box-shadow: 0 1px 3px rgba(0,0,0,0.12); }
@@ -327,7 +333,7 @@ html, body {
 .galley-col {
   display: flex; flex-direction: column; align-items: center;
   width: 54px; flex-shrink: 0; gap: 2px;
-  padding: 0;
+  padding-top: 20px; /* match section-label height */
 }
 .galley-box {
   flex: 1; width: 100%; background: rgba(82,167,190,0.06); border: 1px solid rgba(82,167,190,0.15);
@@ -377,11 +383,7 @@ html, body {
 }
 
 /* Stats bar */
-.cabin-stats { display: flex; gap: 12px; margin-top: 8px; padding: 8px 12px; background: var(--bg-surface); border-radius: 12px; flex-wrap: wrap; box-shadow: 0 1px 2px rgba(0,0,0,0.08); }
-.stat-item { display: flex; align-items: center; gap: 6px; }
-.stat-value { font-size: 16px; font-weight: 600; color: white; }
-.stat-label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--corsair-beige-sable); }
-.stat-divider { width: 1px; height: 24px; background: rgba(255,255,255,0.08); }
+/* cabin-stats removed — counts now in filter buttons */
 
 /* === Pax Detail Panel === */
 .pax-panel-overlay {
