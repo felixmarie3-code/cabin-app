@@ -38,6 +38,33 @@
           <span class="clock-tz-time" id="clockArrTime">00:00</span>
         </button>
       </div>
+      <button class="header-btn clock-btn timer-btn" id="timerToggle" title="Minuteur">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/><path d="M5 3l2 2"/><path d="M19 3l-2 2"/><line x1="12" y1="1" x2="12" y2="3"/></svg>
+        <span class="utc-label" id="timerLabel" style="display:none">00:00</span>
+      </button>
+      <div class="clock-dropdown" id="timerDropdown">
+        <div class="timer-setup">
+          <div class="timer-display" id="timerDisplay">00:00</div>
+          <div class="timer-presets">
+            <button class="timer-preset" data-min="1">1 min</button>
+            <button class="timer-preset" data-min="3">3 min</button>
+            <button class="timer-preset" data-min="5">5 min</button>
+            <button class="timer-preset" data-min="10">10 min</button>
+            <button class="timer-preset" data-min="15">15 min</button>
+            <button class="timer-preset" data-min="30">30 min</button>
+          </div>
+          <div class="timer-custom">
+            <input type="number" id="timerCustomMin" min="0" max="120" placeholder="min" class="timer-input">
+            <span style="color:var(--text-muted)">:</span>
+            <input type="number" id="timerCustomSec" min="0" max="59" placeholder="sec" class="timer-input">
+          </div>
+          <div class="timer-actions">
+            <button class="timer-action-btn start" id="timerStart">D&eacute;marrer</button>
+            <button class="timer-action-btn stop" id="timerStop" style="display:none">Arr&ecirc;ter</button>
+            <button class="timer-action-btn reset" id="timerReset" style="display:none">Reset</button>
+          </div>
+        </div>
+      </div>
       <button class="header-btn" id="shareToggle" title="Partager">
         <svg viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
       </button>

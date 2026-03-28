@@ -785,6 +785,89 @@ document.getElementById('clockDropdown').addEventListener('click',e=>{
   updateUTCClock();
 });
 
+// === Timer ===
+let timerEndTime=null,timerInterval=null,timerTotalSec=0;
+const timerBtn=document.getElementById('timerToggle');
+const timerLabel=document.getElementById('timerLabel');
+const timerDisplay=document.getElementById('timerDisplay');
+
+document.getElementById('timerToggle').addEventListener('click',e=>{
+  e.stopPropagation();document.getElementById('timerDropdown').classList.toggle('visible');
+});
+document.addEventListener('click',e=>{if(!e.target.closest('#timerDropdown')&&!e.target.closest('#timerToggle'))document.getElementById('timerDropdown').classList.remove('visible');});
+
+// Presets
+document.querySelectorAll('.timer-preset').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.timer-preset').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    timerTotalSec=parseInt(btn.dataset.min)*60;
+    document.getElementById('timerCustomMin').value='';
+    document.getElementById('timerCustomSec').value='';
+    updateTimerDisplay(timerTotalSec);
+  });
+});
+// Custom input
+['timerCustomMin','timerCustomSec'].forEach(id=>{
+  document.getElementById(id).addEventListener('input',()=>{
+    document.querySelectorAll('.timer-preset').forEach(b=>b.classList.remove('active'));
+    const m=parseInt(document.getElementById('timerCustomMin').value)||0;
+    const s=parseInt(document.getElementById('timerCustomSec').value)||0;
+    timerTotalSec=m*60+s;
+    updateTimerDisplay(timerTotalSec);
+  });
+});
+
+function updateTimerDisplay(sec){
+  const m=Math.floor(Math.abs(sec)/60),s=Math.abs(sec)%60;
+  const t=(sec<0?'-':'')+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+  timerDisplay.textContent=t;
+}
+
+document.getElementById('timerStart').addEventListener('click',()=>{
+  if(timerTotalSec<=0)return;
+  timerEndTime=Date.now()+timerTotalSec*1000;
+  timerBtn.classList.add('running');timerBtn.classList.remove('expired');
+  timerLabel.style.display='';
+  document.getElementById('timerStart').style.display='none';
+  document.getElementById('timerStop').style.display='';
+  document.getElementById('timerReset').style.display='';
+  timerInterval=setInterval(tickTimer,500);
+  tickTimer();
+});
+
+document.getElementById('timerStop').addEventListener('click',()=>{
+  clearInterval(timerInterval);timerInterval=null;
+  timerBtn.classList.remove('running');
+  document.getElementById('timerStart').style.display='';
+  document.getElementById('timerStop').style.display='none';
+  const remaining=Math.max(0,Math.round((timerEndTime-Date.now())/1000));
+  timerTotalSec=remaining;timerEndTime=null;
+});
+
+document.getElementById('timerReset').addEventListener('click',()=>{
+  clearInterval(timerInterval);timerInterval=null;timerEndTime=null;timerTotalSec=0;
+  timerBtn.classList.remove('running','expired');
+  timerLabel.style.display='none';timerLabel.textContent='';
+  timerDisplay.textContent='00:00';
+  document.getElementById('timerStart').style.display='';
+  document.getElementById('timerStop').style.display='none';
+  document.getElementById('timerReset').style.display='none';
+  document.querySelectorAll('.timer-preset').forEach(b=>b.classList.remove('active'));
+});
+
+function tickTimer(){
+  if(!timerEndTime)return;
+  const remaining=Math.round((timerEndTime-Date.now())/1000);
+  const m=Math.floor(Math.abs(remaining)/60),s=Math.abs(remaining)%60;
+  const t=(remaining<0?'-':'')+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+  timerLabel.textContent=t;updateTimerDisplay(remaining);
+  if(remaining<=0&&!timerBtn.classList.contains('expired')){
+    timerBtn.classList.remove('running');timerBtn.classList.add('expired');
+    addNotification('Minuteur terminé','Le minuteur est arrivé à zéro.','alert');
+  }
+}
+
 // Header date (28MAR26 format)
 (function(){const d=new Date();const m=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];document.getElementById('headerDate').textContent=String(d.getDate()).padStart(2,'0')+m[d.getMonth()]+String(d.getFullYear()).slice(-2);})();
 buildBriefing();buildCabinPlan();buildPaxList();buildMeals();buildTimeline();buildChecklists();buildReport();updateClocks();updateAppBadge();renderNotifCenter();updateNotifBadge();
