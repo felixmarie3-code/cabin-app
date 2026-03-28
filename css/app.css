@@ -392,11 +392,14 @@ html, body {
 .seat.occupied.premium { background: var(--corsair-bleu-economie); }
 .seat.occupied.economy { background: var(--seat-eco); }
 .seat.selected { border-color: white; box-shadow: 0 0 0 1px white; z-index: 3; color: white; }
-.seat.seat-lav {
-  background: rgba(150,155,180,0.12); border: 1px solid rgba(150,155,180,0.1);
+.seat-lav-merged {
+  width: 26px; border-radius: 4px; margin: 1px;
+  background: rgba(150,155,180,0.15); border: 1px solid rgba(150,155,180,0.12);
   display: flex; align-items: center; justify-content: center; cursor: default;
+  color: var(--corsair-beige-sable); opacity: 0.5;
 }
-[data-theme="light"] .seat.seat-lav { background: rgba(180,185,200,0.2); border-color: rgba(180,185,200,0.15); }
+.seat-lav-merged svg { opacity: 0.6; }
+[data-theme="light"] .seat-lav-merged { background: rgba(180,185,200,0.25); border-color: rgba(180,185,200,0.15); color: var(--corsair-bleu-premium); }
 .seat.dimmed { opacity: 0.15; pointer-events: none; }
 .seat.highlighted { box-shadow: 0 0 0 2px #fbbf24; z-index: 2; }
 .seat.bookmarked::before {
@@ -407,7 +410,7 @@ html, body {
 .seat.wheelchair::after { content: ''; position: absolute; top: 1px; right: 1px; width: 4px; height: 4px; border-radius: 50%; background: var(--corsair-bleu-economie); }
 .seat.no-seat { visibility: hidden; }
 .aisle { height: 8px; min-height: 8px; }
-.section-divider { width: 4px; flex-shrink: 0; }
+.section-divider { width: 12px; flex-shrink: 0; }
 
 /* Exit markers */
 .exit-row { position: relative; }
