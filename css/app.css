@@ -183,7 +183,7 @@ html, body {
   width: auto !important; padding: 0 10px !important; border-radius: 17px !important;
   gap: 5px; font-family: 'Gilroy', Arial, sans-serif;
 }
-.clock-btn svg { width: 14px !important; height: 14px !important; }
+.clock-btn svg { width: 18px !important; height: 18px !important; }
 .utc-label { font-size: 11px; font-weight: 700; color: white; letter-spacing: 0.3px; }
 .timer-btn .utc-label { font-variant-numeric: tabular-nums; min-width: 42px; text-align: center; display: inline-block; }
 /* Header panels — same pattern as notif-center */
