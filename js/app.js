@@ -588,6 +588,9 @@ function cacheFilterBadges(){document.querySelectorAll('.filter-btn').forEach(bt
 function getCrewForDoor(doorNum,side){return CREW.find(c=>{const d=doorAssignments[c.name]||c.door;return d===doorNum+side;});}
 
 function updateStats(){
+  // Ensure caches are populated
+  if(!cachedTotalSeats)cacheTotalSeats();
+  if(!Object.keys(filterBadgeRefs).length)cacheFilterBadges();
   // Single pass over passengers
   let occ=0,sm=0,um=0,wchr=0,nb=0;
   for(const id in passengers){
