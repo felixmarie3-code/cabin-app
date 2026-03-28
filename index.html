@@ -24,30 +24,50 @@
       </div>
     </div>
     <div id="splash-plane">
-      <!-- Vectorized from airplane-icon-png-2503.png — clean flat top-down icon -->
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 220" preserveAspectRatio="xMidYMid meet">
+      <!-- Corsair B787 top-down vectorized from airplane-icon-png-2503.png -->
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 260" preserveAspectRatio="xMidYMid meet">
+        <!-- Fuselage (white body) -->
         <path d="
-          M100,12
-          C108,12 114,26 114,44
-          L114,82
-          C124,86 162,100 200,114
-          L200,122
-          L114,106
-          L114,164
-          L146,194
-          C150,198 148,204 142,202
-          L100,184
-          L58,202
-          C52,204 50,198 54,194
-          L86,164
-          L86,106
-          L0,122
-          L0,114
-          C38,100 76,86 86,82
-          L86,44
-          C86,26 92,12 100,12
-          Z
+          M100,4 C104,4 108,14 108,28
+          L109,86 L109,195
+          C109,215 106,240 100,250
+          C94,240 91,215 91,195
+          L91,86 L92,28
+          C92,14 96,4 100,4 Z
         " fill="white"/>
+        <!-- Left wing -->
+        <path d="
+          M91,86 C78,90 38,104 0,120
+          L0,128
+          L91,112 Z
+        " fill="white" opacity="0.95"/>
+        <!-- Right wing -->
+        <path d="
+          M109,86 C122,90 162,104 200,120
+          L200,128
+          L109,112 Z
+        " fill="white" opacity="0.95"/>
+        <!-- Left engine nacelle -->
+        <rect x="50" y="98" width="11" height="26" rx="5.5" fill="white" opacity="0.92"/>
+        <!-- Right engine nacelle -->
+        <rect x="139" y="98" width="11" height="26" rx="5.5" fill="white" opacity="0.92"/>
+        <!-- Left horizontal stabilizer -->
+        <path d="M91,214 L56,232 L56,238 L91,224 Z" fill="rgba(82,167,190,0.65)"/>
+        <!-- Right horizontal stabilizer -->
+        <path d="M109,214 L144,232 L144,238 L109,224 Z" fill="rgba(82,167,190,0.65)"/>
+        <!-- Tail livery (Corsair blue) -->
+        <path d="
+          M100,250 C94,240 91,215 91,195
+          L91,185 C95,183 105,183 109,185
+          L109,195 C109,215 106,240 100,250 Z
+        " fill="rgba(82,167,190,0.55)"/>
+        <!-- Tail fin ridge -->
+        <line x1="100" y1="186" x2="100" y2="250" stroke="rgba(82,167,190,0.7)" stroke-width="2.5" stroke-linecap="round"/>
+        <!-- Fuselage window line -->
+        <line x1="100" y1="32" x2="100" y2="180" stroke="rgba(40,43,98,0.08)" stroke-width="1" stroke-dasharray="2 5"/>
+        <!-- Engine inlet highlights -->
+        <ellipse cx="55.5" cy="100" rx="4" ry="1.5" fill="rgba(82,167,190,0.3)"/>
+        <ellipse cx="144.5" cy="100" rx="4" ry="1.5" fill="rgba(82,167,190,0.3)"/>
       </svg>
     </div>
   </div>
