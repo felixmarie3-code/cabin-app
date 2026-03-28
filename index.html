@@ -377,32 +377,20 @@
   </div>
 
   <!-- Share menu modal -->
-  <div class="pax-panel-overlay" id="shareOverlay">
-    <div class="pax-panel" style="max-width:400px">
-      <div class="pax-panel-header">
-        <div class="pax-panel-title"><div class="pax-name">Partager les donn&eacute;es</div></div>
-        <div class="pax-panel-actions">
-          <button class="pax-action-btn close-btn" id="shareClose">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-          </button>
-        </div>
-      </div>
-      <div class="pax-panel-body">
-        <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px">S&eacute;lectionnez les donn&eacute;es &agrave; partager via AirDrop ou autre :</p>
-        <div class="share-options" id="shareOptions">
-          <label class="share-opt"><input type="checkbox" value="briefing" checked> Briefing vol</label>
-          <label class="share-opt"><input type="checkbox" value="passengers" checked> Liste passagers</label>
-          <label class="share-opt"><input type="checkbox" value="meals"> Repas sp&eacute;ciaux</label>
-          <label class="share-opt"><input type="checkbox" value="checklist"> Checklists</label>
-          <label class="share-opt"><input type="checkbox" value="incidents"> Incidents</label>
-          <label class="share-opt"><input type="checkbox" value="report"> Rapport cabine</label>
-        </div>
-        <button class="pax-save-note" id="shareConfirm" style="width:100%;margin-top:12px">
-          <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:white;stroke-width:1.75;fill:none;vertical-align:middle;margin-right:6px"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
-          Partager
-        </button>
-      </div>
+  <!-- Share panel (same pattern as notif-center) -->
+  <div class="header-panel" id="sharePanel">
+    <div class="header-panel-title">Partager</div>
+    <div class="share-options" id="shareOptions">
+      <label class="share-opt"><input type="checkbox" value="briefing" checked> Briefing vol</label>
+      <label class="share-opt"><input type="checkbox" value="passengers" checked> Liste passagers</label>
+      <label class="share-opt"><input type="checkbox" value="meals"> Repas sp&eacute;ciaux</label>
+      <label class="share-opt"><input type="checkbox" value="checklist"> Checklists</label>
+      <label class="share-opt"><input type="checkbox" value="incidents"> Incidents</label>
+      <label class="share-opt"><input type="checkbox" value="report"> Rapport cabine</label>
     </div>
+    <button class="timer-action-btn start" id="shareConfirm" style="width:100%">
+      Partager
+    </button>
   </div>
 
   <!-- Rest tour modal -->

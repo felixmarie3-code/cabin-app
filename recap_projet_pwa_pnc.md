@@ -1,4 +1,4 @@
-# Cabin App — Recap projet PWA PNC
+# CabinReady — Recap projet PWA PNC
 _Mis a jour le 2026-03-28_
 
 ---
@@ -7,7 +7,7 @@ _Mis a jour le 2026-03-28_
 
 Application web progressive (PWA) destinee au Personnel Navigant Commercial (PNC) de la compagnie CORSAIR. Elle est concue pour etre installee sur un iPad en mode standalone (sans barre de navigateur) et couvre l'ensemble du workflow d'un vol long-courrier : de la preparation du briefing jusqu'a la redaction du rapport de fin de vol.
 
-Vol de reference utilise dans les donnees mock : **SS 901 ORY -> RUN** (Paris-Orly -> La Reunion), appareil B787-9, immatriculation F-OLRA, duree 11h15, STD 14:00.
+Vol de reference utilise dans les donnees mock : **SS 901 ORY -> PTP** (Paris-Orly -> Pointe-a-Pitre), appareil B787-9, immatriculation F-OLRA, duree 11h15, STD 14:00.
 
 ---
 
@@ -20,7 +20,7 @@ Vol de reference utilise dans les donnees mock : **SS 901 ORY -> RUN** (Paris-Or
 | `index.html` | Structure HTML complete, tous les modules et overlays |
 | `css/app.css` | Feuille de style unique, variables CORSAIR, theming dark/light |
 | `js/app.js` | Logique applicative complete (aucune dependance externe) |
-| `sw.js` | Service Worker — cache v18, strategie network-first avec fallback cache |
+| `sw.js` | Service Worker — cache v42, strategie network-first avec fallback cache |
 | `manifest.json` | Manifest PWA avec raccourcis et icones |
 
 ### Technologies
@@ -35,24 +35,27 @@ Vol de reference utilise dans les donnees mock : **SS 901 ORY -> RUN** (Paris-Or
 
 ## Service Worker (sw.js)
 
-- **Nom du cache** : `cabin-app-v18`
+- **Nom du cache** : `cabin-app-v42`
 - **Strategie fetch** : Network First — tente le reseau, repli sur cache si hors ligne. Toute reponse reseau est systematiquement mise en cache (mise a jour automatique).
-- **Installation** : pre-cache de tous les assets statiques (HTML, CSS, JS, manifest, polices, icones SVG/PNG).
+- **Installation** : pre-cache de tous les assets statiques (HTML, CSS, JS, manifest, polices, icones SVG/PNG, logo).
 - **Activation** : suppression de toutes les versions de cache anterieures (`k !== CACHE_NAME`), puis `clients.claim()`.
 - **notificationclick** : redirige vers l'app (focus si fenetres ouvertes, sinon `openWindow`).
-- Assets mis en cache : `./`, `index.html`, `css/app.css`, `js/app.js`, `manifest.json`, `icons/icon-192.svg`, `icons/icon-512.png`, `icons/corsair_blanc.svg`, `fonts/Gilroy-Regular.ttf`, `fonts/Gilroy-SemiBold.ttf`.
+- Assets mis en cache : `./`, `index.html`, `css/app.css`, `js/app.js`, `manifest.json`, `logoapp.png`, `icons/icon-192.svg`, `icons/icon-512.png`, `icons/corsair_blanc.svg`, `fonts/Gilroy-Regular.ttf`, `fonts/Gilroy-SemiBold.ttf`.
 
 ---
 
 ## Manifest PWA (manifest.json)
 
-- **name** : `Cabin App - Gestion de vol PNC`
-- **short_name** : `Cabin App`
+- **name** : `CabinReady - Gestion de vol PNC`
+- **short_name** : `CabinReady`
 - **display** : `standalone`
 - **orientation** : `landscape`
-- **background_color / theme_color** : `#0d0f2b` (bleu nuit CORSAIR)
-- **Icones** : icon-192.png (192x192), icon-512.png (512x512), apple-touch-icon.png (180x180)
-- **Apple touch icon** (balise `<link>`) : `icons/apple-touch-icon.png` — logo CORSAIR voiles (logoapp.png reference)
+- **background_color** : `#0d0f2b` (bleu nuit CORSAIR)
+- **theme_color** : `#0d0f2b`
+- **Icones** : toutes pointent vers `logoapp.png` (192x192, 512x512, 180x180 purpose:any)
+- **Apple touch icon** (balise `<link>`) : `logoapp.png`
+- **Meta theme-color** (balise `<meta>`) : `#282B62`
+- **Meta apple-mobile-web-app-title** : `CabinReady`
 - **Raccourcis PWA** (apparaissent au long-press sur l'icone) :
   - Briefing vol -> `#briefing`
   - Plan de cabine -> `#passengers`
@@ -67,17 +70,39 @@ Barre fixe en haut, hauteur 48px (`--header-height`), fond `--bg-header`, bordur
 
 ### Cote gauche
 - Logo SVG blanc `icons/corsair_blanc.svg` (hauteur 20px)
-- Titre `CABIN` en Gilroy, 14px, letter-spacing 3px, uppercase, couleur blanche
+- Titre `CabinReady` en Gilroy, 14px, letter-spacing 3px, uppercase, couleur blanche
 
 ### Cote droit (de gauche a droite)
-- **Indicateur de vol** : `SS 901 · ORY → RUN · B787-9` (id `flightInfo`), couleur `--corsair-beige-sable`
+- **Indicateur de vol** : `SS 901 · ORY -> RUN · <date>` (id `flightInfo`) avec date dynamique au format DDMMMYY (ex: 28MAR26), couleur `--corsair-beige-sable`
+- **Bouton Horloge UTC** (`utcToggle`) : icone horloge SVG Lucide, label temps reel (ex: `14:32Z`), ouvre le panneau horloge multi-fuseaux
+- **Bouton Minuteur** (`timerToggle`) : icone chronometre SVG Lucide, label temps restant (visible quand minuteur actif), ouvre le panneau minuteur
 - **Bouton Partager** (`shareToggle`) : icone upload SVG Lucide, ouvre l'overlay de partage
 - **Bouton Notifications** (`notifToggle`) : icone cloche SVG Lucide, ouvre le centre de notifications ; badge rouge en position absolue top-right affichant le nombre de notifications
 - **Bouton Theme** (`themeToggle`) : icone lune/soleil SVG Lucide, bascule dark/light
 - **Point de synchronisation** (`syncStatus`) : cercle vert 7px, indicateur visuel en ligne
 
+### Panneau Horloge (clockPanel)
+Panel dropdown sous le header, meme pattern que le centre de notifications. Affiche 3 fuseaux horaires mis a jour toutes les 10s :
+- **UTC** : heure UTC avec suffixe `Z`
+- **ORY (UTC+1)** : heure locale aeroport de depart
+- **PTP (UTC-4)** : heure locale aeroport d'arrivee
+
+Clic sur un fuseau -> le label du bouton header affiche ce fuseau. Fuseau actif persiste visuellement (classe `active`).
+
+### Panneau Minuteur (timerPanel)
+Panel dropdown sous le header. Fonctionnalites :
+- **Affichage** : grand compteur HH:MM:SS (ou MM:SS si < 1h)
+- **Presets** : boutons rapides 1 min, 3 min, 5 min, 10 min, 15 min, 30 min, 11h15 (duree du vol)
+- **Saisie personnalisee** : input `type="time"` natif iOS (roue de selection)
+- **Boutons d'action** : Demarrer / Arreter / Reset
+- **Etat actif** : classe `running` sur le bouton header, label pill visible avec temps restant
+- **Expiration** : classe `expired` sur le bouton header, notification automatique "Minuteur termine" envoyee via le systeme de notifications
+
+### Gestion unifiee des panels
+Tous les panels header (notifCenter, clockPanel, timerPanel) partagent un mecanisme `closeAllPanels(except)` : ouvrir un panel ferme automatiquement les autres. Clic en dehors d'un panel le ferme.
+
 ### Style des boutons d'en-tete
-Tous les boutons sont **circulaires** : `border-radius: 50%`, 34x34px, fond `rgba(255,255,255,0.1)`, icone SVG stroke blanc 18px.
+Tous les boutons sont **circulaires** : `border-radius: 50%`, 34x34px, fond `rgba(255,255,255,0.1)`, icone SVG stroke blanc 18px. Les boutons horloge et minuteur (`clock-btn`) affichent un label texte a cote de l'icone.
 
 ---
 
@@ -181,9 +206,9 @@ Module affiche par defaut a l'ouverture de l'app.
 KPIs en ligne : Vol (SS 901), Route (ORY -> RUN), Appareil (B787-9), Immat. (F-OLRA), Duree (11h15), STD (14:00 — editable indirectement via OTP).
 
 **Profil de vol** (`flightProfile`) : ligne horizontale avec dots — **non SVG curve**. Implementation via elements DOM :
-- `.fp-line` : ligne absolue horizontale, 2px, couleur `rgba(82,167,190,0.2)`, centree verticalement
-- 5 points `.fp-point` positiones en flexbox : Depart ORY (14:00, dot `.dep` bleu premium), TOC FL390 (14:32), Croisiere, TOD (00:38), Arrivee RUN (01:15, dot `.arr` vert)
-- Chaque point : temps au dessus, dot colore, label en dessous
+- `.fp-line` : ligne absolue horizontale, 2px, couleur `rgba(82,167,190,0.2)`, centree verticalement (position calculee dynamiquement via `requestAnimationFrame` pour s'aligner sur le centre des dots)
+- 4 points `.fp-point` positiones en flexbox : Depart ORY (10:10, dot `.dep` bleu premium), TOC (12:44, dot `.cruise`), TOD (18:29, dot `.tod`), Arrivee PTP (18:53, dot `.arr` vert)
+- Chaque point : temps au dessus, dot colore, label IATA en dessous
 
 #### Carte 2 — Passagers
 - KPIs : Total, Business, Premium, Economy (calcules depuis les donnees mock)
@@ -191,18 +216,23 @@ KPIs en ligne : Vol (SS 901), Route (ORY -> RUN), Appareil (B787-9), Immat. (F-O
 - Section **Particularites** : boutons tags cliquables (`pax-tags`) — UM, WCHR, VIP, Repas sp., Nourrissons, Non embarques. Chaque tag affiche un compteur sur fond arrondi et redirige vers le module Passagers avec le filtre pre-selectionne.
 
 #### Carte 3 — Equipage cabine
-Bouton `Assigner aux portes` (inline-btn) ouvre la modale d'assignation.
-Liste de 8 PNC avec avatar circulaire (initiales), nom, role et porte assignee :
-- LEFEBVRE Sophie — CCP — Porte 1L
-- DUPONT Marc — CC1 Business — Porte 1R
-- PAYET Nathalie — CC2 Premium — Porte 2L
-- HOARAU Kevin — CC3 Eco avant — Porte 2R
-- MARTIN Julie — CC4 Eco centre — Porte 3L
-- RIVIERE Paul — CC5 Eco arriere — Porte 3R
-- GRONDIN Lea — CC6 Eco arriere — Porte 4L
-- DIJOUX Sarah — CC7 Galley — Porte 4R
+Deux boutons inline :
+- `Tour de repos` (`restTourBtn`) : ouvre la modale tour de repos
+- `Assigner aux portes` (`assignDoorsBtn`) : ouvre la modale d'assignation
 
-Avatar CCP : fond `--corsair-bleu-premium`. Avatar CC : fond `#3d4280`.
+Liste de 8 PNC avec avatar circulaire (**trigramme** sur 3 lettres), nom, rang et porte assignee. Les portes utilisent la nomenclature **G/D** (Gauche/Droite) :
+- LEFEBVRE Sophie — CCP (trigramme LFS) — Porte 1G
+- DUPONT Marc — CC (trigramme DPM) — Porte 1D
+- PAYET Nathalie — HST (trigramme PYN) — Porte 2G
+- HOARAU Kevin — HST (trigramme HRK) — Porte 2D
+- MARTIN Julie — HST (trigramme MTJ) — Porte 3G
+- RIVIERE Paul — HST (trigramme RVP) — Porte 3D
+- GRONDIN Lea — HST (trigramme GDL) — Porte 4G
+- DIJOUX Sarah — HST (trigramme DJS) — Porte 4D
+
+Avatar CCP : fond `--corsair-bleu-premium`, classe `ccp`. Avatar CC : classe `cc`. Avatar HST : classe `hst`.
+
+L'equipage est trie par porte assignee (numero croissant, G avant D). Clic sur un membre d'equipage -> `showCrewDetail()` redirige vers le module Passagers et affiche une fiche detail avec trigramme, rang, role et porte.
 
 #### Carte 4 — Cabin Status
 Bouton `+ Defaut` ouvre la modale defaut cabine.
@@ -225,7 +255,7 @@ Chaque item : fond `rgba(255,255,255,0.03)`, `border-radius: 10px`, pas de bordu
 
 #### Carte 7 — Notes de briefing (wide)
 Textarea libre persistee en `localStorage` (cle `cabin_briefing_notes`).
-Bouton `Tester une notification` : compte rebours 5s puis declenche une notification OS simulant une alerte medicale au siege 22K.
+Bouton `Tester une notification` : compte rebours 5s puis declenche une notification. Les notifications sont cyclees parmi 7 scenarios pre-definis : embarquement debute, boarding clos, alerte medicale, changement de porte, turbulences prevues, service 1er termine, retard au depart.
 
 ---
 
@@ -291,6 +321,14 @@ Contenu dans `.cabin-container` (fond `--bg-surface`, `border-radius: 14px`, sha
 - Separateurs galley entre sections : Business->Premium (`GAL`), Economy avant->arriere (`GAL/LAV`)
 - Rangees de sortie (`EXIT_ROWS`) : 1, 9, 15, 30, 46 — trait vert `#257A6C` au dessus
 
+#### Colonnes galley avec avatars equipage
+Les separateurs galley sont des colonnes verticales (`galley-col`) affichant :
+- En haut : avatar cliquable du PNC assigne a la porte D (cote A du plan)
+- Au centre : boite galley avec label (GAL, GAL/LAV, ou P1/P2/P3/P4)
+- En bas : avatar cliquable du PNC assigne a la porte G (cote K du plan)
+
+Des colonnes galley sont aussi ajoutees avant la section Business (porte 1) et apres la section Economy arriere (porte 4). Clic sur un avatar -> `showCrewDetail()`.
+
 #### Style des sieges
 - Taille : 22x22px, `border-radius: 3px`, margin 1px
 - Vide : fond `--seat-empty`, bordure `--seat-empty-border`
@@ -328,6 +366,8 @@ Panel fixe sous le plan, `border-radius: 14px`, `max-height: 260px`, shadow. Deu
 - Bouton bookmark (SVG bookmark Lucide) — rempli rouge si active
 - Grille info 2 colonnes : PNR, Nationalite, Embarquement (vert/jaune), Check-in, Repas, Remarque, Bagages, Nourrisson
 - Section notes PNC : textarea + bouton `Enregistrer la note` (feedback `Enregistre !` 1.5s)
+
+Egalement utilise pour afficher le **detail equipage** via `showCrewDetail()` : badge trigramme colore par rang, nom, champs Trigramme/Rang/Role/Porte (notes et bookmark masques).
 
 ### Panel overlay passager (paxOverlay)
 Modal centree pour clic direct sur siege dans le plan. Memes informations que la vue detail inline. Bouton fermer X circulaire.
@@ -429,10 +469,28 @@ Detail complet d'un passager : badge siege colore, nom, classe/FFN, bookmark SVG
 
 ### Modal Partager (shareOverlay)
 Selecteurs cases a cocher par categorie : Briefing vol, Liste passagers, Repas speciaux, Checklists, Incidents, Rapport cabine.
-Bouton `Partager` -> utilise **Web Share API** (`navigator.share`) si disponible (iOS -> AirDrop). Fallback : copie dans le presse-papier (`navigator.clipboard`). Le texte partage est construit dynamiquement depuis les donnees en memoire.
+Bouton `Partager` -> utilise **Web Share API** (`navigator.share`) si disponible (iOS -> AirDrop). Fallback : copie dans le presse-papier (`navigator.clipboard`). Le texte partage est construit dynamiquement depuis les donnees en memoire. Le titre partage est `CabinReady — SS 901`.
+
+### Modal Tour de repos (restOverlay)
+3 creneaux de repos, chacun avec :
+- Numero d'ordre (1, 2, 3)
+- Select PNC (trigramme + prenom parmi les 8 membres d'equipage)
+- Heure de debut (input `type="time"`)
+- Heure de fin (input `type="time"`)
+
+Sauvegarde -> persiste dans `localStorage` (cle `cabin_rest_tour`).
 
 ### Modal Assignation portes (doorOverlay)
-Grille 2 colonnes : 8 PNC avec select dropdown pour chaque porte (1L/1R/2L/2R/3L/3R/4L/4R). Sauvegarde -> met a jour `doorAssignments`, persiste, rafraichit le briefing.
+Grille verticale representant le fuselage avec 4 paires de portes (1G/1D, 2G/2D, 3G/3D, 4G/4D), chaque paire associee a un label de section (BUSINESS, PREMIUM, ECONOMY AV., ECONOMY ARR.).
+
+Chaque porte : label (ex: `1G`), select dropdown avec les 8 PNC (trigramme + rang) et option `— Libre —`. La porte assignee recoit la classe `assigned`.
+
+**Validation temps reel** (`validateDoorAssignments`) : affiche un bandeau d'avertissement (`doorWarning`) si :
+- Des portes ne sont pas assignees
+- Un PNC est assigne a plusieurs portes
+- Des PNC ne sont assignes a aucune porte
+
+Sauvegarde -> met a jour `doorAssignments`, persiste, rafraichit le briefing et le plan de cabine.
 
 ### Modal Defaut cabine (defectOverlay)
 - Select zone : Business, Premium, Economy avant, Economy arriere, Galley, Toilettes, Autre
@@ -446,11 +504,11 @@ Grille 2 colonnes : 8 PNC avec select dropdown pour chaque porte (1L/1R/2L/2R/3L
 
 Panel fixe en dessous du header, cote droit, `width: 380px`, `border-radius: 14px`, shadow, affiche/masque via classe `visible`.
 
-- En-tete : titre `NOTIFICATIONS`, bouton `Tout effacer` (rouge)
+- En-tete : titre `Notifications`, bouton `Tout effacer` (rouge)
 - Liste scrollable d'items, max 50 notifications
 - Chaque notification : icone ronde (lettre `i` ou `!`) sur fond colore (rouge = alert, bleu = info, orange-rouge = warn), titre bold, corps, heure
 - **Swipe gauche** pour supprimer (seuil -80px) : animation `dismissed` translateX(-100%) + opacity 0
-- Bouton dismiss `×` visible au hover/touch
+- Bouton dismiss `x` visible au hover/touch
 - Message vide si aucune notification
 
 ### Types de notifications
@@ -458,11 +516,23 @@ Panel fixe en dessous du header, cote droit, `width: 380px`, `border-radius: 14p
 - `info` : icone `i`, fond bleu premium
 - `warn` : icone `i`, fond `#b64b32`
 
+### Notifications preparees (7 scenarios)
+Le bouton "Tester une notification" cycle parmi 7 scenarios pre-definis :
+1. Embarquement debute
+2. Boarding clos — 4 passagers annules
+3. Alerte medicale — Siege 22K
+4. Changement de porte
+5. Turbulences prevues
+6. Service 1er service termine
+7. Retard au depart — +25 min
+
+### Badge de notifications
+Le badge affiche `appNotifications.length` (nombre total de notifications en memoire). L'app badge OS (`navigator.setAppBadge`) est synchronise sur ce meme compteur.
+
 ### Notifications OS (Push)
 - Via `navigator.serviceWorker.ready.then(r => r.showNotification(...))` si SW actif
 - Fallback via `new Notification(...)` si permission accordee
 - Options : icone `icons/icon-192.svg`, badge meme icone, vibration `[200,100,200]`, `renotify: true`
-- Badge applicatif (`navigator.setAppBadge`) : nombre de passagers non embarques + incidents
 
 ---
 
@@ -497,11 +567,12 @@ Champs par passager :
 | `cabin_incidents` | array | `[{ time, type, seat, desc, severity }]` |
 | `cabin_zones` | object | `{ "Business": "OK", ... }` |
 | `cabin_services` | object | `{ s1: { biz: N }, s2: { ... } }` |
-| `cabin_doors` | object | `{ "LEFEBVRE Sophie": "1L" }` |
+| `cabin_doors` | object | `{ "LEFEBVRE Sophie": "1G" }` |
 | `cabin_notifications` | array | `[{ id, title, body, type, time }]` |
 | `cabin_defects` | array | `[{ zone, desc, impact }]` |
 | `cabin_briefing_notes` | string | Texte libre |
 | `cabin_report_notes` | string | Texte libre |
+| `cabin_rest_tour` | array | `[{ crew, start, end }]` |
 
 ---
 
@@ -511,5 +582,7 @@ Champs par passager :
 - `-webkit-tap-highlight-color: transparent`
 - `overflow: hidden` sur `html, body` (scroll uniquement dans `.content`)
 - Taille minimale touchable : `min-height: 36px; min-width: 36px` sur tous les boutons
-- Clocks : `updateClocks()` toutes les 30s, `buildTimeline()` toutes les 30s
+- Clocks : `updateClocks()` toutes les 30s, `buildTimeline()` toutes les 30s, `updateUTCClock()` toutes les 10s
+- Gestion unifiee des panels header : `closeAllPanels(except)` ferme tous les panels sauf celui specifie ; clic en dehors ferme tous les panels
 - Init complete a la fin de `app.js` : `buildBriefing()`, `buildCabinPlan()`, `buildPaxList()`, `buildMeals()`, `buildTimeline()`, `buildChecklists()`, `buildReport()`, `updateClocks()`, `updateAppBadge()`, `renderNotifCenter()`, `updateNotifBadge()`
+- Date du jour affichee dans le header au format DDMMMYY (ex: 28MAR26)
