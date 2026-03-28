@@ -381,8 +381,9 @@ function showCrewDetail(c){
     it.appendChild(lb);it.appendChild(vl);grid.appendChild(it);
   });
   document.getElementById('paxDetNotes').value='';
-  document.getElementById('paxDetNotes').style.display='none';
-  document.getElementById('paxDetSaveNote').style.display='none';
+  // Hide entire notes section for crew
+  const notesSec=document.querySelector('#paxDetailView .pax-notes-section');
+  if(notesSec)notesSec.style.display='none';
   document.querySelectorAll('.seat.selected').forEach(s=>s.classList.remove('selected'));
 }
 
@@ -481,6 +482,10 @@ function showPaxDetail(seatId){
   [{l:'PNR',v:pax.pnr},{l:'Nationalit\u00e9',v:pax.nationality},{l:'Embarquement',v:pax.boarded?'\u00c0 bord':'En attente',c:pax.boarded?'ok':'warn'},{l:'Check-in',v:pax.checkedIn?'Oui':'Non',c:pax.checkedIn?'ok':'warn'},{l:'Repas',v:pax.meal||'Standard'},{l:'Remarque',v:pax.remark||'Aucune',c:pax.remark?'warn':''},{l:'Bagages',v:pax.bags+' pcs'},{l:'Nourrisson',v:pax.infant?'Oui':'Non',c:pax.infant?'warn':''}].forEach(f=>{
     const it=document.createElement('div');it.className='pax-info-item';const lb=document.createElement('div');lb.className='pax-info-label';lb.textContent=f.l;const vl=document.createElement('div');vl.className='pax-info-value'+(f.c?' '+f.c:'');vl.textContent=f.v;it.appendChild(lb);it.appendChild(vl);grid.appendChild(it);});
   document.getElementById('paxDetNotes').value=notes[seatId]||'';
+  // Re-show notes section (may be hidden by showCrewDetail)
+  const notesSec=document.querySelector('#paxDetailView .pax-notes-section');
+  if(notesSec)notesSec.style.display='';
+  document.getElementById('paxDetBookmark').style.display='';
   // Highlight seat in cabin
   document.querySelectorAll('.seat.selected').forEach(s=>s.classList.remove('selected'));
   const se=document.querySelector('[data-seat="'+seatId+'"]');if(se){se.classList.add('selected');se.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});}
