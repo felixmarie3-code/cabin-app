@@ -702,6 +702,11 @@ button, [role="button"] { min-height: 36px; min-width: 36px; }
 .rest-slot-time { font-size: 11px; color: var(--text-muted); }
 .rest-slot select { padding: 4px 8px; border-radius: 8px; background: var(--bg-surface); color: var(--text); border: 1px solid rgba(82,167,190,0.2); font-size: 12px; }
 
+/* === Crew badge in pax detail === */
+.pax-seat-badge.crew-badge.ccp { background: var(--corsair-bleu-premium); }
+.pax-seat-badge.crew-badge.cc { background: var(--corsair-bleu-economie); }
+.pax-seat-badge.crew-badge.hst { background: #7a5a8a; }
+
 /* === Crew markers on cabin plan === */
 .crew-marker {
   position: absolute; left: 50%; transform: translateX(-50%);

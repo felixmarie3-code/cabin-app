@@ -322,10 +322,29 @@ document.getElementById('doorSave').addEventListener('click',()=>{
   lsSet('cabin_doors',doorAssignments);document.getElementById('doorOverlay').classList.remove('visible');buildBriefing();buildCabinPlan();
 });
 
-// Crew detail (click on crew member)
+// Crew detail — opens in the pax detail panel (passengers tab)
 function showCrewDetail(c){
+  switchToTab('passengers');
+  selectedPaxSeat=null;
+  document.getElementById('paxListView').style.display='none';
+  document.getElementById('paxDetailView').style.display='';
   const saved=doorAssignments[c.name];const door=(saved&&DOORS.includes(saved))?saved:c.door;
-  alert(c.name+'\n'+c.rank+' — '+c.trigramme+'\nRôle : '+c.role+'\nPorte : '+door);
+  const badge=document.getElementById('paxDetBadge');badge.textContent=c.trigramme;badge.className='pax-seat-badge crew-badge '+c.rankCls;
+  document.getElementById('paxDetName').textContent=c.name;
+  document.getElementById('paxDetClass').textContent=c.rank;
+  document.getElementById('paxDetBookmark').classList.remove('bookmarked');
+  document.getElementById('paxDetBookmark').style.display='none';
+  const grid=document.getElementById('paxDetGrid');grid.textContent='';
+  [{l:'Trigramme',v:c.trigramme},{l:'Rang',v:c.rank},{l:'Rôle',v:c.role},{l:'Porte',v:door}].forEach(f=>{
+    const it=document.createElement('div');it.className='pax-info-item';
+    const lb=document.createElement('div');lb.className='pax-info-label';lb.textContent=f.l;
+    const vl=document.createElement('div');vl.className='pax-info-value';vl.textContent=f.v;
+    it.appendChild(lb);it.appendChild(vl);grid.appendChild(it);
+  });
+  document.getElementById('paxDetNotes').value='';
+  document.getElementById('paxDetNotes').style.display='none';
+  document.getElementById('paxDetSaveNote').style.display='none';
+  document.querySelectorAll('.seat.selected').forEach(s=>s.classList.remove('selected'));
 }
 
 // Rest tour modal
@@ -429,6 +448,9 @@ function showPaxDetail(seatId){
 }
 document.getElementById('paxDetailBack').addEventListener('click',()=>{
   document.getElementById('paxDetailView').style.display='none';document.getElementById('paxListView').style.display='';
+  document.getElementById('paxDetBookmark').style.display='';
+  document.getElementById('paxDetNotes').style.display='';
+  document.getElementById('paxDetSaveNote').style.display='';
   document.querySelectorAll('.seat.selected').forEach(s=>s.classList.remove('selected'));selectedPaxSeat=null;
 });
 document.getElementById('paxDetBookmark').addEventListener('click',()=>{
