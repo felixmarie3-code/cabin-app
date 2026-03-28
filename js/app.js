@@ -118,8 +118,10 @@ function renderNotifCenter(){
 }
 function removeNotif(idx){appNotifications.splice(idx,1);lsSet('cabin_notifications',appNotifications);renderNotifCenter();updateNotifBadge();}
 function updateNotifBadge(){const b=document.getElementById('notifBadge');const c=appNotifications.length;b.textContent=c>0?String(c):'';b.style.display=c>0?'':'none';if('setAppBadge' in navigator){if(c>0)navigator.setAppBadge(c).catch(()=>{});else navigator.clearAppBadge().catch(()=>{});}}
-document.getElementById('notifToggle').addEventListener('click',()=>{if(typeof closeAllDropdowns==='function')closeAllDropdowns();document.getElementById('notifCenter').classList.toggle('visible');});
-document.addEventListener('click',e=>{if(!e.target.closest('#notifCenter')&&!e.target.closest('#notifToggle'))document.getElementById('notifCenter').classList.remove('visible');});
+document.getElementById('notifToggle').addEventListener('click',()=>{
+  closeAllPanels('notifCenter');
+  document.getElementById('notifCenter').classList.toggle('visible');
+});
 document.getElementById('notifClearAll').addEventListener('click',()=>{appNotifications=[];lsSet('cabin_notifications',appNotifications);renderNotifCenter();updateNotifBadge();});
 
 // Prepared notification types
@@ -824,22 +826,24 @@ function updateUTCClock(){
 }
 updateUTCClock();setInterval(updateUTCClock,10000);
 
-// === Unified header dropdown management ===
-const headerBackdrop=document.getElementById('headerBackdrop');
-function closeAllDropdowns(){
-  document.querySelectorAll('.clock-dropdown.visible').forEach(d=>d.classList.remove('visible'));
-  headerBackdrop.classList.remove('visible');
+// === Unified header panel management (same pattern as notifCenter) ===
+const ALL_PANELS=['notifCenter','clockPanel','timerPanel'];
+function closeAllPanels(except){
+  ALL_PANELS.forEach(id=>{if(id!==except)document.getElementById(id).classList.remove('visible');});
 }
-function toggleDropdown(id){
-  const dd=document.getElementById(id);
-  const wasVisible=dd.classList.contains('visible');
-  closeAllDropdowns();
-  if(!wasVisible){dd.classList.add('visible');headerBackdrop.classList.add('visible');}
-}
-headerBackdrop.addEventListener('click',closeAllDropdowns);
+document.addEventListener('click',e=>{
+  ALL_PANELS.forEach(id=>{
+    const panel=document.getElementById(id);
+    const toggleId=id==='notifCenter'?'notifToggle':id==='clockPanel'?'utcToggle':'timerToggle';
+    if(!e.target.closest('#'+id)&&!e.target.closest('#'+toggleId))panel.classList.remove('visible');
+  });
+});
 
-document.getElementById('utcToggle').addEventListener('click',e=>{e.stopPropagation();toggleDropdown('clockDropdown');});
-document.getElementById('clockDropdown').addEventListener('click',e=>{
+document.getElementById('utcToggle').addEventListener('click',()=>{
+  closeAllPanels('clockPanel');
+  document.getElementById('clockPanel').classList.toggle('visible');
+});
+document.getElementById('clockPanel').addEventListener('click',e=>{
   const opt=e.target.closest('.clock-option');if(!opt)return;
   activeClockTz=opt.dataset.tz;
   document.querySelectorAll('.clock-option').forEach(o=>o.classList.toggle('active',o===opt));
@@ -852,7 +856,10 @@ const timerBtn=document.getElementById('timerToggle');
 const timerLabel=document.getElementById('timerLabel');
 const timerDisplay=document.getElementById('timerDisplay');
 
-document.getElementById('timerToggle').addEventListener('click',e=>{e.stopPropagation();toggleDropdown('timerDropdown');});
+document.getElementById('timerToggle').addEventListener('click',()=>{
+  closeAllPanels('timerPanel');
+  document.getElementById('timerPanel').classList.toggle('visible');
+});
 
 // Presets
 document.querySelectorAll('.timer-preset').forEach(btn=>{

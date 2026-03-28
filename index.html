@@ -24,46 +24,10 @@
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
         <span class="utc-label" id="utcLabel">00:00Z</span>
       </button>
-      <div class="clock-dropdown" id="clockDropdown">
-        <button class="clock-option active" id="clockUtc" data-tz="utc">
-          <span class="clock-tz-name">UTC</span>
-          <span class="clock-tz-time" id="clockUtcTime">00:00Z</span>
-        </button>
-        <button class="clock-option" id="clockDep" data-tz="dep">
-          <span class="clock-tz-name">ORY (UTC+1)</span>
-          <span class="clock-tz-time" id="clockDepTime">00:00</span>
-        </button>
-        <button class="clock-option" id="clockArr" data-tz="arr">
-          <span class="clock-tz-name">PTP (UTC-4)</span>
-          <span class="clock-tz-time" id="clockArrTime">00:00</span>
-        </button>
-      </div>
       <button class="header-btn clock-btn timer-btn" id="timerToggle" title="Minuteur">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/><path d="M5 3l2 2"/><path d="M19 3l-2 2"/><line x1="12" y1="1" x2="12" y2="3"/></svg>
         <span class="utc-label" id="timerLabel" style="display:none">00:00</span>
       </button>
-      <div class="clock-dropdown" id="timerDropdown">
-        <div class="timer-setup">
-          <div class="timer-display" id="timerDisplay">00:00</div>
-          <div class="timer-presets">
-            <button class="timer-preset" data-sec="60">1 min</button>
-            <button class="timer-preset" data-sec="180">3 min</button>
-            <button class="timer-preset" data-sec="300">5 min</button>
-            <button class="timer-preset" data-sec="600">10 min</button>
-            <button class="timer-preset" data-sec="900">15 min</button>
-            <button class="timer-preset" data-sec="1800">30 min</button>
-            <button class="timer-preset" data-sec="40500">11h15</button>
-          </div>
-          <div class="timer-custom">
-            <input type="time" id="timerPicker" value="00:00" step="60" class="timer-wheel">
-          </div>
-          <div class="timer-actions">
-            <button class="timer-action-btn start" id="timerStart">D&eacute;marrer</button>
-            <button class="timer-action-btn stop" id="timerStop" style="display:none">Arr&ecirc;ter</button>
-            <button class="timer-action-btn reset" id="timerReset" style="display:none">Reset</button>
-          </div>
-        </div>
-      </div>
       <button class="header-btn" id="shareToggle" title="Partager">
         <svg viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
       </button>
@@ -77,7 +41,46 @@
       <span class="sync-status" id="syncStatus" title="En ligne"></span>
     </div>
   </header>
-  <div class="header-dropdown-backdrop" id="headerBackdrop"></div>
+
+  <!-- Clock panel (same pattern as notif-center) -->
+  <div class="header-panel" id="clockPanel">
+    <div class="header-panel-title">Horloge</div>
+    <button class="clock-option active" data-tz="utc">
+      <span class="clock-tz-name">UTC</span>
+      <span class="clock-tz-time" id="clockUtcTime">00:00Z</span>
+    </button>
+    <button class="clock-option" data-tz="dep">
+      <span class="clock-tz-name">ORY (UTC+1)</span>
+      <span class="clock-tz-time" id="clockDepTime">00:00</span>
+    </button>
+    <button class="clock-option" data-tz="arr">
+      <span class="clock-tz-name">PTP (UTC-4)</span>
+      <span class="clock-tz-time" id="clockArrTime">00:00</span>
+    </button>
+  </div>
+
+  <!-- Timer panel (same pattern as notif-center) -->
+  <div class="header-panel" id="timerPanel">
+    <div class="header-panel-title">Minuteur</div>
+    <div class="timer-display" id="timerDisplay">00:00</div>
+    <div class="timer-presets">
+      <button class="timer-preset" data-sec="60">1 min</button>
+      <button class="timer-preset" data-sec="180">3 min</button>
+      <button class="timer-preset" data-sec="300">5 min</button>
+      <button class="timer-preset" data-sec="600">10 min</button>
+      <button class="timer-preset" data-sec="900">15 min</button>
+      <button class="timer-preset" data-sec="1800">30 min</button>
+      <button class="timer-preset" data-sec="40500">11h15</button>
+    </div>
+    <div class="timer-custom">
+      <input type="time" id="timerPicker" value="00:00" step="60" class="timer-wheel">
+    </div>
+    <div class="timer-actions">
+      <button class="timer-action-btn start" id="timerStart">D&eacute;marrer</button>
+      <button class="timer-action-btn stop" id="timerStop" style="display:none">Arr&ecirc;ter</button>
+      <button class="timer-action-btn reset" id="timerReset" style="display:none">Reset</button>
+    </div>
+  </div></div>
 
   <main class="content" id="content">
 
