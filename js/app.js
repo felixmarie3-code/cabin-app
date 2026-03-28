@@ -758,6 +758,33 @@ function updateAppBadge(){if(!('setAppBadge' in navigator))return;let c=0;Object
 // ============================================================
 // INIT
 // ============================================================
+// === UTC Clock ===
+let activeClockTz='utc';
+const TZ_OFFSETS={utc:0,dep:1,arr:-4}; // ORY=UTC+1 (CET), PTP=UTC-4
+function updateUTCClock(){
+  const now=new Date();
+  const utcH=now.getUTCHours(),utcM=now.getUTCMinutes();
+  const fmtT=(h,m)=>String(((h%24)+24)%24).padStart(2,'0')+':'+String(m).padStart(2,'0');
+  document.getElementById('clockUtcTime').textContent=fmtT(utcH,utcM)+'Z';
+  document.getElementById('clockDepTime').textContent=fmtT(utcH+TZ_OFFSETS.dep,utcM);
+  document.getElementById('clockArrTime').textContent=fmtT(utcH+TZ_OFFSETS.arr,utcM);
+  // Update button label based on active tz
+  const labels={utc:fmtT(utcH,utcM)+'Z',dep:fmtT(utcH+TZ_OFFSETS.dep,utcM),arr:fmtT(utcH+TZ_OFFSETS.arr,utcM)};
+  document.getElementById('utcLabel').textContent=labels[activeClockTz];
+}
+updateUTCClock();setInterval(updateUTCClock,10000);
+
+document.getElementById('utcToggle').addEventListener('click',e=>{
+  e.stopPropagation();document.getElementById('clockDropdown').classList.toggle('visible');
+});
+document.addEventListener('click',e=>{if(!e.target.closest('#clockDropdown')&&!e.target.closest('#utcToggle'))document.getElementById('clockDropdown').classList.remove('visible');});
+document.getElementById('clockDropdown').addEventListener('click',e=>{
+  const opt=e.target.closest('.clock-option');if(!opt)return;
+  activeClockTz=opt.dataset.tz;
+  document.querySelectorAll('.clock-option').forEach(o=>o.classList.toggle('active',o===opt));
+  updateUTCClock();
+});
+
 // Header date (28MAR26 format)
 (function(){const d=new Date();const m=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];document.getElementById('headerDate').textContent=String(d.getDate()).padStart(2,'0')+m[d.getMonth()]+String(d.getFullYear()).slice(-2);})();
 buildBriefing();buildCabinPlan();buildPaxList();buildMeals();buildTimeline();buildChecklists();buildReport();updateClocks();updateAppBadge();renderNotifCenter();updateNotifBadge();

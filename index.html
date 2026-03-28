@@ -20,6 +20,24 @@
     </div>
     <div class="header-right">
       <span class="flight-info" id="flightInfo">SS 901 &middot; ORY &rarr; RUN &middot; <span id="headerDate"></span></span>
+      <button class="header-btn clock-btn" id="utcToggle" title="Horloge UTC">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <span class="utc-label" id="utcLabel">00:00Z</span>
+      </button>
+      <div class="clock-dropdown" id="clockDropdown">
+        <button class="clock-option active" id="clockUtc" data-tz="utc">
+          <span class="clock-tz-name">UTC</span>
+          <span class="clock-tz-time" id="clockUtcTime">00:00Z</span>
+        </button>
+        <button class="clock-option" id="clockDep" data-tz="dep">
+          <span class="clock-tz-name">ORY (UTC+1)</span>
+          <span class="clock-tz-time" id="clockDepTime">00:00</span>
+        </button>
+        <button class="clock-option" id="clockArr" data-tz="arr">
+          <span class="clock-tz-name">PTP (UTC-4)</span>
+          <span class="clock-tz-time" id="clockArrTime">00:00</span>
+        </button>
+      </div>
       <button class="header-btn" id="shareToggle" title="Partager">
         <svg viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
       </button>
