@@ -579,8 +579,23 @@ function applyFilters(){const has=activeFilter!=='all'||searchQuery.length>0;doc
   // Update pax list below cabin
   buildPaxList();
 }
-function updateStats(){const se=document.getElementById('cabinStats');se.textContent='';const biz=document.querySelectorAll('.seat.occupied.business').length,prem=document.querySelectorAll('.seat.occupied.premium').length,eco=document.querySelectorAll('.seat.occupied.economy').length,total=document.querySelectorAll('.seat:not(.no-seat)').length,occ=biz+prem+eco,pct=Math.round(occ/total*100),sm=document.querySelectorAll('.seat.special-meal').length;
-  [{v:pct+'%',l:'Remplissage'},null,{v:''+biz,l:'Business'},null,{v:''+prem,l:'Premium'},null,{v:''+eco,l:'Economy'},null,{v:''+sm,l:'Repas sp\u00e9.'},null,{v:''+Object.keys(bookmarks).length,l:'Marqu\u00e9s'}].forEach(i=>{if(!i){const d=document.createElement('div');d.className='stat-divider';se.appendChild(d);return;}const si=document.createElement('div');si.className='stat-item';const w=document.createElement('div');const v=document.createElement('div');v.className='stat-value';v.textContent=i.v;const l=document.createElement('div');l.className='stat-label';l.textContent=i.l;w.appendChild(v);w.appendChild(l);si.appendChild(w);se.appendChild(si);});}
+function updateStats(){
+  const occ=Object.keys(passengers).length;
+  const total=document.querySelectorAll('.seat:not(.no-seat)').length;
+  const empty=total-occ;
+  const sm=Object.values(passengers).filter(p=>p.meal).length;
+  const um=Object.values(passengers).filter(p=>p.remark==='UM').length;
+  const wchr=Object.values(passengers).filter(p=>p.remark==='WCHR').length;
+  const nb=Object.values(passengers).filter(p=>!p.boarded).length;
+  const bk=Object.keys(bookmarks).length;
+  const counts={all:occ,occupied:occ,empty:empty,'special-meal':sm,um:um,wchr:wchr,'not-boarded':nb,bookmarked:bk};
+  document.querySelectorAll('.filter-btn').forEach(btn=>{
+    const f=btn.dataset.filter;
+    let badge=btn.querySelector('.filter-count');
+    if(!badge){badge=document.createElement('span');badge.className='filter-count';btn.appendChild(badge);}
+    badge.textContent=counts[f]!=null?counts[f]:'';
+  });
+}
 
 // === Pax Panel ===
 let currentPanelSeat=null;
