@@ -118,7 +118,7 @@ function renderNotifCenter(){
 }
 function removeNotif(idx){appNotifications.splice(idx,1);lsSet('cabin_notifications',appNotifications);renderNotifCenter();updateNotifBadge();}
 function updateNotifBadge(){const b=document.getElementById('notifBadge');const c=appNotifications.length;b.textContent=c>0?String(c):'';b.style.display=c>0?'':'none';if('setAppBadge' in navigator){if(c>0)navigator.setAppBadge(c).catch(()=>{});else navigator.clearAppBadge().catch(()=>{});}}
-document.getElementById('notifToggle').addEventListener('click',()=>document.getElementById('notifCenter').classList.toggle('visible'));
+document.getElementById('notifToggle').addEventListener('click',()=>{if(typeof closeAllDropdowns==='function')closeAllDropdowns();document.getElementById('notifCenter').classList.toggle('visible');});
 document.addEventListener('click',e=>{if(!e.target.closest('#notifCenter')&&!e.target.closest('#notifToggle'))document.getElementById('notifCenter').classList.remove('visible');});
 document.getElementById('notifClearAll').addEventListener('click',()=>{appNotifications=[];lsSet('cabin_notifications',appNotifications);renderNotifCenter();updateNotifBadge();});
 
@@ -824,10 +824,21 @@ function updateUTCClock(){
 }
 updateUTCClock();setInterval(updateUTCClock,10000);
 
-document.getElementById('utcToggle').addEventListener('click',e=>{
-  e.stopPropagation();document.getElementById('clockDropdown').classList.toggle('visible');
-});
-document.addEventListener('click',e=>{if(!e.target.closest('#clockDropdown')&&!e.target.closest('#utcToggle'))document.getElementById('clockDropdown').classList.remove('visible');});
+// === Unified header dropdown management ===
+const headerBackdrop=document.getElementById('headerBackdrop');
+function closeAllDropdowns(){
+  document.querySelectorAll('.clock-dropdown.visible').forEach(d=>d.classList.remove('visible'));
+  headerBackdrop.classList.remove('visible');
+}
+function toggleDropdown(id){
+  const dd=document.getElementById(id);
+  const wasVisible=dd.classList.contains('visible');
+  closeAllDropdowns();
+  if(!wasVisible){dd.classList.add('visible');headerBackdrop.classList.add('visible');}
+}
+headerBackdrop.addEventListener('click',closeAllDropdowns);
+
+document.getElementById('utcToggle').addEventListener('click',e=>{e.stopPropagation();toggleDropdown('clockDropdown');});
 document.getElementById('clockDropdown').addEventListener('click',e=>{
   const opt=e.target.closest('.clock-option');if(!opt)return;
   activeClockTz=opt.dataset.tz;
@@ -841,30 +852,31 @@ const timerBtn=document.getElementById('timerToggle');
 const timerLabel=document.getElementById('timerLabel');
 const timerDisplay=document.getElementById('timerDisplay');
 
-document.getElementById('timerToggle').addEventListener('click',e=>{
-  e.stopPropagation();document.getElementById('timerDropdown').classList.toggle('visible');
-});
-document.addEventListener('click',e=>{if(!e.target.closest('#timerDropdown')&&!e.target.closest('#timerToggle'))document.getElementById('timerDropdown').classList.remove('visible');});
+document.getElementById('timerToggle').addEventListener('click',e=>{e.stopPropagation();toggleDropdown('timerDropdown');});
 
-// Presets — click selects and updates timerTotalSec
-document.getElementById('timerDropdown').addEventListener('click',e=>{
-  const btn=e.target.closest('.timer-preset');if(!btn)return;
-  e.stopPropagation();
-  document.querySelectorAll('.timer-preset').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  timerTotalSec=parseInt(btn.dataset.sec);
-  const picker=document.getElementById('timerPicker');
-  const h=Math.floor(timerTotalSec/3600),m=Math.floor((timerTotalSec%3600)/60);
-  picker.value=String(h).padStart(2,'0')+':'+String(m).padStart(2,'0');
-  updateTimerDisplay(timerTotalSec);
+// Presets
+document.querySelectorAll('.timer-preset').forEach(btn=>{
+  btn.addEventListener('click',e=>{
+    e.stopPropagation();
+    document.querySelectorAll('.timer-preset').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    timerTotalSec=parseInt(btn.dataset.sec);
+    const picker=document.getElementById('timerPicker');
+    const h=Math.floor(timerTotalSec/3600),m=Math.floor((timerTotalSec%3600)/60);
+    picker.value=String(h).padStart(2,'0')+':'+String(m).padStart(2,'0');
+    updateTimerDisplay(timerTotalSec);
+  });
 });
 
 // iOS wheel picker (type="time" triggers native wheel on iOS)
-document.getElementById('timerPicker').addEventListener('change',function(){
-  document.querySelectorAll('.timer-preset').forEach(b=>b.classList.remove('active'));
-  const parts=this.value.split(':');
-  timerTotalSec=(parseInt(parts[0])||0)*3600+(parseInt(parts[1])||0)*60;
-  updateTimerDisplay(timerTotalSec);
+const timerPicker=document.getElementById('timerPicker');
+['change','input'].forEach(evt=>{
+  timerPicker.addEventListener(evt,function(){
+    document.querySelectorAll('.timer-preset').forEach(b=>b.classList.remove('active'));
+    const parts=this.value.split(':');
+    timerTotalSec=(parseInt(parts[0])||0)*3600+(parseInt(parts[1])||0)*60;
+    updateTimerDisplay(timerTotalSec);
+  });
 });
 
 function updateTimerDisplay(sec){
