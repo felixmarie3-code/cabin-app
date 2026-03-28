@@ -40,8 +40,8 @@
       var centerPct = ((curY + planeH * WING_MID) / vh) * 100;
       // 30° angle: offset = tan(30°) * half-viewport-width / vh * 100
       var angleOff = (0.577 * vw * 0.5) / vh * 100;
-      var cY = Math.max(-5, Math.min(110, centerPct));
-      var eY = Math.max(-5, Math.min(110, cY + angleOff));
+      var cY = Math.min(110, centerPct);
+      var eY = Math.min(110, cY + angleOff);
       splashBg.style.clipPath = 'polygon(' +
         '0% 0%,100% 0%,' +
         '100% ' + eY + '%,' +
