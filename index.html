@@ -514,6 +514,28 @@
     </div>
   </div>
 
+  <!-- Notification permission prompt -->
+  <div class="notif-prompt-overlay" id="notifPromptOverlay">
+    <div class="notif-prompt">
+      <div class="notif-prompt-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="40" height="40"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      </div>
+      <div class="notif-prompt-title">Activer les notifications</div>
+      <div class="notif-prompt-desc">Restez informé en temps réel pendant votre vol :</div>
+      <ul class="notif-prompt-list">
+        <li><strong>Passagers</strong> — embarquement, annulations, passagers spéciaux</li>
+        <li><strong>Horaires</strong> — retards, nouveau créneau, jalons OTP</li>
+        <li><strong>Porte &amp; avion</strong> — changement de porte, cabin defects</li>
+        <li><strong>Équipage</strong> — messages du CDB, infos managériales</li>
+        <li><strong>Minuteur</strong> — alertes de fin de minuteur</li>
+      </ul>
+      <div class="notif-prompt-btns">
+        <button class="notif-prompt-btn primary" id="notifPromptAllow">Autoriser</button>
+        <button class="notif-prompt-btn secondary" id="notifPromptLater">Plus tard</button>
+      </div>
+    </div>
+  </div>
+
   <script src="js/app.js"></script>
 </body>
 </html>
