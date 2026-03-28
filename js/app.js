@@ -1007,18 +1007,107 @@ document.getElementById('incidentSave').addEventListener('click',()=>{const desc
 // ============================================================
 // OTP
 // ============================================================
-const MILESTONES=[{offset:-120,label:'Check-in ouvert'},{offset:-120,label:'Security check'},{offset:-120,label:'Tow in'},{offset:-110,label:'Crew pick up'},{offset:-110,label:'Security search'},{offset:-100,label:'Crew at counter'},{offset:-100,label:'Cargo at aircraft'},{offset:-90,label:'Crew bus'},{offset:-80,label:'Agent at gate'},{offset:-80,label:'Crew at gate'},{offset:-70,label:'Cleaning'},{offset:-70,label:'Catering'},{offset:-70,label:'Loading'},{offset:-70,label:'Fueling'},{offset:-60,label:'LDS sent'},{offset:-50,label:'Boarding'},{offset:-50,label:'OK Cabin'},{offset:-40,label:'PMR / Remote'},{offset:-40,label:'Pax bus'},{offset:-30,label:'Servicing'},{offset:-20,label:'Dep GPU'},{offset:-20,label:'Bulk closed'},{offset:-20,label:'Bag search'},{offset:-10,label:'Dep jetbridge'},{offset:-10,label:'Marshaller'},{offset:-10,label:'Pushback ready'},{offset:0,label:'D\u00c9PART'}];
+// Crew-relevant milestones only
+const MILESTONES=[
+  {offset:-110,label:'Prise en charge équipage'},
+  {offset:-100,label:'Équipage au comptoir'},
+  {offset:-90,label:'Bus équipage'},
+  {offset:-80,label:'Équipage en porte'},
+  {offset:-70,label:'Accueil pré-vol / Briefing'},
+  {offset:-70,label:'Catering chargé'},
+  {offset:-60,label:'Vérification cabine'},
+  {offset:-50,label:'Début embarquement'},
+  {offset:-50,label:'Annonce embarquement'},
+  {offset:-40,label:'PMR / Embarquement distant'},
+  {offset:-30,label:'Fin embarquement'},
+  {offset:-20,label:'Comptage final / rapprochement'},
+  {offset:-15,label:'Annonce bienvenue'},
+  {offset:-10,label:'Portes fermées — cross-check'},
+  {offset:-5,label:'Annonce sécurité'},
+  {offset:0,label:'DÉPART'}
+];
 function getSTD(){const p=document.getElementById('stdInput').value.split(':');const d=new Date();d.setHours(+p[0],+p[1],0,0);return d;}
 function fmt(d){return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}
-function buildTimeline(){const c=document.getElementById('timelineContainer');if(!c)return;c.textContent='';const std=getSTD(),now=new Date();const groups={};MILESTONES.forEach((m,i)=>{if(!groups[m.offset])groups[m.offset]=[];groups[m.offset].push({...m,idx:i});});
-  Object.keys(groups).map(Number).sort((a,b)=>a-b).forEach(off=>{const items=groups[off],target=new Date(std.getTime()+off*60000),diff=Math.round((target-now)/60000);
-    const ge=document.createElement('div');ge.className='timeline-group';const gl=document.createElement('div');gl.className='timeline-group-label';const hh=Math.floor(Math.abs(off)/60),mm=Math.abs(off)%60;gl.textContent=off===0?'H - D\u00c9PART':'H - '+String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0');ge.appendChild(gl);
-    items.forEach(m=>{const row=document.createElement('div');row.className='timeline-item';const chk=!!milestoneChecks[m.idx];if(chk)row.classList.add('past');else if(diff>5)row.classList.add('upcoming');else if(diff>=-5)row.classList.add('current');else row.classList.add('overdue');
-      const te=document.createElement('div');te.className='timeline-time';te.textContent=off===0?'STD':'H'+off+'min';const ae=document.createElement('div');ae.className='timeline-abs-time';ae.textContent=fmt(target);const le=document.createElement('div');le.className='timeline-label';le.textContent=m.label;
-      const se=document.createElement('div');se.className='timeline-status';if(chk){se.classList.add('done');se.textContent='Fait';}else if(diff>5){se.classList.add('waiting');se.textContent='\u00c0 venir';}else if(diff>=-5){se.classList.add('now');se.textContent='En cours';}else{se.classList.add('late');se.textContent='Retard';}
-      const ce=document.createElement('div');ce.className='timeline-check'+(chk?' checked':'');const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 24 24');const poly=document.createElementNS('http://www.w3.org/2000/svg','polyline');poly.setAttribute('points','20 6 9 17 4 12');svg.appendChild(poly);ce.appendChild(svg);
-      ce.addEventListener('click',()=>{if(milestoneChecks[m.idx])delete milestoneChecks[m.idx];else milestoneChecks[m.idx]=Date.now();lsSet('cabin_otp_checks',milestoneChecks);buildTimeline();});
-      row.appendChild(te);row.appendChild(ae);row.appendChild(le);row.appendChild(se);row.appendChild(ce);ge.appendChild(row);});c.appendChild(ge);});}
+let otpRemarks=lsGet('cabin_otp_remarks',{});
+function buildTimeline(){
+  const c=document.getElementById('timelineContainer');if(!c)return;c.textContent='';
+  const std=getSTD(),now=new Date();
+
+  MILESTONES.forEach((m,idx)=>{
+    const target=new Date(std.getTime()+m.offset*60000);
+    const diff=Math.round((target-now)/60000);
+    const chk=!!milestoneChecks[idx];
+
+    const row=document.createElement('div');row.className='otp-row';
+    // Status
+    if(chk)row.classList.add('done');
+    else if(diff>5)row.classList.add('upcoming');
+    else if(diff>=-5)row.classList.add('current');
+    else row.classList.add('overdue');
+
+    // Left: time column
+    const timeCol=document.createElement('div');timeCol.className='otp-time-col';
+    const absTime=document.createElement('div');absTime.className='otp-abs-time';absTime.textContent=fmt(target);
+    const relTime=document.createElement('div');relTime.className='otp-rel-time';
+    relTime.textContent=m.offset===0?'STD':'H'+m.offset;
+    timeCol.appendChild(absTime);timeCol.appendChild(relTime);
+
+    // Center: dot + line
+    const dotCol=document.createElement('div');dotCol.className='otp-dot-col';
+    const dot=document.createElement('div');dot.className='otp-dot';
+    if(chk)dot.classList.add('checked');
+    dot.addEventListener('click',e=>{
+      e.stopPropagation();
+      if(milestoneChecks[idx])delete milestoneChecks[idx];else milestoneChecks[idx]=Date.now();
+      lsSet('cabin_otp_checks',milestoneChecks);buildTimeline();
+    });
+    dotCol.appendChild(dot);
+
+    // Right: label + remark
+    const contentCol=document.createElement('div');contentCol.className='otp-content-col';
+    const label=document.createElement('div');label.className='otp-label';label.textContent=m.label;
+    // Status badge
+    const badge=document.createElement('span');badge.className='otp-status-badge';
+    if(chk){badge.textContent='Fait';badge.classList.add('done');}
+    else if(diff>5){badge.textContent='\u00c0 venir';badge.classList.add('waiting');}
+    else if(diff>=-5){badge.textContent='En cours';badge.classList.add('now');}
+    else{badge.textContent='Retard';badge.classList.add('late');}
+    label.appendChild(badge);
+    contentCol.appendChild(label);
+
+    // Remark area
+    const remarkKey='otp_remark_'+idx;
+    const existingRemark=otpRemarks[remarkKey]||'';
+    if(existingRemark){
+      const remarkDiv=document.createElement('div');remarkDiv.className='otp-remark';remarkDiv.textContent=existingRemark;
+      contentCol.appendChild(remarkDiv);
+    }
+    // Add remark button
+    const addBtn=document.createElement('div');addBtn.className='otp-add-remark';addBtn.textContent='+ Note';
+    addBtn.addEventListener('click',e=>{
+      e.stopPropagation();
+      const input=document.createElement('input');input.type='text';input.className='otp-remark-input';
+      input.value=existingRemark;input.placeholder='Ajouter une remarque...';
+      input.addEventListener('keydown',ev=>{
+        if(ev.key==='Enter'){
+          if(input.value.trim())otpRemarks[remarkKey]=input.value.trim();
+          else delete otpRemarks[remarkKey];
+          lsSet('cabin_otp_remarks',otpRemarks);buildTimeline();
+        }
+      });
+      input.addEventListener('blur',()=>{
+        if(input.value.trim())otpRemarks[remarkKey]=input.value.trim();
+        else delete otpRemarks[remarkKey];
+        lsSet('cabin_otp_remarks',otpRemarks);buildTimeline();
+      });
+      addBtn.replaceWith(input);input.focus();
+    });
+    contentCol.appendChild(addBtn);
+
+    row.appendChild(timeCol);row.appendChild(dotCol);row.appendChild(contentCol);
+    c.appendChild(row);
+  });
+}
 function updateClocks(){const t=fmt(new Date());const c1=document.getElementById('otpClock');if(c1)c1.textContent=t;const c2=document.getElementById('briefingClock');if(c2)c2.textContent=t;}
 const stdIn=document.getElementById('stdInput');if(stdIn)stdIn.addEventListener('change',buildTimeline);
 setInterval(()=>{buildTimeline();updateClocks();},30000);
@@ -1164,10 +1253,12 @@ function tickTimer(){
   timerLabel.textContent=fmtTimerPill(remaining);
   updateTimerDisplay(remaining);
   if(remaining<=0&&!timerBtn.classList.contains('expired')){
-    // Stop the timer
+    // Stop the timer — keep displaying 00:00
     clearInterval(timerInterval);timerInterval=null;
     timerBtn.classList.remove('running');timerBtn.classList.add('expired');
     timerEndTime=null;timerTotalSec=0;
+    timerLabel.textContent='00:00';timerLabel.style.display='';
+    updateTimerDisplay(0);
     document.getElementById('timerStop').style.display='none';
     document.getElementById('timerStart').style.display='none';
     document.getElementById('timerReset').style.display='';
