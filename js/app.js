@@ -57,12 +57,7 @@
         '15% ' + p1 + '%, ' +
         '0% ' + eY + '%)';
 
-      // Fade brand out when plane reaches it
-      if (!brandFaded && cY < 55) {
-        brandFaded = true;
-        splashBrand.style.transition = 'opacity 0.35s ease-out';
-        splashBrand.style.opacity = '0';
-      }
+      // Brand is inside splash-bg, so it gets clipped with it automatically
       if (raw < 1) {
         requestAnimationFrame(frame);
       } else {
