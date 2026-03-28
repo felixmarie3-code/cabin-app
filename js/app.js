@@ -334,11 +334,9 @@ document.getElementById('assignDoorsBtn').addEventListener('click',()=>{
     const slotG=buildDoorSlot(doorG);
     // Label
     const rlbl=document.createElement('div');rlbl.className='door-row-label';rlbl.textContent='Porte '+String(idx+1);
-    // Fuselage
-    const fuse=document.createElement('div');fuse.className='door-row-fuselage';
     // Right door (Droite)
     const slotD=buildDoorSlot(doorD);
-    row.appendChild(slotG);row.appendChild(rlbl);row.appendChild(fuse);row.appendChild(slotD);
+    row.appendChild(slotG);row.appendChild(rlbl);row.appendChild(slotD);
     grid.appendChild(row);
   });
   document.getElementById('doorOverlay').classList.add('visible');
@@ -389,14 +387,20 @@ function validateDoorAssignments(){
 }
 
 document.getElementById('doorSave').addEventListener('click',()=>{
-  // Rebuild from selects scoped to doorGrid only
+  // Read all selects BEFORE closing overlay
+  const selects=Array.from(document.querySelectorAll('#doorGrid .door-assign-select'));
   const newAssign={};
-  document.querySelectorAll('#doorGrid .door-assign-select').forEach(s=>{
-    if(s.value&&s.dataset.door){newAssign[s.value]=s.dataset.door;}
+  selects.forEach(s=>{
+    const crewName=s.value;const door=s.dataset.door;
+    if(crewName&&door)newAssign[crewName]=door;
   });
+  // Replace doorAssignments
   Object.keys(doorAssignments).forEach(k=>delete doorAssignments[k]);
   Object.assign(doorAssignments,newAssign);
-  lsSet('cabin_doors',doorAssignments);document.getElementById('doorOverlay').classList.remove('visible');buildBriefing();buildCabinPlan();
+  lsSet('cabin_doors',doorAssignments);
+  // Close overlay and rebuild
+  document.getElementById('doorOverlay').classList.remove('visible');
+  buildBriefing();buildCabinPlan();
 });
 
 // Crew detail — opens in the pax detail panel (passengers tab)
