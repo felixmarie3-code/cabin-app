@@ -366,11 +366,14 @@ function buildBriefing(){
         fp.style.paddingRight=Math.max(0,rightPad)+'px';
       }
     }
-    const firstDot=fp.querySelector('.fp-dot');
-    if(firstDot&&line){
+    const dots=fp.querySelectorAll('.fp-dot');
+    if(dots.length>=2&&line){
       const fpRect2=fp.getBoundingClientRect();
-      const dotRect=firstDot.getBoundingClientRect();
-      line.style.top=(dotRect.top-fpRect2.top+dotRect.height/2-1)+'px';
+      const firstRect=dots[0].getBoundingClientRect();
+      const lastRect=dots[dots.length-1].getBoundingClientRect();
+      line.style.top=(firstRect.top-fpRect2.top+firstRect.height/2-1)+'px';
+      line.style.left=(firstRect.left-fpRect2.left+firstRect.width/2)+'px';
+      line.style.right=(fpRect2.right-lastRect.right+lastRect.width/2)+'px';
     }
   });
 
