@@ -18,66 +18,43 @@
   <div id="splash" aria-hidden="true">
     <div id="splash-bg"></div>
     <div id="splash-brand">
-      <!-- Corsair voiles (tail fin) vectorized from logoapp.png -->
-      <svg id="splash-voiles" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 130" fill="none">
-        <!-- Tail fin silhouette -->
-        <path d="
-          M12,126 C8,118 4,100 3,82 C2,62 8,40 22,22
-          C34,8 52,1 68,1 C78,1 86,5 90,12
-          C95,22 92,36 84,52 C74,72 58,95 44,112
-          L30,126 Z
-        " fill="white" opacity="0.08"/>
-        <!-- Voile 1 — left, subtle -->
-        <path d="
-          M14,118 C12,95 16,68 30,44 C40,28 54,14 68,6
-          C62,16 52,32 44,50 C34,72 26,96 24,118 Z
-        " fill="white" opacity="0.2"/>
-        <!-- Voile 2 — middle -->
-        <path d="
-          M24,122 C22,96 28,66 44,38 C54,22 66,10 78,5
-          C74,14 64,30 56,48 C44,72 36,98 34,122 Z
-        " fill="white" opacity="0.45"/>
-        <!-- Voile 3 — right, prominent -->
-        <path d="
-          M38,126 C36,100 44,68 62,38 C70,24 80,14 90,8
-          C86,20 78,40 68,58 C56,82 48,106 46,126 Z
-        " fill="white" opacity="0.9"/>
-      </svg>
+      <!-- Corsair white wordmark -->
+      <img src="icons/corsair_blanc.svg" alt="CORSAIR" id="splash-logo">
       <span id="splash-title">CABIN READY</span>
     </div>
     <div id="splash-plane">
-      <!-- Clean A330 top-down silhouette, nose UP, full width -->
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 215" preserveAspectRatio="xMidYMid meet">
+      <!-- Vectorized from airplane-icon-png-2503.png — clean flat top-down icon -->
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 220" preserveAspectRatio="xMidYMid meet">
         <defs>
           <filter id="plane-glow" x="-10%" y="-10%" width="120%" height="120%">
-            <feGaussianBlur in="SourceAlpha" stdDeviation="3" result="shadow"/>
-            <feFlood flood-color="rgba(82,167,190,0.5)"/>
+            <feGaussianBlur in="SourceAlpha" stdDeviation="4" result="shadow"/>
+            <feFlood flood-color="rgba(82,167,190,0.45)"/>
             <feComposite in2="shadow" operator="in"/>
             <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
           </filter>
         </defs>
-        <g filter="url(#plane-glow)">
-          <!-- Fuselage -->
-          <path d="
-            M100 3 C103 3 105.5 10 105.5 20
-            L106.5 68 C109 73 142 84 197 98
-            L198 104 L195 106
-            C158 109 118 104 107 99
-            L107 172 C107 174 120 187 136 194
-            L136 204 L100 197 L64 204 L64 194
-            C80 187 93 174 93 172
-            L93 99 C82 104 42 109 5 106
-            L2 104 L3 98
-            C58 84 91 73 93.5 68
-            L94.5 20 C94.5 10 97 3 100 3Z
-          " fill="white"/>
-          <!-- Left engine -->
-          <rect x="48" y="82" width="9" height="26" rx="4.5" fill="white" opacity="0.92"/>
-          <!-- Right engine -->
-          <rect x="143" y="82" width="9" height="26" rx="4.5" fill="white" opacity="0.92"/>
-        </g>
-        <!-- Window line -->
-        <line x1="100" y1="35" x2="100" y2="165" stroke="rgba(40,43,98,0.12)" stroke-width="1.5" stroke-dasharray="3 5"/>
+        <path filter="url(#plane-glow)" d="
+          M100,12
+          C108,12 114,26 114,44
+          L114,82
+          C122,86 158,100 188,116
+          C194,120 192,126 186,124
+          L114,106
+          L114,164
+          L146,194
+          C150,198 148,204 142,202
+          L100,184
+          L58,202
+          C52,204 50,198 54,194
+          L86,164
+          L86,106
+          L14,124
+          C8,126 6,120 12,116
+          C42,100 78,86 86,82
+          L86,44
+          C86,26 92,12 100,12
+          Z
+        " fill="white"/>
       </svg>
     </div>
   </div>
