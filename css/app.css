@@ -394,10 +394,10 @@ html, body {
 .seat.occupied.economy { background: var(--seat-eco); }
 .seat.selected { border-color: white; box-shadow: 0 0 0 1px white; z-index: 3; color: white; }
 .seat-lav-merged {
-  width: 26px; border-radius: 4px; margin: 1px;
+  width: 26px; border-radius: 4px; margin: 1px; box-sizing: content-box;
   background: rgba(170,180,210,0.25); border: 1px solid rgba(170,180,210,0.2);
   display: flex; align-items: center; justify-content: center; cursor: default;
-  color: rgba(200,205,220,0.8);
+  color: rgba(200,205,220,0.8); flex-shrink: 0;
 }
 .seat-lav-merged svg { opacity: 0.7; }
 [data-theme="light"] .seat-lav-merged { background: rgba(40,50,100,0.1); border-color: rgba(40,50,100,0.08); color: var(--corsair-bleu-premium); opacity: 0.6; }
@@ -409,8 +409,8 @@ html, body {
 }
 .seat.special-meal::after { content: ''; position: absolute; top: 1px; right: 1px; width: 4px; height: 4px; border-radius: 50%; background: #fbbf24; }
 .seat.wheelchair::after { content: ''; position: absolute; top: 1px; right: 1px; width: 4px; height: 4px; border-radius: 50%; background: var(--corsair-bleu-economie); }
-.seat.no-seat { visibility: hidden; }
-.aisle { height: 8px; min-height: 8px; }
+.seat.no-seat { visibility: hidden; width: 26px; height: 26px; margin: 1px; flex-shrink: 0; }
+.aisle { height: 8px; min-height: 8px; flex-shrink: 0; }
 .section-divider { width: 12px; flex-shrink: 0; }
 
 /* Exit markers */
