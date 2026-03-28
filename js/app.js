@@ -885,9 +885,7 @@ document.getElementById('timerPicker').addEventListener('change',function(){
 });
 
 function updateTimerDisplay(sec){
-  const h=Math.floor(Math.abs(sec)/3600),m=Math.floor((Math.abs(sec)%3600)/60),s=Math.abs(sec)%60;
-  const t=(sec<0?'-':'')+(h>0?String(h)+':':'')+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
-  timerDisplay.textContent=t;
+  timerDisplay.textContent=fmtTimerFull(sec);
 }
 
 document.getElementById('timerStart').addEventListener('click',e=>{
@@ -926,14 +924,32 @@ document.getElementById('timerReset').addEventListener('click',e=>{
   document.querySelectorAll('.timer-preset').forEach(b=>b.classList.remove('active'));
 });
 
+function fmtTimerFull(sec){
+  const abs=Math.abs(sec);
+  const h=Math.floor(abs/3600),m=Math.floor((abs%3600)/60),s=abs%60;
+  const sign=sec<0?'-':'';
+  return sign+(h>0?h+':'+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0'):String(m).padStart(2,'0')+':'+String(s).padStart(2,'0'));
+}
+function fmtTimerPill(sec){
+  const abs=Math.abs(sec);
+  const h=Math.floor(abs/3600),m=Math.floor((abs%3600)/60),s=abs%60;
+  // >1h show HH:MM, <1h show MM:SS
+  if(h>0)return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0');
+  return String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+}
 function tickTimer(){
   if(!timerEndTime)return;
-  const remaining=Math.round((timerEndTime-Date.now())/1000);
-  const m=Math.floor(Math.abs(remaining)/60),s=Math.abs(remaining)%60;
-  const t=(remaining<0?'-':'')+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
-  timerLabel.textContent=t;updateTimerDisplay(remaining);
+  const remaining=Math.max(0,Math.round((timerEndTime-Date.now())/1000));
+  timerLabel.textContent=fmtTimerPill(remaining);
+  updateTimerDisplay(remaining);
   if(remaining<=0&&!timerBtn.classList.contains('expired')){
+    // Stop the timer
+    clearInterval(timerInterval);timerInterval=null;
     timerBtn.classList.remove('running');timerBtn.classList.add('expired');
+    timerEndTime=null;timerTotalSec=0;
+    document.getElementById('timerStop').style.display='none';
+    document.getElementById('timerStart').style.display='none';
+    document.getElementById('timerReset').style.display='';
     addNotification('Minuteur terminé','Le minuteur est arrivé à zéro.','alert');
   }
 }
