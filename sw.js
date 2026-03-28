@@ -1,4 +1,4 @@
-const CACHE_NAME = 'cabin-app-v73';
+const CACHE_NAME = 'cabin-app-v74';
 const ASSETS = [
   './',
   './index.html',
