@@ -107,6 +107,32 @@ html, body {
   display: flex; align-items: center; justify-content: center; padding: 0 4px;
 }
 .notif-badge:empty { display: none; }
+
+/* UTC clock button */
+.clock-btn {
+  width: auto !important; padding: 0 10px !important; border-radius: 17px !important;
+  gap: 5px; font-family: 'Gilroy', Arial, sans-serif;
+}
+.clock-btn svg { width: 14px !important; height: 14px !important; }
+.utc-label { font-size: 11px; font-weight: 700; color: white; letter-spacing: 0.3px; }
+.clock-dropdown {
+  position: absolute; top: 42px; right: 0; background: var(--bg-surface);
+  border-radius: 14px; padding: 4px; min-width: 180px; z-index: 200;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.3); display: none;
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+}
+.clock-dropdown.visible { display: block; }
+.clock-option {
+  display: flex; justify-content: space-between; align-items: center;
+  width: 100%; padding: 10px 14px; border: none; background: none;
+  border-radius: 10px; cursor: pointer; font-family: 'Gilroy', Arial, sans-serif;
+  transition: background 0.15s;
+}
+.clock-option:active { background: rgba(82,167,190,0.15); }
+.clock-option.active { background: rgba(82,167,190,0.1); }
+.clock-tz-name { font-size: 12px; font-weight: 600; color: var(--text); }
+.clock-tz-time { font-size: 13px; font-weight: 700; color: var(--corsair-bleu-economie); letter-spacing: 0.3px; }
+.clock-option.active .clock-tz-name { color: var(--corsair-bleu-economie); }
 [data-theme="light"] .header-btn { background: rgba(255,255,255,0.15); }
 [data-theme="light"] .header-btn svg { stroke: white; }
 [data-theme="light"] .app-header { color: white; }
