@@ -2,11 +2,70 @@
 (function() {
   const splash = document.getElementById('splash');
   if (!splash) return;
-  // Remove from DOM after animation completes (plane rises + wipe = 0.9s delay + 2.4s = 3.3s)
-  setTimeout(() => {
-    splash.style.transition = 'none';
-    splash.remove();
-  }, 3400);
+  const splashBg = document.getElementById('splash-bg');
+  const splashPlane = document.getElementById('splash-plane');
+  const splashBrand = document.getElementById('splash-brand');
+
+  const BRAND_PAUSE = 2000;   // 2s CabinReady visible
+  const RISE_DURATION = 2800; // 2.8s plane traversal
+  const FADE_IN = 600;        // plane fade-in ms
+
+  // Park plane below viewport
+  splashPlane.style.transform = 'translateY(' + (window.innerHeight + 60) + 'px)';
+
+  setTimeout(function() {
+    // Measure plane height after layout
+    splashPlane.style.opacity = '1';
+    splashPlane.style.transition = 'opacity ' + FADE_IN + 'ms ease-out';
+    var planeH = splashPlane.getBoundingClientRect().height || window.innerHeight * 0.9;
+    var vh = window.innerHeight;
+    var startY = vh + 60;
+    var endY = -(planeH + 60);
+    var brandFaded = false;
+    var startTime = performance.now();
+
+    function frame(now) {
+      var elapsed = now - startTime;
+      var raw = Math.min(elapsed / RISE_DURATION, 1);
+      // Ease-out cubic (smooth deceleration)
+      var eased = 1 - Math.pow(1 - raw, 3);
+      var curY = startY + (endY - startY) * eased;
+      splashPlane.style.transform = 'translateY(' + curY + 'px)';
+
+      // Tail (bottom of plane) position as % of viewport
+      var tailPct = ((curY + planeH) / vh) * 100;
+      var tp = Math.max(-5, Math.min(105, tailPct));
+      // V-shaped bottom edge following tail contour
+      var d = 5;
+      splashBg.style.clipPath = 'polygon(' +
+        '0% 0%, 100% 0%, ' +
+        '100% ' + tp + '%, ' +
+        '82% ' + tp + '%, ' +
+        '70% ' + Math.max(0, tp - d * 0.35) + '%, ' +
+        '56% ' + Math.max(0, tp - d * 0.7) + '%, ' +
+        '50% ' + Math.max(0, tp - d) + '%, ' +
+        '44% ' + Math.max(0, tp - d * 0.7) + '%, ' +
+        '30% ' + Math.max(0, tp - d * 0.35) + '%, ' +
+        '18% ' + tp + '%, ' +
+        '0% ' + tp + '%)';
+
+      // Fade brand out when plane reaches it
+      if (!brandFaded && tp < 55) {
+        brandFaded = true;
+        splashBrand.style.transition = 'opacity 0.35s ease-out';
+        splashBrand.style.opacity = '0';
+      }
+      if (raw < 1) {
+        requestAnimationFrame(frame);
+      } else {
+        splash.remove();
+      }
+    }
+    requestAnimationFrame(frame);
+  }, BRAND_PAUSE);
+
+  // Fallback
+  setTimeout(function() { if (splash.parentNode) splash.remove(); }, BRAND_PAUSE + RISE_DURATION + 1000);
 })();
 
 // === Service Worker Registration ===
