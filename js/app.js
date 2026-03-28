@@ -6,9 +6,15 @@
   const splashPlane = document.getElementById('splash-plane');
   const splashBrand = document.getElementById('splash-brand');
 
-  const BRAND_PAUSE = 2000;   // 2s CabinReady visible
+  const BRAND_PAUSE = 3000;   // 3s brand visible
   const RISE_DURATION = 2800; // 2.8s plane traversal
   const FADE_IN = 600;        // plane fade-in ms
+
+  // Wing geometry ratios (from SVG viewBox 200x220)
+  // Wing trailing edge at fuselage: y=106 → 106/220 = 0.482
+  // Wing trailing edge at tips:     y=122 → 122/220 = 0.555
+  var WING_CENTER = 0.482;
+  var WING_TIP = 0.555;
 
   // Park plane below viewport
   splashPlane.style.transform = 'translateY(' + (window.innerHeight + 60) + 'px)';
@@ -32,25 +38,27 @@
       var curY = startY + (endY - startY) * eased;
       splashPlane.style.transform = 'translateY(' + curY + 'px)';
 
-      // Tail (bottom of plane) position as % of viewport
-      var tailPct = ((curY + planeH) / vh) * 100;
-      var tp = Math.max(-5, Math.min(105, tailPct));
-      // V-shaped bottom edge following tail contour
-      var d = 5;
+      // Clip at wing trailing edge level (plane body hides the boundary)
+      var centerPct = ((curY + planeH * WING_CENTER) / vh) * 100;
+      var edgePct = ((curY + planeH * WING_TIP) / vh) * 100;
+      var cY = Math.max(-5, Math.min(105, centerPct));
+      var eY = Math.max(-5, Math.min(105, edgePct));
+      // Interpolated points following wing sweep
+      var p1 = eY - (eY - cY) * 0.35;
+      var p2 = eY - (eY - cY) * 0.70;
       splashBg.style.clipPath = 'polygon(' +
         '0% 0%, 100% 0%, ' +
-        '100% ' + tp + '%, ' +
-        '82% ' + tp + '%, ' +
-        '70% ' + Math.max(0, tp - d * 0.35) + '%, ' +
-        '56% ' + Math.max(0, tp - d * 0.7) + '%, ' +
-        '50% ' + Math.max(0, tp - d) + '%, ' +
-        '44% ' + Math.max(0, tp - d * 0.7) + '%, ' +
-        '30% ' + Math.max(0, tp - d * 0.35) + '%, ' +
-        '18% ' + tp + '%, ' +
-        '0% ' + tp + '%)';
+        '100% ' + eY + '%, ' +
+        '85% ' + p1 + '%, ' +
+        '70% ' + p2 + '%, ' +
+        '57% ' + cY + '%, ' +
+        '43% ' + cY + '%, ' +
+        '30% ' + p2 + '%, ' +
+        '15% ' + p1 + '%, ' +
+        '0% ' + eY + '%)';
 
       // Fade brand out when plane reaches it
-      if (!brandFaded && tp < 55) {
+      if (!brandFaded && cY < 55) {
         brandFaded = true;
         splashBrand.style.transition = 'opacity 0.35s ease-out';
         splashBrand.style.opacity = '0';
