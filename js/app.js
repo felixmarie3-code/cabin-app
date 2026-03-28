@@ -1,3 +1,14 @@
+// === Splash Screen ===
+(function() {
+  const splash = document.getElementById('splash');
+  if (!splash) return;
+  // Remove from DOM after animation completes (plane rises + wipe = 0.9s delay + 2.4s = 3.3s)
+  setTimeout(() => {
+    splash.style.transition = 'none';
+    splash.remove();
+  }, 3400);
+})();
+
 // === Service Worker Registration ===
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./sw.js')

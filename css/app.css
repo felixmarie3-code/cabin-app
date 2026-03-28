@@ -67,6 +67,92 @@
   --corsair-beige-sable-contrast: #5c5a50;
 }
 
+/* === Splash Screen === */
+#splash {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  z-index: 9999;
+  pointer-events: all;
+  overflow: hidden;
+}
+
+#splash-bg {
+  position: absolute; inset: 0;
+  background: linear-gradient(160deg, #1c1f5e 0%, #282B62 45%, #1a4a7a 100%);
+  animation: splash-wipe 2.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.9s forwards;
+}
+
+#splash-brand {
+  position: absolute;
+  top: 38%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  animation: brand-in 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s both,
+             brand-out 0.4s ease-in 0.6s forwards;
+  pointer-events: none;
+}
+
+#splash-logo-img {
+  width: 64px; height: 64px;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+}
+
+#splash-title {
+  font-family: 'Gilroy', Arial, sans-serif;
+  font-weight: 600;
+  font-size: 28px;
+  color: #ffffff;
+  letter-spacing: 0.5px;
+}
+
+#splash-sub {
+  font-family: 'Gilroy', Arial, sans-serif;
+  font-weight: 400;
+  font-size: 13px;
+  color: rgba(255,255,255,0.55);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+#splash-plane {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  filter: drop-shadow(0 -8px 24px rgba(82,167,190,0.35));
+  animation: plane-rise 2.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.5s both;
+}
+
+#splash-plane svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+@keyframes splash-wipe {
+  from { clip-path: inset(0 0 0% 0); }
+  to   { clip-path: inset(0 0 100% 0); }
+}
+
+@keyframes plane-rise {
+  from { transform: translateY(0); }
+  to   { transform: translateY(calc(-100vh - 100%)); }
+}
+
+@keyframes brand-in {
+  from { opacity: 0; transform: translate(-50%, -42%) scale(0.9); }
+  to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+@keyframes brand-out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
 /* === Reset & Base === */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
