@@ -925,19 +925,35 @@ function buildChecklists(){
   const tiles=document.getElementById('checklistTiles');tiles.textContent='';
   let totalItems=0,doneItems=0;
   Object.entries(CHECKLISTS).forEach(([catName,cat])=>{
-    const tile=document.createElement('div');tile.className='cl-tile '+cat.color;
+    const tile=document.createElement('div');tile.className='cl-tile';
+    // Header: icon + title + badge
+    const header=document.createElement('div');header.className='cl-tile-header';
     const icon=document.createElement('div');icon.className='cl-tile-icon';icon.innerHTML=cat.icon;
     const title=document.createElement('div');title.className='cl-tile-title';title.textContent=catName;
-    tile.appendChild(icon);tile.appendChild(title);
-    // Sub-tiles
+    // Count total for this category
+    let catTotal=0,catDone=0;
+    Object.entries(cat.subs).forEach(([subName,items])=>{
+      catTotal+=items.length;
+      catDone+=items.filter((_,i)=>checklistState[catName+'_'+subName+'_'+i]).length;
+    });
+    totalItems+=catTotal;doneItems+=catDone;
+    const badge=document.createElement('div');badge.className='cl-tile-badge';
+    badge.textContent=catDone+'/'+catTotal;
+    header.appendChild(icon);header.appendChild(title);header.appendChild(badge);
+    tile.appendChild(header);
+    // Sub-items as list rows
     const subs=document.createElement('div');subs.className='cl-subtiles';
     Object.entries(cat.subs).forEach(([subName,items])=>{
       const subTile=document.createElement('div');subTile.className='cl-subtile';
       const st=document.createElement('div');st.className='cl-subtile-title';st.textContent=subName;
+      const right=document.createElement('div');right.className='cl-subtile-right';
       const done=items.filter((_,i)=>checklistState[catName+'_'+subName+'_'+i]).length;
-      totalItems+=items.length;doneItems+=done;
-      const sc=document.createElement('div');sc.className='cl-subtile-count';sc.textContent=done+'/'+items.length;
-      subTile.appendChild(st);subTile.appendChild(sc);
+      const sc=document.createElement('div');sc.className='cl-subtile-count';
+      sc.textContent=done+'/'+items.length;
+      if(done===items.length)sc.style.color='#4ade80';
+      const arrow=document.createElement('div');arrow.className='cl-subtile-arrow';arrow.textContent='\u203A';
+      right.appendChild(sc);right.appendChild(arrow);
+      subTile.appendChild(st);subTile.appendChild(right);
       subTile.addEventListener('click',()=>openChecklistDetail(catName,subName,items));
       subs.appendChild(subTile);
     });
