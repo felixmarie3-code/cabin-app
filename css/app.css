@@ -53,16 +53,18 @@
   --bg-card: #f7f7fb;
   --bg-header: var(--corsair-bleu-business);
   --text: #1a1d3a;
-  --text-muted: #6b6e8a;
-  --accent: var(--corsair-bleu-premium);
+  --text-muted: #5c5f78;
+  --text-secondary: #6b6e8a;
+  --accent: #1e5f8a;
   --border: rgba(0,0,0,0.06);
   --border-strong: rgba(0,0,0,0.1);
   --seat-empty: rgba(40,43,98,0.06);
   --seat-empty-border: rgba(40,43,98,0.1);
-  --seat-eco: #b8bae0;
+  --seat-eco: #8b8ec0;
   --overlay-bg: rgba(0,0,0,0.3);
   --input-bg: rgba(0,0,0,0.03);
   --logo-filter: none;
+  --corsair-beige-sable-contrast: #5c5a50;
 }
 
 /* === Reset & Base === */
@@ -719,6 +721,55 @@ button, [role="button"] { min-height: 36px; min-width: 36px; }
 [data-theme="light"] .meal-special-row { background: var(--bg-card); }
 [data-theme="light"] .crew-member { background: var(--bg-card); }
 [data-theme="light"] .brief-alert-text { color: var(--text-muted); }
+
+/* Light theme: fix all beige-sable and white text contrast issues */
+[data-theme="light"] .pax-info-label { color: var(--corsair-beige-sable-contrast); }
+[data-theme="light"] .pax-info-value { color: var(--text); }
+[data-theme="light"] .pax-class { color: var(--text-secondary); }
+[data-theme="light"] .pax-notes-label { color: var(--corsair-beige-sable-contrast); }
+[data-theme="light"] .pax-notes { color: var(--text); }
+[data-theme="light"] .pax-detail-back { color: var(--accent); }
+[data-theme="light"] .pax-seat-badge { color: white; }
+[data-theme="light"] .row-label { color: var(--corsair-beige-sable-contrast); }
+[data-theme="light"] .row-num { color: var(--corsair-beige-sable-contrast) !important; }
+[data-theme="light"] .section-label.business { color: var(--corsair-bleu-premium); }
+[data-theme="light"] .section-label.premium { color: #1e5f8a; }
+[data-theme="light"] .section-label.economy { color: var(--text-muted); opacity: 1; }
+[data-theme="light"] .galley-box-label { color: var(--corsair-beige-sable-contrast); }
+[data-theme="light"] .galley-label { color: var(--corsair-beige-sable-contrast); }
+[data-theme="light"] .timeline-time { color: var(--text-muted); }
+[data-theme="light"] .timeline-abs-time { color: var(--text-muted); }
+[data-theme="light"] .timeline-label { color: var(--text); }
+[data-theme="light"] .timeline-status.waiting { color: var(--text-muted); }
+[data-theme="light"] .brief-kpi-value { color: var(--text); }
+[data-theme="light"] .brief-kpi-label { color: var(--text-muted); }
+[data-theme="light"] .crew-name { color: var(--text); }
+[data-theme="light"] .crew-role { color: var(--text-secondary); }
+[data-theme="light"] .meal-name { color: var(--text-muted); }
+[data-theme="light"] .service-row span:first-child { color: var(--text-muted); }
+[data-theme="light"] .checklist-group-count { color: var(--text-muted); }
+[data-theme="light"] .cl-text { color: var(--text); }
+[data-theme="light"] .checklist-item.done .cl-text { color: var(--text-muted); }
+[data-theme="light"] .cl-tag { color: var(--text-muted); background: rgba(0,0,0,0.04); }
+[data-theme="light"] .cabin-zone-name { color: var(--text); }
+[data-theme="light"] .zone-btn { color: var(--text-muted); }
+[data-theme="light"] .incident-time { color: var(--text-muted); }
+[data-theme="light"] .incident-desc { color: var(--text-muted); }
+[data-theme="light"] .report-stat-value { color: var(--text); }
+[data-theme="light"] .report-stat-label { color: var(--text-muted); }
+[data-theme="light"] .form-label { color: var(--corsair-beige-sable-contrast); }
+[data-theme="light"] .form-input, [data-theme="light"] .form-select { color: var(--text); }
+[data-theme="light"] .sev-btn { color: var(--text-muted); }
+[data-theme="light"] .otp-dep-time label { color: var(--corsair-beige-sable-contrast); }
+[data-theme="light"] .otp-dep-time input { color: var(--text); }
+[data-theme="light"] .placeholder { color: var(--text-muted); }
+[data-theme="light"] .pax-list-seat { color: var(--text); }
+[data-theme="light"] .search-box input::placeholder { color: var(--text-muted); }
+[data-theme="light"] .filter-btn .filter-count { background: rgba(0,0,0,0.08); }
+[data-theme="light"] .filter-btn.active .filter-count { background: rgba(255,255,255,0.25); }
+[data-theme="light"] .notif-prompt-desc { color: var(--text-muted); }
+[data-theme="light"] .notif-prompt-list { color: var(--text-muted); }
+[data-theme="light"] .notif-prompt-btn.secondary { color: var(--text-muted); }
 
 /* === Flight Profile === */
 .flight-profile {
