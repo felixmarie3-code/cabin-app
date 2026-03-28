@@ -23,67 +23,38 @@
       <span id="splash-sub">Corsair International</span>
     </div>
     <div id="splash-plane">
-      <!-- Top-down A330 silhouette, nose UP, wings spanning full width -->
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 240" preserveAspectRatio="xMidYMid meet">
+      <!-- Clean A330 top-down silhouette, nose UP, full width -->
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 215" preserveAspectRatio="xMidYMid meet">
         <defs>
-          <filter id="plane-glow" x="-20%" y="-20%" width="140%" height="140%">
-            <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur"/>
-            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          <filter id="plane-glow" x="-10%" y="-10%" width="120%" height="120%">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="3" result="shadow"/>
+            <feFlood flood-color="rgba(82,167,190,0.5)"/>
+            <feComposite in2="shadow" operator="in"/>
+            <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
           </filter>
         </defs>
         <g filter="url(#plane-glow)">
-          <!-- Fuselage (nose at top, tail at bottom) -->
+          <!-- Fuselage -->
           <path d="
-            M 193,14 C 193,5 207,5 207,14
-            L 222,82 C 230,94 232,144 230,178
-            L 222,230 C 210,236 190,236 178,230
-            L 170,178 C 168,144 170,94 178,82 Z
-          " fill="rgba(255,255,255,0.97)"/>
-
-          <!-- Left wing (sweeps from fuselage root to far left tip) -->
-          <path d="
-            M 180,102 L 4,148 L 4,168 L 26,170 L 182,148 Z
-          " fill="rgba(255,255,255,0.92)"/>
-
-          <!-- Right wing (mirror) -->
-          <path d="
-            M 220,102 L 396,148 L 396,168 L 374,170 L 218,148 Z
-          " fill="rgba(255,255,255,0.92)"/>
-
-          <!-- Left engine nacelle -->
-          <path d="
-            M 48,136 C 44,128 44,158 48,162
-            L 74,162 C 78,158 78,128 74,136 Z
-          " fill="rgba(255,255,255,0.88)"/>
-
-          <!-- Right engine nacelle -->
-          <path d="
-            M 326,136 C 322,128 322,158 326,162
-            L 352,162 C 356,158 356,128 352,136 Z
-          " fill="rgba(255,255,255,0.88)"/>
-
-          <!-- Left horizontal stabilizer -->
-          <path d="M 176,198 L 102,220 L 106,232 L 178,212 Z"
-                fill="rgba(255,255,255,0.90)"/>
-
-          <!-- Right horizontal stabilizer -->
-          <path d="M 224,198 L 298,220 L 294,232 L 222,212 Z"
-                fill="rgba(255,255,255,0.90)"/>
+            M100 3 C103 3 105.5 10 105.5 20
+            L106.5 68 C109 73 142 84 197 98
+            L198 104 L195 106
+            C158 109 118 104 107 99
+            L107 172 C107 174 120 187 136 194
+            L136 204 L100 197 L64 204 L64 194
+            C80 187 93 174 93 172
+            L93 99 C82 104 42 109 5 106
+            L2 104 L3 98
+            C58 84 91 73 93.5 68
+            L94.5 20 C94.5 10 97 3 100 3Z
+          " fill="white"/>
+          <!-- Left engine -->
+          <rect x="48" y="82" width="9" height="26" rx="4.5" fill="white" opacity="0.92"/>
+          <!-- Right engine -->
+          <rect x="143" y="82" width="9" height="26" rx="4.5" fill="white" opacity="0.92"/>
         </g>
-
-        <!-- Window dots along fuselage centerline -->
-        <g fill="rgba(40,43,98,0.35)">
-          <circle cx="200" cy="100" r="3"/>
-          <circle cx="200" cy="113" r="3"/>
-          <circle cx="200" cy="126" r="3"/>
-          <circle cx="200" cy="139" r="3"/>
-          <circle cx="200" cy="152" r="3"/>
-          <circle cx="200" cy="165" r="3"/>
-        </g>
-
-        <!-- Engine inlet rings -->
-        <ellipse cx="61" cy="149" rx="13" ry="5" fill="rgba(40,43,98,0.25)"/>
-        <ellipse cx="339" cy="149" rx="13" ry="5" fill="rgba(40,43,98,0.25)"/>
+        <!-- Window line -->
+        <line x1="100" y1="35" x2="100" y2="165" stroke="rgba(40,43,98,0.12)" stroke-width="1.5" stroke-dasharray="3 5"/>
       </svg>
     </div>
   </div>
