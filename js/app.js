@@ -235,13 +235,16 @@ function buildBriefing(){
     const triSpan=document.createElement('span');triSpan.className='crew-tri';triSpan.textContent=c.trigramme;
     const rankSpan=document.createElement('span');rankSpan.className='crew-rank-label';rankSpan.textContent=c.rank;
     av.appendChild(triSpan);av.appendChild(rankSpan);
-    const info=document.createElement('div');
-    const nm=document.createElement('div');nm.className='crew-name';
+    const info=document.createElement('div');info.className='crew-info';
+    const nm=document.createElement('div');nm.className='crew-name';nm.textContent=c.name;
+    const rl=document.createElement('div');rl.className='crew-role';rl.textContent=c.role;
+    info.appendChild(nm);info.appendChild(rl);
     const saved=doorAssignments[c.name];
     const door=(saved&&DOORS.includes(saved))?saved:c.door;
-    nm.textContent=c.name+' \u2014 Porte '+door;
-    const rl=document.createElement('div');rl.className='crew-role';rl.textContent=c.role;
-    info.appendChild(nm);info.appendChild(rl);row.appendChild(av);row.appendChild(info);crewEl.appendChild(row);
+    const doorEl=document.createElement('div');doorEl.className='crew-door';doorEl.textContent=door;
+    row.appendChild(av);row.appendChild(info);row.appendChild(doorEl);
+    row.addEventListener('click',()=>showCrewDetail(c));
+    crewEl.appendChild(row);
   });
 
   // Cabin defects
@@ -261,25 +264,95 @@ function buildBriefing(){
   notesEl.addEventListener('input',()=>localStorage.setItem('cabin_briefing_notes',notesEl.value));
 }
 
-// Door assignment modal
+// Door assignment modal — mini cabin plan with doors on each side
 document.getElementById('assignDoorsBtn').addEventListener('click',()=>{
   const grid=document.getElementById('doorGrid');grid.textContent='';
-  CREW.forEach(c=>{
-    const item=document.createElement('div');item.className='door-item';
-    const nm=document.createElement('div');nm.className='door-name';nm.textContent=c.name.split(' ')[0];
-    const sel=document.createElement('select');sel.className='door-select';sel.dataset.crew=c.name;
-    const emptyOpt=document.createElement('option');emptyOpt.value='';emptyOpt.textContent='— Non assigné —';sel.appendChild(emptyOpt);
-    DOORS.forEach(d=>{const o=document.createElement('option');o.value=d;o.textContent=d;sel.appendChild(o);});
-    const saved=doorAssignments[c.name];sel.value=saved&&DOORS.includes(saved)?saved:c.door;
-    item.appendChild(nm);item.appendChild(sel);grid.appendChild(item);
+  // Doors are paired: 1G/1D, 2G/2D, 3G/3D, 4G/4D — displayed top to bottom
+  const pairs=[['1G','1D'],['2G','2D'],['3G','3D'],['4G','4D']];
+  const sectionLabels={0:'BUSINESS',1:'PREMIUM',2:'ECONOMY AV.',3:'ECONOMY ARR.'};
+  pairs.forEach(([doorG,doorD],idx)=>{
+    // Section label
+    if(sectionLabels[idx]){const lbl=document.createElement('div');lbl.className='door-pair-label';lbl.textContent=sectionLabels[idx];grid.appendChild(lbl);}
+    const row=document.createElement('div');row.className='door-row';
+    // Left door (Gauche)
+    const slotG=buildDoorSlot(doorG);
+    // Label
+    const rlbl=document.createElement('div');rlbl.className='door-row-label';rlbl.textContent='Porte '+String(idx+1);
+    // Fuselage
+    const fuse=document.createElement('div');fuse.className='door-row-fuselage';
+    // Right door (Droite)
+    const slotD=buildDoorSlot(doorD);
+    row.appendChild(slotG);row.appendChild(rlbl);row.appendChild(fuse);row.appendChild(slotD);
+    grid.appendChild(row);
   });
   document.getElementById('doorOverlay').classList.add('visible');
 });
+function buildDoorSlot(doorName){
+  const slot=document.createElement('div');slot.className='door-slot';
+  const label=document.createElement('div');label.style.cssText='font-size:9px;color:var(--text-muted);letter-spacing:0.3px;';label.textContent=doorName;
+  const sel=document.createElement('select');sel.className='door-assign-select';sel.dataset.door=doorName;
+  const emptyOpt=document.createElement('option');emptyOpt.value='';emptyOpt.textContent='— Libre —';sel.appendChild(emptyOpt);
+  CREW.forEach(c=>{const o=document.createElement('option');o.value=c.name;o.textContent=c.trigramme+' — '+c.rank;sel.appendChild(o);});
+  // Find who's assigned to this door
+  const assigned=Object.entries(doorAssignments).find(([,d])=>d===doorName);
+  if(assigned)sel.value=assigned[0];
+  else{const def=CREW.find(c=>c.door===doorName);if(def)sel.value=def.name;}
+  if(sel.value)slot.classList.add('assigned');
+  sel.addEventListener('change',()=>slot.classList.toggle('assigned',!!sel.value));
+  slot.appendChild(label);slot.appendChild(sel);
+  return slot;
+}
 document.getElementById('doorClose').addEventListener('click',()=>document.getElementById('doorOverlay').classList.remove('visible'));
 document.getElementById('doorOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)document.getElementById('doorOverlay').classList.remove('visible');});
 document.getElementById('doorSave').addEventListener('click',()=>{
-  document.querySelectorAll('.door-select').forEach(s=>{doorAssignments[s.dataset.crew]=s.value;});
-  lsSet('cabin_doors',doorAssignments);document.getElementById('doorOverlay').classList.remove('visible');buildBriefing();
+  // Clear old assignments then rebuild from selects (assign crew to doors)
+  const newAssign={};
+  document.querySelectorAll('.door-assign-select').forEach(s=>{
+    if(s.value){newAssign[s.value]=s.dataset.door;}
+  });
+  Object.assign(doorAssignments,{});Object.keys(doorAssignments).forEach(k=>delete doorAssignments[k]);
+  Object.assign(doorAssignments,newAssign);
+  lsSet('cabin_doors',doorAssignments);document.getElementById('doorOverlay').classList.remove('visible');buildBriefing();buildCabinPlan();
+});
+
+// Crew detail (click on crew member)
+function showCrewDetail(c){
+  const saved=doorAssignments[c.name];const door=(saved&&DOORS.includes(saved))?saved:c.door;
+  alert(c.name+'\n'+c.rank+' — '+c.trigramme+'\nRôle : '+c.role+'\nPorte : '+door);
+}
+
+// Rest tour modal
+document.getElementById('restTourBtn').addEventListener('click',()=>{
+  const grid=document.getElementById('restGrid');grid.textContent='';
+  const restData=lsGet('cabin_rest_tour',[]);
+  // Build 3 rest slots
+  const slots=restData.length?restData:[{crew:'',start:'',end:''},{crew:'',start:'',end:''},{crew:'',start:'',end:''}];
+  slots.forEach((sl,idx)=>{
+    const row=document.createElement('div');row.className='rest-slot';
+    const order=document.createElement('div');order.className='rest-slot-order';order.textContent=idx+1;
+    const sel=document.createElement('select');sel.className='door-assign-select';sel.dataset.restIdx=idx;
+    const emptyOpt=document.createElement('option');emptyOpt.value='';emptyOpt.textContent='— Choisir PN —';sel.appendChild(emptyOpt);
+    CREW.forEach(c=>{const o=document.createElement('option');o.value=c.name;o.textContent=c.trigramme+' — '+c.name.split(' ')[0];sel.appendChild(o);});
+    if(sl.crew)sel.value=sl.crew;
+    const startIn=document.createElement('input');startIn.type='time';startIn.className='door-assign-select';startIn.style.width='90px';startIn.value=sl.start||'';startIn.dataset.field='start';startIn.dataset.restIdx=idx;
+    const endIn=document.createElement('input');endIn.type='time';endIn.className='door-assign-select';endIn.style.width='90px';endIn.value=sl.end||'';endIn.dataset.field='end';endIn.dataset.restIdx=idx;
+    const sep=document.createElement('span');sep.textContent='→';sep.style.cssText='color:var(--text-muted);font-size:12px';
+    row.appendChild(order);row.appendChild(sel);row.appendChild(startIn);row.appendChild(sep);row.appendChild(endIn);
+    grid.appendChild(row);
+  });
+  document.getElementById('restOverlay').classList.add('visible');
+});
+document.getElementById('restClose').addEventListener('click',()=>document.getElementById('restOverlay').classList.remove('visible'));
+document.getElementById('restOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)document.getElementById('restOverlay').classList.remove('visible');});
+document.getElementById('restSave').addEventListener('click',()=>{
+  const slots=[];
+  document.querySelectorAll('#restGrid .rest-slot').forEach((row,idx)=>{
+    const sel=row.querySelector('select');
+    const start=row.querySelector('input[data-field="start"]');
+    const end=row.querySelector('input[data-field="end"]');
+    slots.push({crew:sel.value,start:start.value,end:end.value});
+  });
+  lsSet('cabin_rest_tour',slots);document.getElementById('restOverlay').classList.remove('visible');
 });
 
 // Cabin defect modal
@@ -390,7 +463,30 @@ function buildCabinPlan(){
           if(bookmarks[sid])se.classList.add('bookmarked');se.addEventListener('click',ev=>{ev.stopPropagation();showPaxDetail(sid);});col.appendChild(se);}});
       const rne=document.createElement('div');rne.className='row-num';rne.textContent=rn;rne.style.cssText='height:16px;display:flex;align-items:center;justify-content:center';
       col.appendChild(rne);cols.appendChild(col);});
-    sec.appendChild(cols);c.appendChild(sec);});applyFilters();updateStats();
+    sec.appendChild(cols);c.appendChild(sec);});
+  // Add crew trigrammes at door positions in the cabin plan
+  const doorRowMap={'1':1,'2':9,'3':30,'4':46};
+  Object.entries(doorRowMap).forEach(([doorNum,rowNum])=>{
+    ['G','D'].forEach(side=>{
+      const doorId=doorNum+side;
+      const crew=CREW.find(c=>{const d=doorAssignments[c.name]||c.door;return d===doorId;});
+      if(!crew)return;
+      // Find the exit-row column for this row
+      const col=document.querySelector('.cabin-col.exit-row');
+      // Place a marker at the correct row
+      const allCols=document.querySelectorAll('.cabin-col');
+      allCols.forEach(col=>{
+        const rne=col.querySelector('.row-num');
+        if(rne&&rne.textContent===String(rowNum)){
+          const marker=document.createElement('div');marker.className='crew-marker '+(side==='G'?'top':'bottom');
+          marker.textContent=crew.trigramme;marker.title=crew.name+' — '+crew.rank;
+          marker.addEventListener('click',e=>{e.stopPropagation();showCrewDetail(crew);});
+          col.style.position='relative';col.appendChild(marker);
+        }
+      });
+    });
+  });
+  applyFilters();updateStats();
 }
 document.getElementById('filters').addEventListener('click',e=>{const b=e.target.closest('.filter-btn');if(!b)return;document.querySelectorAll('.filter-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');activeFilter=b.dataset.filter;applyFilters();});
 document.getElementById('searchInput').addEventListener('input',e=>{searchQuery=e.target.value.toLowerCase().trim();applyFilters();});

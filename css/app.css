@@ -443,9 +443,11 @@ button, [role="button"] { min-height: 36px; min-width: 36px; }
 /* Crew list */
 .brief-crew-list { display: flex; flex-direction: column; gap: 6px; }
 .crew-member {
-  display: flex; align-items: center; gap: 10px; padding: 6px 8px;
-  background: rgba(255,255,255,0.03); border-radius: 6px;
+  display: flex; align-items: center; gap: 10px; padding: 8px 10px;
+  background: rgba(255,255,255,0.03); border-radius: 10px;
 }
+.crew-info { flex: 1; min-width: 0; }
+.crew-door { font-size: 11px; font-weight: 600; color: var(--corsair-bleu-economie); letter-spacing: 0.3px; flex-shrink: 0; }
 .crew-avatar {
   width: 38px; height: 38px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center;
   font-weight: 600; color: white; flex-shrink: 0; gap: 0; line-height: 1;
@@ -641,13 +643,16 @@ button, [role="button"] { min-height: 36px; min-width: 36px; }
   margin-top: 12px; padding: 20px 16px 12px; position: relative;
   display: flex; align-items: center; justify-content: space-between;
 }
-.fp-point { display: flex; flex-direction: column; align-items: center; gap: 6px; position: relative; z-index: 1; min-width: 48px; }
+/* fp-point defined below fp-line */
 .fp-time { font-size: 13px; font-weight: 700; color: var(--corsair-bleu-premium); letter-spacing: 0.3px; }
 .fp-dot { width: 14px; height: 14px; border-radius: 50%; background: var(--corsair-bleu-economie); box-shadow: 0 0 0 4px rgba(82,167,190,0.2); flex-shrink: 0; }
 .fp-dot.dep { background: var(--corsair-bleu-premium); box-shadow: 0 0 0 4px rgba(53,94,171,0.2); }
 .fp-dot.arr { background: #4ade80; box-shadow: 0 0 0 4px rgba(74,222,128,0.2); }
 .fp-label { font-size: 10px; color: var(--text-muted); letter-spacing: 0.5px; text-transform: uppercase; font-weight: 600; }
-.fp-line { position: absolute; top: 50%; left: 32px; right: 32px; height: 2px; background: rgba(82,167,190,0.3); z-index: 0; transform: translateY(1px); }
+.fp-line { position: absolute; top: 0; bottom: 0; left: 32px; right: 32px; height: 2px; background: rgba(82,167,190,0.3); z-index: 0; margin: auto 0; }
+.fp-point { display: flex; flex-direction: column; align-items: center; position: relative; z-index: 1; min-width: 48px; }
+.fp-time { margin-bottom: 6px; }
+.fp-label { margin-top: 6px; }
 [data-theme="light"] .flight-profile { background: var(--bg-card); }
 [data-theme="light"] .fp-time { color: var(--corsair-bleu-nuit); }
 
@@ -684,9 +689,49 @@ button, [role="button"] { min-height: 36px; min-width: 36px; }
   letter-spacing: 0.5px; min-height: 24px; min-width: 24px;
 }
 .inline-btn:active { opacity: 0.7; }
+.crew-btns { display: flex; gap: 6px; margin-left: auto; }
+
+/* === Rest tour === */
+.rest-grid { display: flex; flex-direction: column; gap: 8px; }
+.rest-slot { display: flex; align-items: center; gap: 10px; padding: 10px; background: var(--bg-card); border-radius: 10px; }
+.rest-slot-order { width: 24px; height: 24px; border-radius: 50%; background: var(--corsair-bleu-economie); color: white; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+.rest-slot-crew { flex: 1; font-size: 13px; font-weight: 600; color: var(--text); }
+.rest-slot-time { font-size: 11px; color: var(--text-muted); }
+.rest-slot select { padding: 4px 8px; border-radius: 8px; background: var(--bg-surface); color: var(--text); border: 1px solid rgba(82,167,190,0.2); font-size: 12px; }
+
+/* === Crew markers on cabin plan === */
+.crew-marker {
+  position: absolute; left: 50%; transform: translateX(-50%);
+  font-size: 7px; font-weight: 700; letter-spacing: 0.3px;
+  color: white; background: var(--corsair-bleu-premium);
+  padding: 1px 4px; border-radius: 3px; cursor: pointer;
+  white-space: nowrap; z-index: 5; line-height: 1.2;
+}
+.crew-marker.top { top: -12px; }
+.crew-marker.bottom { bottom: 16px; }
 
 /* === Door assignment === */
-.door-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.door-cabin-layout { display: flex; flex-direction: column; gap: 12px; }
+.door-pair { display: flex; align-items: center; gap: 8px; }
+.door-pair-label { font-size: 10px; font-weight: 600; color: var(--text-muted); letter-spacing: 0.5px; text-transform: uppercase; text-align: center; width: 100%; margin-bottom: 4px; }
+.door-side { flex: 1; }
+.door-side-label { font-size: 9px; color: var(--text-muted); text-align: center; margin-bottom: 4px; letter-spacing: 0.5px; }
+.door-fuselage { width: 40px; height: 60px; background: rgba(82,167,190,0.08); border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.door-fuselage svg { width: 24px; height: 24px; stroke: var(--corsair-bleu-economie); opacity: 0.4; }
+.door-grid { display: flex; flex-direction: column; gap: 10px; }
+.door-row { display: flex; align-items: center; gap: 8px; }
+.door-row-label { font-size: 11px; font-weight: 700; color: var(--corsair-bleu-economie); width: 48px; text-align: center; flex-shrink: 0; }
+.door-row-fuselage { width: 24px; background: rgba(82,167,190,0.15); border-radius: 4px; height: 48px; flex-shrink: 0; }
+.door-slot {
+  flex: 1; padding: 8px; background: var(--bg-card); border-radius: 10px;
+  border: 1.5px dashed rgba(82,167,190,0.2); min-height: 48px;
+  display: flex; align-items: center; gap: 8px;
+}
+.door-slot.assigned { border-color: var(--corsair-bleu-economie); border-style: solid; background: rgba(82,167,190,0.05); }
+.door-slot-crew { font-size: 12px; font-weight: 600; color: var(--text); flex: 1; }
+.door-slot-avatar { width: 30px; height: 30px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; font-size: 9px; font-weight: 600; line-height: 1; flex-shrink: 0; }
+.door-assign-select { width: 100%; padding: 6px 8px; border-radius: 8px; background: var(--bg-surface); color: var(--text); border: 1px solid rgba(82,167,190,0.2); font-size: 12px; }
+.door-assign-select option { background: var(--bg-surface); }
 .door-item {
   display: flex; align-items: center; justify-content: space-between; padding: 10px;
   background: var(--input-bg); border-radius: 6px; border: 1px solid var(--border);
