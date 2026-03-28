@@ -13,6 +13,82 @@
   <link rel="stylesheet" href="css/app.css">
 </head>
 <body>
+
+  <!-- ===== SPLASH SCREEN ===== -->
+  <div id="splash" aria-hidden="true">
+    <div id="splash-bg"></div>
+    <div id="splash-brand">
+      <img src="logoapp.png" alt="CabinReady" id="splash-logo-img">
+      <span id="splash-title">CabinReady</span>
+      <span id="splash-sub">Corsair International</span>
+    </div>
+    <div id="splash-plane">
+      <!-- Top-down A330 silhouette, nose UP, wings spanning full width -->
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 240" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <filter id="plane-glow" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+        <g filter="url(#plane-glow)">
+          <!-- Fuselage (nose at top, tail at bottom) -->
+          <path d="
+            M 193,14 C 193,5 207,5 207,14
+            L 222,82 C 230,94 232,144 230,178
+            L 222,230 C 210,236 190,236 178,230
+            L 170,178 C 168,144 170,94 178,82 Z
+          " fill="rgba(255,255,255,0.97)"/>
+
+          <!-- Left wing (sweeps from fuselage root to far left tip) -->
+          <path d="
+            M 180,102 L 4,148 L 4,168 L 26,170 L 182,148 Z
+          " fill="rgba(255,255,255,0.92)"/>
+
+          <!-- Right wing (mirror) -->
+          <path d="
+            M 220,102 L 396,148 L 396,168 L 374,170 L 218,148 Z
+          " fill="rgba(255,255,255,0.92)"/>
+
+          <!-- Left engine nacelle -->
+          <path d="
+            M 48,136 C 44,128 44,158 48,162
+            L 74,162 C 78,158 78,128 74,136 Z
+          " fill="rgba(255,255,255,0.88)"/>
+
+          <!-- Right engine nacelle -->
+          <path d="
+            M 326,136 C 322,128 322,158 326,162
+            L 352,162 C 356,158 356,128 352,136 Z
+          " fill="rgba(255,255,255,0.88)"/>
+
+          <!-- Left horizontal stabilizer -->
+          <path d="M 176,198 L 102,220 L 106,232 L 178,212 Z"
+                fill="rgba(255,255,255,0.90)"/>
+
+          <!-- Right horizontal stabilizer -->
+          <path d="M 224,198 L 298,220 L 294,232 L 222,212 Z"
+                fill="rgba(255,255,255,0.90)"/>
+        </g>
+
+        <!-- Window dots along fuselage centerline -->
+        <g fill="rgba(40,43,98,0.35)">
+          <circle cx="200" cy="100" r="3"/>
+          <circle cx="200" cy="113" r="3"/>
+          <circle cx="200" cy="126" r="3"/>
+          <circle cx="200" cy="139" r="3"/>
+          <circle cx="200" cy="152" r="3"/>
+          <circle cx="200" cy="165" r="3"/>
+        </g>
+
+        <!-- Engine inlet rings -->
+        <ellipse cx="61" cy="149" rx="13" ry="5" fill="rgba(40,43,98,0.25)"/>
+        <ellipse cx="339" cy="149" rx="13" ry="5" fill="rgba(40,43,98,0.25)"/>
+      </svg>
+    </div>
+  </div>
+  <!-- ===== END SPLASH ===== -->
+
   <header class="app-header">
     <div class="header-left">
       <img src="icons/corsair_blanc.svg" alt="CORSAIR" class="app-logo">
