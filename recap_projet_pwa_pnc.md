@@ -1,5 +1,5 @@
 # CabinReady — Recap projet PWA PNC
-_Mis a jour le 2026-03-28_
+_Mis a jour le 2026-03-29_
 
 ---
 
@@ -20,7 +20,7 @@ Vol de reference utilise dans les donnees mock : **SS 901 ORY -> PTP** (Paris-Or
 | `index.html` | Structure HTML complete, tous les modules et overlays |
 | `css/app.css` | Feuille de style unique, variables CORSAIR, theming dark/light |
 | `js/app.js` | Logique applicative complete (aucune dependance externe) |
-| `sw.js` | Service Worker — cache v42, strategie network-first avec fallback cache |
+| `sw.js` | Service Worker — cache v74, strategie network-first avec fallback cache |
 | `manifest.json` | Manifest PWA avec raccourcis et icones |
 
 ### Technologies
@@ -35,7 +35,7 @@ Vol de reference utilise dans les donnees mock : **SS 901 ORY -> PTP** (Paris-Or
 
 ## Service Worker (sw.js)
 
-- **Nom du cache** : `cabin-app-v42`
+- **Nom du cache** : `cabin-app-v74`
 - **Strategie fetch** : Network First — tente le reseau, repli sur cache si hors ligne. Toute reponse reseau est systematiquement mise en cache (mise a jour automatique).
 - **Installation** : pre-cache de tous les assets statiques (HTML, CSS, JS, manifest, polices, icones SVG/PNG, logo).
 - **Activation** : suppression de toutes les versions de cache anterieures (`k !== CACHE_NAME`), puis `clients.claim()`.
@@ -61,6 +61,38 @@ Vol de reference utilise dans les donnees mock : **SS 901 ORY -> PTP** (Paris-Or
   - Plan de cabine -> `#passengers`
   - Ponctualite OTP -> `#punctuality`
   - Checklists securite -> `#checklist`
+
+---
+
+## Splash Screen (animation d'ouverture)
+
+Ecran anime affiche au chargement initial de l'app. Structure HTML : `#splash` > `#splash-bg` (contient `#splash-brand`) + `#splash-plane`.
+
+### Sequence d'animation
+1. **Ecran bleu** : fond gradient (`#1c1f5e` -> `#282B62` -> `#1a4a7a`), plein ecran, z-index 9999
+2. **Brand apparait** (apres 0.15s) : logo wordmark CORSAIR blanc (`icons/corsair_blanc.svg`, 180px) + texte `CABIN READY` (Gilroy 18px, letter-spacing 6px, uppercase), centre a 38% du haut, animation `brand-in` avec spring cubic-bezier
+3. **Pause 3 secondes** : le brand reste visible
+4. **Avion monte** : icone avion vectorisee (SVG inline, viewBox 200x220) monte de bas en haut avec `translate3d` (GPU compositing), fade-in 600ms, ease-out cubique sur 2.8s
+5. **Effacement par contour d'aile** : le `#splash-bg` (et le brand a l'interieur) est decoupe par un `clip-path: polygon()` anime via `requestAnimationFrame`, dont le bord inferieur suit le bord de fuite des ailes (plus haut au centre/fuselage, plus bas aux extremites). L'avion masque la ligne de transition.
+6. **Suppression du DOM** : splash retire du DOM apres fin d'animation. Fallback timeout a BRAND_PAUSE + RISE_DURATION + 1000ms.
+
+### Icone avion (SVG vectorise)
+- Source : `airplane-icon-png-2503.png` vectorise manuellement
+- Style flat/pictogramme, vue du dessus, nez en haut
+- Ailes en fleche, extremites touchant les bords de l'ecran (x=0 et x=200 dans le viewBox)
+- Queue en V avec deux derives
+- Remplissage blanc uni, drop-shadow CSS `rgba(82,167,190,0.35)` (pas de filtre SVG — perf)
+- `will-change: transform, opacity`, `contain: layout style`
+
+### Geometrie clip-path
+- Le clip suit le bord de fuite des ailes : ratios `WING_CENTER=0.482` (y=106/220 au fuselage) et `WING_TIP=0.555` (y=122/220 aux extremites)
+- Polygone 7 points : edges, 25%/75% interpoles, centre
+- Optimise paysage : pas de filtre SVG, translate3d GPU, polygone simplifie, `contain` CSS
+
+### Variables JS (app.js, IIFE au debut du fichier)
+- `BRAND_PAUSE = 3000` (3s)
+- `RISE_DURATION = 2800` (2.8s)
+- `FADE_IN = 600` (0.6s)
 
 ---
 
@@ -96,7 +128,7 @@ Panel dropdown sous le header. Fonctionnalites :
 - **Saisie personnalisee** : input `type="time"` natif iOS (roue de selection)
 - **Boutons d'action** : Demarrer / Arreter / Reset
 - **Etat actif** : classe `running` sur le bouton header, label pill visible avec temps restant
-- **Expiration** : classe `expired` sur le bouton header, notification automatique "Minuteur termine" envoyee via le systeme de notifications
+- **Expiration** : classe `expired` sur le bouton header, label explicitement mis a `00:00` et garde visible, notification automatique "Minuteur termine" envoyee via le systeme de notifications
 
 ### Gestion unifiee des panels
 Tous les panels header (notifCenter, clockPanel, timerPanel) partagent un mecanisme `closeAllPanels(except)` : ouvrir un panel ferme automatiquement les autres. Clic en dehors d'un panel le ferme.
@@ -349,8 +381,8 @@ Aucun point indicateur pour repas speciaux ni fauteuil roulant (`.seat.special-m
 #### Animation "breathing" (filtre actif)
 Classe `breathing` (et non `highlighted`) : animation `breathe` 3s ease-in-out infinite, glow pulsant `rgba(82,167,190,0.3)`.
 
-### Statistiques cabine (`cabinStats`)
-Barre horizontale sous le plan : % Remplissage, Business, Premium, Economy, Repas spe., Marques. Fond `--bg-surface`, `border-radius: 12px`, shadow.
+### Statistiques cabine
+Les compteurs (nombre de passagers par filtre) sont affiches directement dans les boutons de filtre via des badges `.filter-count` (inline-block, 16px, border-radius 8px, font-size 9px, fond `rgba(255,255,255,0.15)`). Pas de barre de stats separee.
 
 ### Panneau inferieur passagers (`paxBottomPanel`)
 Panel fixe sous le plan, `border-radius: 14px`, `max-height: 260px`, shadow. Deux vues exclusives :
@@ -397,36 +429,41 @@ Meme structure que Service 1.
 
 ## Module 5 — Ponctualite OTP (`mod-punctuality`)
 
-En-tete : titre `Ponctualite — Depart ORY`, horloge temps reel (`otpClock`).
+En-tete : titre `Ponctualite`, horloge temps reel (`otpClock`).
 
 ### Saisie STD
-Input `time` editable (valeur initiale 14:00). Changement -> recalcul immediat de la timeline.
+Barre horizontale avec label `STD`, input `time` editable (valeur initiale 14:00), label aeroport `ORY`. Changement -> recalcul immediat de la timeline.
 
-### Timeline OTP (`timelineContainer`)
-27 jalons regroupes par offset de temps par rapport au STD, de H-120min a H-DEPART.
+### Frise verticale OTP (`timelineContainer`)
+16 jalons equipage (MILESTONES), presentes en frise verticale avec dot + ligne.
 
-**Groupes de jalons** (offset en minutes relatif au STD) :
-- H-02:00 : Check-in ouvert, Security check, Tow in
-- H-01:50 : Crew pick up, Security search
-- H-01:40 : Crew at counter, Cargo at aircraft
-- H-01:30 : Crew bus
-- H-01:20 : Agent at gate, Crew at gate
-- H-01:10 : Cleaning, Catering, Loading, Fueling
-- H-01:00 : LDS sent
-- H-00:50 : Boarding, OK Cabin
-- H-00:40 : PMR/Remote, Pax bus
-- H-00:30 : Servicing
-- H-00:20 : Dep GPU, Bulk closed, Bag search
-- H-00:10 : Dep jetbridge, Marshaller, Pushback ready
+**Jalons** (offset en minutes relatif au STD) :
+- H-01:50 : Prise en charge equipage
+- H-01:40 : Equipage au comptoir
+- H-01:30 : Bus equipage
+- H-01:20 : Equipage en porte
+- H-01:10 : Accueil pre-vol / Briefing
+- H-01:10 : Catering charge
+- H-01:00 : Verification cabine
+- H-00:50 : Debut embarquement
+- H-00:50 : Annonce embarquement
+- H-00:40 : PMR / Embarquement distant
+- H-00:30 : Fin embarquement
+- H-00:20 : Comptage final / rapprochement
+- H-00:15 : Annonce bienvenue
+- H-00:10 : Portes fermees — cross-check
+- H-00:05 : Annonce securite
 - H — DEPART
 
-Chaque jalon affiche : offset relatif, heure absolue calculee, label, statut (Fait/En cours/A venir/Retard), case a cocher SVG. Statuts avec codes couleur :
-- Fait : fond vert translucide, texte vert
-- En cours (diff <= 5 min) : fond bleu translucide
-- Retard : fond rouge translucide, texte rouge
-- A venir : texte beige attenue
-
-Cases cochees persistees en `localStorage` (cle `cabin_otp_checks`). Mise a jour automatique toutes les 30s.
+### Structure visuelle
+- `.otp-row` : ligne horizontale avec dot-col (dot 14px + ligne verticale 2px) et info-col (heure + label)
+- `.otp-dot` : dot cliquable, rond 14px, bordure 2px. Etats :
+  - Non coche : fond transparent, bordure `--border-strong`
+  - Coche (`.checked`) : fond `#257A6C`, bordure `#257A6C`
+  - Jalon courant (`.current`) : bordure `--corsair-bleu-economie`, glow bleu
+- Clic sur un dot -> toggle check + ouvre zone de remarque
+- Remarques par jalon persistees en `localStorage` (cle `cabin_otp_remarks`)
+- Cases cochees persistees en `localStorage` (cle `cabin_otp_checks`)
 
 ---
 
@@ -563,6 +600,7 @@ Champs par passager :
 | `cabin_bookmarks` | object | `{ "14A": true, ... }` |
 | `cabin_notes` | object | `{ "14A": "note texte" }` |
 | `cabin_otp_checks` | object | `{ "12": timestamp, ... }` |
+| `cabin_otp_remarks` | object | `{ "0": "texte remarque", ... }` (index du jalon) |
 | `cabin_checklist` | object | `{ "Prevol_Check pre-vol_0": true }` |
 | `cabin_incidents` | array | `[{ time, type, seat, desc, severity }]` |
 | `cabin_zones` | object | `{ "Business": "OK", ... }` |
