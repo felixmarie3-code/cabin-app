@@ -335,10 +335,13 @@ html, body {
 /* Galley column */
 .galley-col {
   display: flex; flex-direction: column; align-items: center;
-  width: 54px; flex-shrink: 0; gap: 2px;
+  width: 50px; flex-shrink: 0; gap: 2px;
   padding-top: 20px; /* match section-label height */
-  margin: 0 6px;
+  margin: 0 4px;
 }
+.galley-col.galley-medium { width: 56px; }
+.galley-col.galley-wide { width: 64px; }
+.galley-col.galley-x-wide { width: 78px; }
 .galley-box {
   flex: 1; width: 100%; background: rgba(82,167,190,0.06); border: 1px solid rgba(82,167,190,0.15);
   border-radius: 5px; display: flex; flex-direction: column; align-items: center; justify-content: space-between;
@@ -354,14 +357,19 @@ html, body {
 .galley-label { font-size: 6px; color: var(--corsair-beige-sable); opacity: 0.4; letter-spacing: 0.5px; text-transform: uppercase; writing-mode: vertical-lr; text-orientation: mixed; }
 
 /* Galley facility pictograms */
-.galley-facilities { display: flex; flex-wrap: wrap; gap: 2px; justify-content: center; align-items: center; padding: 2px 0; }
+.galley-facilities { display: flex; flex-wrap: wrap; gap: 3px; justify-content: center; align-items: center; padding: 3px 2px; }
 .galley-facility-icon {
   width: 22px; height: 22px; display: flex; align-items: center; justify-content: center;
-  color: var(--corsair-beige-sable); opacity: 0.35;
-  background: rgba(255,255,255,0.03); border-radius: 4px;
+  color: var(--corsair-beige-sable); opacity: 0.4;
+  background: rgba(255,255,255,0.04); border-radius: 3px;
 }
 .galley-facility-icon svg { width: 14px; height: 14px; }
-[data-theme="light"] .galley-facility-icon { color: var(--corsair-bleu-premium); opacity: 0.3; background: rgba(0,0,0,0.02); }
+.galley-cart-rect {
+  width: 20px; height: 26px; border-radius: 3px;
+  background: rgba(150,155,180,0.25); border: 1px solid rgba(150,155,180,0.15);
+}
+[data-theme="light"] .galley-facility-icon { color: var(--corsair-bleu-premium); opacity: 0.35; background: rgba(0,0,0,0.03); }
+[data-theme="light"] .galley-cart-rect { background: rgba(180,185,200,0.35); border-color: rgba(180,185,200,0.2); }
 
 /* Individual seat */
 .seat {
