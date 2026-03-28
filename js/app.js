@@ -293,6 +293,7 @@ document.getElementById('assignDoorsBtn').addEventListener('click',()=>{
     grid.appendChild(row);
   });
   document.getElementById('doorOverlay').classList.add('visible');
+  setTimeout(validateDoorAssignments,0);
 });
 function buildDoorSlot(doorName){
   const slot=document.createElement('div');slot.className='door-slot';
@@ -305,19 +306,38 @@ function buildDoorSlot(doorName){
   if(assigned)sel.value=assigned[0];
   else{const def=CREW.find(c=>c.door===doorName);if(def)sel.value=def.name;}
   if(sel.value)slot.classList.add('assigned');
-  sel.addEventListener('change',()=>slot.classList.toggle('assigned',!!sel.value));
+  sel.addEventListener('change',()=>{slot.classList.toggle('assigned',!!sel.value);validateDoorAssignments();});
   slot.appendChild(label);slot.appendChild(sel);
   return slot;
 }
 document.getElementById('doorClose').addEventListener('click',()=>document.getElementById('doorOverlay').classList.remove('visible'));
 document.getElementById('doorOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)document.getElementById('doorOverlay').classList.remove('visible');});
-document.getElementById('doorSave').addEventListener('click',()=>{
-  // Clear old assignments then rebuild from selects (assign crew to doors)
-  const newAssign={};
-  document.querySelectorAll('.door-assign-select').forEach(s=>{
-    if(s.value){newAssign[s.value]=s.dataset.door;}
+// Validate door assignments in real-time
+function validateDoorAssignments(){
+  const warn=document.getElementById('doorWarning');
+  const selects=document.querySelectorAll('#doorGrid .door-assign-select');
+  const issues=[];
+  // Check unassigned doors
+  const unassigned=[];
+  selects.forEach(s=>{if(!s.value)unassigned.push(s.dataset.door);});
+  if(unassigned.length)issues.push(unassigned.length+' porte'+(unassigned.length>1?'s':'')+' non assignée'+(unassigned.length>1?'s':'')+' : '+unassigned.join(', '));
+  // Check duplicates
+  const crewCount={};
+  selects.forEach(s=>{if(s.value){crewCount[s.value]=(crewCount[s.value]||0)+1;}});
+  Object.entries(crewCount).forEach(([name,count])=>{
+    if(count>1){const c=CREW.find(cr=>cr.name===name);issues.push((c?c.trigramme:name)+' assigné(e) à '+count+' portes');}
   });
-  Object.assign(doorAssignments,{});Object.keys(doorAssignments).forEach(k=>delete doorAssignments[k]);
+  if(issues.length){warn.textContent=issues.join(' · ');warn.style.display='';}
+  else{warn.style.display='none';warn.textContent='';}
+}
+
+document.getElementById('doorSave').addEventListener('click',()=>{
+  // Rebuild from selects scoped to doorGrid only
+  const newAssign={};
+  document.querySelectorAll('#doorGrid .door-assign-select').forEach(s=>{
+    if(s.value&&s.dataset.door){newAssign[s.value]=s.dataset.door;}
+  });
+  Object.keys(doorAssignments).forEach(k=>delete doorAssignments[k]);
   Object.assign(doorAssignments,newAssign);
   lsSet('cabin_doors',doorAssignments);document.getElementById('doorOverlay').classList.remove('visible');buildBriefing();buildCabinPlan();
 });
