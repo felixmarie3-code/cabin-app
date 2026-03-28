@@ -493,29 +493,63 @@ function buildCabinPlan(){
       const rne=document.createElement('div');rne.className='row-num';rne.textContent=rn;rne.style.cssText='height:16px;display:flex;align-items:center;justify-content:center';
       col.appendChild(rne);cols.appendChild(col);});
     sec.appendChild(cols);c.appendChild(sec);});
-  // Add crew trigrammes at door positions in the cabin plan
-  const doorRowMap={'1':1,'2':9,'3':30,'4':46};
-  Object.entries(doorRowMap).forEach(([doorNum,rowNum])=>{
-    ['G','D'].forEach(side=>{
-      const doorId=doorNum+side;
-      const crew=CREW.find(c=>{const d=doorAssignments[c.name]||c.door;return d===doorId;});
-      if(!crew)return;
-      // Find the exit-row column for this row
-      const col=document.querySelector('.cabin-col.exit-row');
-      // Place a marker at the correct row
-      const allCols=document.querySelectorAll('.cabin-col');
-      allCols.forEach(col=>{
-        const rne=col.querySelector('.row-num');
-        if(rne&&rne.textContent===String(rowNum)){
-          const marker=document.createElement('div');marker.className='crew-marker '+(side==='G'?'top':'bottom');
-          marker.textContent=crew.trigramme;marker.title=crew.name+' — '+crew.rank;
-          marker.addEventListener('click',e=>{e.stopPropagation();showCrewDetail(crew);});
-          col.style.position='relative';col.appendChild(marker);
-        }
-      });
-    });
+  // Add crew pastilles at galley positions (not on pax seats)
+  // Door mapping to galley insert points: 1=before biz, 2=galley after biz, 3=between eco_front/rear, 4=after eco_rear
+  // G=bottom (K side), D=top (A side)
+  const galleyCols=c.querySelectorAll('.galley-col, .crew-door-col');
+  // Insert crew door columns at positions 1 (before biz) and 4 (after eco_rear)
+  // Position 1: before the first cabin-section
+  const firstSection=c.querySelector('.cabin-section');
+  if(firstSection){
+    const col1=buildCrewDoorCol('1');
+    c.insertBefore(col1,firstSection);
+  }
+  // Position 4: after last element
+  const col4=buildCrewDoorCol('4');
+  c.appendChild(col4);
+  // Position 2 & 3: find existing galley-cols and append crew markers
+  const galleys=c.querySelectorAll('.galley-col');
+  if(galleys[0])appendCrewToGalley(galleys[0],'2');
+  // Position 3: section-divider between eco_front and eco_rear — replace with a crew door col
+  const dividers=c.querySelectorAll('.section-divider');
+  dividers.forEach(div=>{
+    const col3=buildCrewDoorCol('3');
+    col3.classList.add('galley-col');
+    div.replaceWith(col3);
   });
+  if(galleys[1])appendCrewToGalley(galleys[1],'3');
+
   applyFilters();updateStats();
+}
+
+function buildCrewAvatar(crew){
+  const av=document.createElement('div');av.className='crew-avatar cabin-crew-marker '+crew.rankCls;
+  av.textContent=crew.trigramme;av.title=crew.name+' — '+crew.rank;
+  av.addEventListener('click',e=>{e.stopPropagation();showCrewDetail(crew);});
+  return av;
+}
+
+function buildCrewDoorCol(doorNum){
+  const col=document.createElement('div');col.className='crew-door-col';
+  const crewD=CREW.find(c=>{const d=doorAssignments[c.name]||c.door;return d===doorNum+'D';});
+  const crewG=CREW.find(c=>{const d=doorAssignments[c.name]||c.door;return d===doorNum+'G';});
+  // D = top (A side), G = bottom (K side)
+  if(crewD)col.appendChild(buildCrewAvatar(crewD));
+  const spacer=document.createElement('div');spacer.className='crew-door-spacer';
+  const lbl=document.createElement('div');lbl.className='crew-door-label';lbl.textContent='P'+doorNum;
+  spacer.appendChild(lbl);col.appendChild(spacer);
+  if(crewG)col.appendChild(buildCrewAvatar(crewG));
+  return col;
+}
+
+function appendCrewToGalley(galleyEl,doorNum){
+  const crewD=CREW.find(c=>{const d=doorAssignments[c.name]||c.door;return d===doorNum+'D';});
+  const crewG=CREW.find(c=>{const d=doorAssignments[c.name]||c.door;return d===doorNum+'G';});
+  // Remove existing markers
+  galleyEl.querySelectorAll('.cabin-crew-marker').forEach(m=>m.remove());
+  // Insert D at top, G at bottom
+  if(crewD)galleyEl.insertBefore(buildCrewAvatar(crewD),galleyEl.firstChild);
+  if(crewG)galleyEl.appendChild(buildCrewAvatar(crewG));
 }
 document.getElementById('filters').addEventListener('click',e=>{const b=e.target.closest('.filter-btn');if(!b)return;document.querySelectorAll('.filter-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');activeFilter=b.dataset.filter;applyFilters();});
 document.getElementById('searchInput').addEventListener('input',e=>{searchQuery=e.target.value.toLowerCase().trim();applyFilters();});
