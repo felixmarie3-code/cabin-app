@@ -86,7 +86,7 @@ function addNotification(title,body,type){
   sendOSNotification(title,body);
 }
 function sendOSNotification(t,b){
-  const o={body:b,icon:'icons/icon-192.svg',badge:'icons/icon-192.svg',tag:'cabin-'+Date.now(),renotify:true,vibrate:[200,100,200]};
+  const o={body:b,icon:'logoapp.png',badge:'logoapp.png',tag:'cabin-'+Date.now(),renotify:true,vibrate:[200,100,200]};
   if('serviceWorker' in navigator&&navigator.serviceWorker.controller)
     navigator.serviceWorker.ready.then(r=>r.showNotification(t,o).catch(()=>{})).catch(()=>{});
   else if('Notification' in window&&Notification.permission==='granted') try{new Notification(t,o);}catch{}
@@ -150,9 +150,10 @@ document.getElementById('notifTestBtn').addEventListener('click',function(){
 // ============================================================
 // SHARE (Web Share API = AirDrop on iOS)
 // ============================================================
-document.getElementById('shareToggle').addEventListener('click',()=>document.getElementById('shareOverlay').classList.add('visible'));
-document.getElementById('shareClose').addEventListener('click',()=>document.getElementById('shareOverlay').classList.remove('visible'));
-document.getElementById('shareOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)document.getElementById('shareOverlay').classList.remove('visible');});
+document.getElementById('shareToggle').addEventListener('click',()=>{
+  closeAllPanels('sharePanel');
+  document.getElementById('sharePanel').classList.toggle('visible');
+});
 document.getElementById('shareConfirm').addEventListener('click',()=>{
   const checks=document.querySelectorAll('#shareOptions input:checked');
   const parts=[];
@@ -167,7 +168,7 @@ document.getElementById('shareConfirm').addEventListener('click',()=>{
   const text=parts.join('\n\n');
   if(navigator.share){navigator.share({title:'CabinReady \u2014 SS 901',text}).catch(()=>{});}
   else{navigator.clipboard.writeText(text).then(()=>alert('Donn\u00e9es copi\u00e9es dans le presse-papier')).catch(()=>{});}
-  document.getElementById('shareOverlay').classList.remove('visible');
+  document.getElementById('sharePanel').classList.remove('visible');
 });
 
 // ============================================================
@@ -827,14 +828,14 @@ function updateUTCClock(){
 updateUTCClock();setInterval(updateUTCClock,10000);
 
 // === Unified header panel management (same pattern as notifCenter) ===
-const ALL_PANELS=['notifCenter','clockPanel','timerPanel'];
+const ALL_PANELS=['notifCenter','clockPanel','timerPanel','sharePanel'];
 function closeAllPanels(except){
   ALL_PANELS.forEach(id=>{if(id!==except)document.getElementById(id).classList.remove('visible');});
 }
 document.addEventListener('click',e=>{
   ALL_PANELS.forEach(id=>{
     const panel=document.getElementById(id);
-    const toggleId=id==='notifCenter'?'notifToggle':id==='clockPanel'?'utcToggle':'timerToggle';
+    const toggleId=id==='notifCenter'?'notifToggle':id==='clockPanel'?'utcToggle':id==='timerPanel'?'timerToggle':'shareToggle';
     if(!e.target.closest('#'+id)&&!e.target.closest('#'+toggleId))panel.classList.remove('visible');
   });
 });
