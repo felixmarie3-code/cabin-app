@@ -95,26 +95,18 @@
   pointer-events: none;
 }
 
-#splash-logo-img {
-  width: 64px; height: 64px;
-  border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+#splash-voiles {
+  width: 72px;
+  height: auto;
+  filter: drop-shadow(0 4px 16px rgba(82,167,190,0.3));
 }
 
 #splash-title {
   font-family: 'Gilroy', Arial, sans-serif;
   font-weight: 600;
-  font-size: 28px;
+  font-size: 22px;
   color: #ffffff;
-  letter-spacing: 0.5px;
-}
-
-#splash-sub {
-  font-family: 'Gilroy', Arial, sans-serif;
-  font-weight: 400;
-  font-size: 13px;
-  color: rgba(255,255,255,0.55);
-  letter-spacing: 1.5px;
+  letter-spacing: 4px;
   text-transform: uppercase;
 }
 
