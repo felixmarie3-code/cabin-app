@@ -84,6 +84,44 @@ function addNotification(title,body,type){
   if(appNotifications.length>50)appNotifications=appNotifications.slice(0,50);
   lsSet('cabin_notifications',appNotifications);renderNotifCenter();updateNotifBadge();
   sendOSNotification(title,body);
+  showInAppBanner(title,body,type);
+}
+// In-app iOS-style banner
+let bannerTimeout=null;
+function showInAppBanner(title,body,type){
+  let banner=document.getElementById('inAppBanner');
+  if(!banner){
+    banner=document.createElement('div');banner.id='inAppBanner';banner.className='in-app-banner';
+    banner.innerHTML='<div class="iab-icon"></div><div class="iab-content"><div class="iab-title"></div><div class="iab-body"></div></div><div class="iab-time">maintenant</div>';
+    document.body.appendChild(banner);
+    // Swipe up to dismiss
+    let startY=0;
+    banner.addEventListener('touchstart',e=>{startY=e.touches[0].clientY;},{passive:true});
+    banner.addEventListener('touchmove',e=>{
+      const dy=e.touches[0].clientY-startY;
+      if(dy<0)banner.style.transform='translateY('+dy+'px)';
+    },{passive:true});
+    banner.addEventListener('touchend',e=>{
+      const dy=parseInt(banner.style.transform.replace(/[^-\d]/g,'')||'0');
+      if(dy<-30)dismissBanner();else banner.style.transform='';
+    });
+    banner.addEventListener('click',()=>{dismissBanner();document.getElementById('notifBtn').click();});
+  }
+  if(bannerTimeout)clearTimeout(bannerTimeout);
+  const icon=banner.querySelector('.iab-icon');
+  icon.textContent=type==='alert'?'!':'i';
+  icon.className='iab-icon '+(type||'info');
+  banner.querySelector('.iab-title').textContent=title;
+  banner.querySelector('.iab-body').textContent=body;
+  banner.classList.remove('dismiss');
+  banner.classList.add('visible');
+  bannerTimeout=setTimeout(dismissBanner,5000);
+}
+function dismissBanner(){
+  const b=document.getElementById('inAppBanner');
+  if(!b)return;b.classList.add('dismiss');
+  setTimeout(()=>{b.classList.remove('visible','dismiss');b.style.transform='';},300);
+  if(bannerTimeout){clearTimeout(bannerTimeout);bannerTimeout=null;}
 }
 function sendOSNotification(t,b){
   const o={body:b,icon:'logoapp.png',badge:'logoapp.png',tag:'cabin-'+Date.now(),renotify:true,vibrate:[200,100,200]};
