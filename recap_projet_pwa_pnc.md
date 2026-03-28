@@ -1,331 +1,198 @@
-# Projet PWA — App de gestion de vol pour PNC
+# Cabin App — Recap projet PWA PNC
+_Mis a jour le 2026-03-28_
+
+---
 
 ## Contexte
 
-Application iPad interne pour Personnel Navigant Commercial (PNC) de CORSAIR.
-Developpee pour les vols long-courriers (B787-9) avec acces futur a l'API interne.
-Hebergee sur GitHub Pages : https://felixmarie3-code.github.io/cabin-app/
-Depot public : https://github.com/felixmarie3-code/cabin-app
+Application web progressive (PWA) destinee au Personnel Navigant Commercial (PNC) de la compagnie CORSAIR. Elle est concue pour etre installee sur un iPad en mode standalone (sans barre de navigateur) et couvre l'ensemble du workflow d'un vol long-courrier : de la preparation du briefing jusqu'a la redaction du rapport de fin de vol.
+
+Vol de reference utilise dans les donnees mock : **SS 901 ORY -> RUN** (Paris-Orly -> La Reunion), appareil B787-9, immatriculation F-OLRA, duree 11h15, STD 14:00.
 
 ---
 
-## Stack technique
+## Architecture generale
 
-- **PWA** : HTML/CSS/JS vanilla (aucune dependance externe)
-- **Service Worker** : network-first + cache fallback (cache v10)
-- **Persistance locale** : localStorage (bookmarks, notes, checklists, incidents, theme, services, zones cabine, notifications, portes, briefing OTP)
-- **Branding** : Charte CORSAIR — police Gilroy (Regular + SemiBold), palette Bleu Business #282B62 / Bleu Premium #355EAB / Bleu Economie #52A7BE / Rouge Vermillon #DA3D32
-- **Orientation** : Landscape (declaree dans le manifest)
-- **Mode d'affichage** : Standalone (PWA installee)
-- **Offline** : Service Worker cache statique complet au premier chargement
+### Fichiers principaux
 
----
-
-## Architecture fichiers
-
-```
-cabin-app/
-  index.html              — Shell principal, tous les modules (6 onglets) + 5 modales
-  manifest.json           — Manifest PWA (standalone, landscape, 4 shortcuts)
-  sw.js                   — Service Worker (network-first, cache cabin-app-v10)
-  css/app.css             — Styles CORSAIR complets (dark + light theme, CSS custom properties)
-  js/app.js               — Logique metier complete (tous modules en un seul fichier)
-  fonts/
-    Gilroy-Regular.ttf
-    Gilroy-SemiBold.ttf
-  icons/
-    corsair_blanc.svg          — Logo CORSAIR blanc (header)
-    icon-192.svg               — Icone PWA (C italique CORSAIR)
-    icon-512.png               — Icone PWA grande taille
-    shortcut-briefing.svg      — Icone raccourci Briefing
-    shortcut-pax.svg           — Icone raccourci Passagers
-    shortcut-otp.svg           — Icone raccourci OTP
-    shortcut-check.svg         — Icone raccourci Checklist
-```
-
----
-
-## Fonctionnalites transversales
-
-### Theme clair / sombre
-- **Mode sombre** (defaut) : fond #0d0f2b, surfaces #141638, cards #1a1d4a — optimise pour faible luminosite et cockpit
-- **Mode clair** : fond #f0f1f7, cards blanches, header Bleu Business conserve
-- Toggle icone lune/soleil dans le header
-- Choix persiste en localStorage (`cabin_theme`)
-- Icone bascule entre lune (dark) et soleil avec rayons (light) via SVG inline
-
-### Navigation par onglets
-- 6 onglets : Briefing, Checklist, Passagers, Repas, OTP, Rapport
-- Navigation par clic sur la tab bar (delegation d'evenements)
-- Navigation par URL hash (#briefing, #checklist, #passengers, #meals, #punctuality, #report)
-- Gestion de l'evenement `hashchange` pour les raccourcis manifest
-
-### Notifications
-- **Push via Service Worker** : `registration.showNotification()` avec icone, badge, tag, vibrate
-- **Fallback direct** : `new Notification()` si le SW n'est pas controleur
-- **Notification in-app** : centre de notifications avec historique (max 50 entrees)
-- Badge chiffre sur l'icone du bouton notifications dans le header
-- Icone clochette avec badge rouge numerique
-- Bouton "Tout effacer" dans le centre de notifications
-- Swipe gauche pour rejeter une notification individuelle (threshold -80px)
-- Bouton "Rejeter" (x) par notification
-- Persistance en localStorage (`cabin_notifications`)
-- Fermeture du centre en cliquant en dehors
-- Bouton de test dans le Briefing avec compte a rebours 5s (simule une alerte medicale siege 22K)
-- Requiert iOS 16.4+ et PWA installee pour push natif
-
-### Badge icone (App Badge API)
-- `navigator.setAppBadge()` / `navigator.clearAppBadge()`
-- Compte : passagers non embarques + incidents enregistres
-- Mise a jour a chaque ajout d'incident et au chargement
-
-### Partage (Web Share API)
-- Bouton partage dans le header (icone fleche vers le haut)
-- Modale avec cases a cocher selectionnant les donnees a inclure :
-  - Briefing vol (infos textuelles)
-  - Liste passagers (siege + nom + repas + remarque)
-  - Repas speciaux
-  - Checklists (comptage valide)
-  - Incidents
-  - Rapport cabine (comptage zones OK)
-- Sur iOS : `navigator.share()` declenche la feuille de partage native (AirDrop inclus)
-- Fallback : `navigator.clipboard.writeText()` avec confirmation alert
-
-### Raccourcis manifest (long-press icone iPad)
-- 4 raccourcis declares : Briefing, Plan de cabine (Passagers), Ponctualite OTP, Checklists securite
-- Navigation directe par hash d'URL
-
-### Persistance localStorage (cles utilisees)
-| Cle | Contenu |
+| Fichier | Role |
 |---|---|
-| `cabin_theme` | 'dark' ou 'light' |
-| `cabin_bookmarks` | objet {siege: true} |
-| `cabin_notes` | objet {siege: texte} |
-| `cabin_otp_checks` | objet {idx: timestamp} |
-| `cabin_checklist` | objet {cat_sub_idx: true} |
-| `cabin_incidents` | tableau d'incidents |
-| `cabin_zones` | objet {zone: statut} |
-| `cabin_services` | objet {s1: {}, s2: {}} |
-| `cabin_doors` | objet {nom_pnc: porte} |
-| `cabin_notifications` | tableau de notifications |
-| `cabin_briefing_notes` | texte libre |
-| `cabin_report_notes` | texte libre |
+| `index.html` | Structure HTML complete, tous les modules et overlays |
+| `css/app.css` | Feuille de style unique, variables CORSAIR, theming dark/light |
+| `js/app.js` | Logique applicative complete (aucune dependance externe) |
+| `sw.js` | Service Worker — cache v18, strategie network-first avec fallback cache |
+| `manifest.json` | Manifest PWA avec raccourcis et icones |
+
+### Technologies
+
+- HTML5 / CSS3 / JavaScript ES6+ vanilla (zero framework, zero dependance npm)
+- PWA : Service Worker + Web App Manifest
+- Polices : Gilroy Regular (400) et Gilroy SemiBold (600) chargees en local via `@font-face`
+- Persistence : `localStorage` exclusivement (cle prefixee `cabin_`)
+- Icones : SVG inline Lucide (aucune image raster pour les icones UI)
 
 ---
 
-## Modules implementes (detail par onglet)
+## Service Worker (sw.js)
 
-### 1. Briefing (onglet par defaut)
-
-**Informations vol** (carte large)
-- Numero de vol : SS 901
-- Route : ORY -> RUN
-- Appareil : B787-9, immatriculation F-OLRA
-- Duree : 11h15, STD : 14:00
-- **Profil de vol SVG** : courbe de montee/croisiere/descente avec 5 points animes (depart ORY 14:00, TOC FL390 14:32, croisiere, TOD 00:38, arrivee RUN 01:15)
-
-**Passagers** (carte)
-- KPI : Total, Business, Premium, Economy (calcules dynamiquement depuis les mock)
-- Barre de remplissage coloree : vert > 90%, bleu 70-90%, jaune < 70%
-- **Particularites cliquables** : boutons-tags (UM, WCHR, VIP, Repas spe., Nourrissons, Non embarques) avec comptage ; clic bascule sur l'onglet Passagers avec le filtre correspondant pre-active
-
-**Equipage cabine** (carte)
-- 8 membres : CCP + 7 CC avec initiales en avatar, nom, role, porte assignee
-- Porte affichee = doorAssignments[nom] ou porte par defaut
-- Bouton "Assigner aux portes" ouvrant la modale d'assignation
-
-**Modale assignation aux portes**
-- Grille : pour chaque PNC, un select avec les 8 portes (1L, 1R, 2L, 2R, 3L, 3R, 4L, 4R)
-- Valeur pre-remplie avec l'assignation courante ou la porte par defaut
-- Enregistrement en localStorage (`cabin_doors`), mise a jour immediate du Briefing
-
-**Meteo destination** (carte)
-- RUN : 28 degres C, vent 12 kt, plafond FEW025
-
-**Notes de briefing** (carte)
-- Textarea libre persistee en localStorage (`cabin_briefing_notes`)
-- Bouton "Tester une notification" avec compte a rebours 5s
-
-**Horloge temps reel**
-- Affichage HH:MM dans le header de la section, mis a jour toutes les 30s
+- **Nom du cache** : `cabin-app-v18`
+- **Strategie fetch** : Network First — tente le reseau, repli sur cache si hors ligne. Toute reponse reseau est systematiquement mise en cache (mise a jour automatique).
+- **Installation** : pre-cache de tous les assets statiques (HTML, CSS, JS, manifest, polices, icones SVG/PNG).
+- **Activation** : suppression de toutes les versions de cache anterieures (`k !== CACHE_NAME`), puis `clients.claim()`.
+- **notificationclick** : redirige vers l'app (focus si fenetres ouvertes, sinon `openWindow`).
+- Assets mis en cache : `./`, `index.html`, `css/app.css`, `js/app.js`, `manifest.json`, `icons/icon-192.svg`, `icons/icon-512.png`, `icons/corsair_blanc.svg`, `fonts/Gilroy-Regular.ttf`, `fonts/Gilroy-SemiBold.ttf`.
 
 ---
 
-### 2. Checklist — Procedures & Securite
+## Manifest PWA (manifest.json)
 
-**Structure en tuiles categories/sous-categories**
-- Vue principale : tuiles par categorie, chaque tuile contient des sous-tuiles avec compteur done/total
-- Vue detail : liste d'items cochables avec retour (bouton <- Retour)
-- Badge global "X / Y" dans le header du module
+- **name** : `Cabin App - Gestion de vol PNC`
+- **short_name** : `Cabin App`
+- **display** : `standalone`
+- **orientation** : `landscape`
+- **background_color / theme_color** : `#0d0f2b` (bleu nuit CORSAIR)
+- **Icones** : icon-192.png (192x192), icon-512.png (512x512), apple-touch-icon.png (180x180)
+- **Apple touch icon** (balise `<link>`) : `icons/apple-touch-icon.png` — logo CORSAIR voiles (logoapp.png reference)
+- **Raccourcis PWA** (apparaissent au long-press sur l'icone) :
+  - Briefing vol -> `#briefing`
+  - Plan de cabine -> `#passengers`
+  - Ponctualite OTP -> `#punctuality`
+  - Checklists securite -> `#checklist`
 
-**4 categories, 16 sous-checklists, 46 items au total**
+---
 
-| Categorie | Sous-checklist | Items |
+## En-tete (Header)
+
+Barre fixe en haut, hauteur 48px (`--header-height`), fond `--bg-header`, bordure inferieure 2px couleur `--corsair-rouge-vermillon`, `backdrop-filter: saturate(180%) blur(20px)`.
+
+### Cote gauche
+- Logo SVG blanc `icons/corsair_blanc.svg` (hauteur 20px)
+- Titre `CABIN` en Gilroy, 14px, letter-spacing 3px, uppercase, couleur blanche
+
+### Cote droit (de gauche a droite)
+- **Indicateur de vol** : `SS 901 · ORY → RUN · B787-9` (id `flightInfo`), couleur `--corsair-beige-sable`
+- **Bouton Partager** (`shareToggle`) : icone upload SVG Lucide, ouvre l'overlay de partage
+- **Bouton Notifications** (`notifToggle`) : icone cloche SVG Lucide, ouvre le centre de notifications ; badge rouge en position absolue top-right affichant le nombre de notifications
+- **Bouton Theme** (`themeToggle`) : icone lune/soleil SVG Lucide, bascule dark/light
+- **Point de synchronisation** (`syncStatus`) : cercle vert 7px, indicateur visuel en ligne
+
+### Style des boutons d'en-tete
+Tous les boutons sont **circulaires** : `border-radius: 50%`, 34x34px, fond `rgba(255,255,255,0.1)`, icone SVG stroke blanc 18px.
+
+---
+
+## Barre de navigation (Tab Bar)
+
+Barre de navigation **en bas de l'ecran**, style iOS, position fixed `bottom: 0`.
+
+- **Hauteur** : 72px (`--tab-height`)
+- **Fond** : `rgba(13,15,43,0.85)` avec `backdrop-filter: saturate(180%) blur(20px)` (effet verre depoli iOS)
+- **Bordure superieure** : 0.5px `rgba(255,255,255,0.08)`
+- **Padding safe area** : `padding-bottom: env(safe-area-inset-bottom, 0px)` pour encoche iPhone/iPad
+- **Padding interne des tabs** : `padding: 10px 2px 4px` (padding-top 10px)
+- En theme clair : fond `rgba(255,255,255,0.88)`, bordure `rgba(0,0,0,0.08)`
+- Aucun indicateur de trait au-dessus des tabs actifs (`tab.active::after { display: none }`)
+- Tab actif : couleur `--corsair-bleu-economie` (theme sombre) ou `--corsair-bleu-premium` (theme clair)
+
+### 6 onglets (dans l'ordre)
+
+| Onglet | data-module | Icone SVG Lucide |
 |---|---|---|
-| Pre-vol | Check pre-vol | 9 |
-| Pre-vol | Avant fermeture portes | 7 |
-| En vol | Montee | 4 |
-| En vol | Descente | 5 |
-| En vol | Turbulences | 5 |
-| Annonces | Annonces commerciales | 8 |
-| Memo | Descente d'urgence | 4 |
-| Memo | Feu cabine | 5 |
-| Memo | PAXI (passager indiscipline) | 5 |
-| Memo | FORDEC | 6 |
+| Briefing | `briefing` | Livre ouvert (book-open) |
+| Checklist | `checklist` | Case a cocher (check-square) |
+| Passagers | `passengers` | Groupe utilisateurs (users) |
+| Repas | `meals` | Tasse chauffante (coffee) |
+| OTP | `punctuality` | Horloge (clock) |
+| Rapport | `report` | Document (file-text) |
 
-**Comportement**
-- Clic item : toggle coche/decoche avec animation checkmark SVG vert
-- Items coches : style barre + grise
-- Etat persiste en localStorage (`cabin_checklist`, cle = "categorie_sous-cat_index")
-- Compteur par sous-tuile mis a jour en temps reel
+Navigation : clic sur un tab -> `switchToTab(name)` -> active le module correspondant (`mod-{name}`) avec animation `fadeIn`. Navigation par hash URL supportee (`#briefing`, `#passengers`, etc.).
 
 ---
 
-### 3. Passagers — Plan de cabine interactif
+## Systeme de themes
 
-**Geometrie cabine B787-9 CORSAIR**
-- **Business** (1-2-1) : rangees 1-8, sieges K / F E / A (4 sieges par rangee)
-- **Premium** (2-3-2) : rangees 9-14, sieges K J / F E D / B A (7 sieges)
-- **Economy avant** (3-3-3) : rangees 15-29, sieges K J H / F E D / C B A (9 sieges)
-- **Economy arriere** (3-3-3) : rangees 30-47, sieges K J H / F E D / C B A (9 sieges)
-- Rangees de sortie de secours : 1, 9, 15, 30, 46 (bordure bleue distincte)
-- Galley/LAV signale entre Business et Premium, et entre Economy avant et arriere
-- Labels colonnes en haut, numeros de rangee en bas de chaque colonne
+- Theme par defaut : **dark**
+- Bascule via bouton `themeToggle`, persistance `localStorage` (cle `cabin_theme`)
+- Attribut `data-theme` sur `<html>`
 
-**Interactions sur les sieges**
-- Clic siege occupe : ouvre le panel passager detaille
-- Clic siege libre : ouvre le panel avec "Siege libre"
-- Indicateurs visuels par siege : couleur de classe, point jaune = repas special, icone WCHR, icone UM, point rouge = bookmark
+### Palette dark (defaut)
+- `--bg` : `#0d0f2b`
+- `--bg-surface` : `#141638`
+- `--bg-card` : `#1a1d4a`
+- `--bg-header` : `#0d0f2b`
+- `--text` : `#FFFFFF`
+- `--text-muted` : `#9a9bb8`
+- `--accent` : `var(--corsair-bleu-economie)`
+- `--seat-eco` : `#2d3068`
 
-**Filtres (8 boutons)**
-- Tous, Occupes, Libres, Repas spe., UM, WCHR, Non embarques, Marques
-- Sieges hors filtre : classe `dimmed` (opacite reduite)
-- Sieges correspondants : classe `highlighted`
+### Palette light
+- `--bg` : `#f0f1f7`
+- `--bg-surface` : `#ffffff`
+- `--bg-card` : `#f7f7fb`
+- `--bg-header` : `var(--corsair-bleu-business)` (identique en clair)
+- `--text` : `#1a1d3a`
+- `--text-muted` : `#6b6e8a`
+- `--accent` : `var(--corsair-bleu-premium)`
+- `--seat-eco` : `#b8bae0`
 
-**Recherche texte**
-- Input de recherche en temps reel (nom, PNR, numero de siege, remarque, repas)
-- Compatible avec les filtres (les deux s'appliquent simultanement)
-
-**Panel passager (modale overlay)**
-- Badge siege colore par classe
-- Nom en majuscules, classe + FFN si present
-- Grille 2 colonnes : PNR, Nationalite, Embarquement (a bord / en attente), Check-in (oui/non), Repas, Remarque, Bagages, Nourrisson
-- Codes couleur : vert = OK, jaune = attention
-- Bouton marque-page : toggle bookmark, point rouge sur le siege, persiste localStorage
-- Zone notes PNC : textarea + bouton "Enregistrer la note" avec confirmation "Enregistre !"
-- Fermeture par bouton X ou clic sur l'overlay
-- Siege selectionne surligne (classe `selected`) pendant que le panel est ouvert
-
-**Barre de statistiques laterale**
-- Remplissage %, Business, Premium, Economy, Repas speciaux, Marques (mis a jour a chaque rendu)
+### Variables de marque CORSAIR
+- `--corsair-bleu-business` : `#282B62`
+- `--corsair-bleu-premium` : `#355EAB`
+- `--corsair-bleu-economie` : `#52A7BE`
+- `--corsair-rouge-vermillon` : `#DA3D32`
+- `--corsair-beige-sable` : `#DEDBCE`
+- `--corsair-noir-nuit` : `#252525`
 
 ---
 
-### 4. Repas & Boissons
+## Regles de style globales
 
-**Comptage repas** (carte large)
-- KPIs dynamiques par type de repas : STD, VGML, VLML, HNML, DBML, CHML, AVML, KSML
-- Tri par frequence decroissante
-- Badge total repas speciaux dans le header
+### Cartes (cards)
+Tous les elements de type carte utilisent **`border-radius: 14px`** et **`box-shadow: 0 1px 3px rgba(0,0,0,0.12)`**. Aucune bordure coloree n'est presente (remplacee par des fonds arrondis colores).
 
-**Liste repas speciaux** (carte large)
-- Tableau : siege | nom passager | code repas
-- Trie par numero de siege (ordre alphabetique)
+### Boutons filtres
+Forme **pill** : `border-radius: 20px`, fond `--bg-surface`, sans bordure apparente, shadow legere. Actif : fond `--corsair-bleu-economie`, texte blanc.
 
-**Tracker Service 1 — Repas principal** (carte)
-- Barres de progression cliquables par classe (Business, Premium, Economy)
-- Clic sur la barre : +10% de la classe correspondante
-- Pourcentage affiche en temps reel
-- Persiste en localStorage (`cabin_services`)
+### Scrollbars
+Style iOS — **cachees** : `::-webkit-scrollbar { width: 0; height: 0; }` et `scrollbar-width: none` sur `.content`. Exception : `.cabin-container` affiche une scrollbar horizontale fine (3px) avec thumb `rgba(82,167,190,0.3)`.
 
-**Tracker Service 2 — Collation** (carte)
-- Meme structure que Service 1
+### Conteneur principal `.content`
+- Hauteur : `calc(100% - var(--header-height))`
+- Padding-bottom : `calc(var(--tab-height) + env(safe-area-inset-bottom, 0px) + 8px)` pour eviter le chevauchement avec la tab bar
+- `overflow-y: auto`, `-webkit-overflow-scrolling: touch`
 
----
-
-### 5. OTP — Ponctualite depart ORY
-
-**Configuration STD**
-- Input `<time>` pour modifier l'heure de depart prevue (defaut 14:00)
-- Recalcul immediat de toute la timeline au changement
-
-**Timeline de 27 jalons groupes par offset**
-- Groupes avec libelle "H - HH:MM" a gauche
-- Chaque jalon affiche : offset relatif | heure absolue calculee | libelle | statut | checkbox
-
-**Statuts dynamiques (calcules en temps reel)**
-- **Fait** (vert) : checkbox cochee manuellement
-- **En cours** (bleu) : entre -5 min et +5 min de l'heure absolue
-- **A venir** (gris) : plus de 5 min avant
-- **Retard** (rouge) : plus de 5 min de depassement sans etre coche
-
-**Liste complete des 27 jalons**
-H-02:00 : Check-in ouvert, Security check, Tow in
-H-01:50 : Crew pick up, Security search
-H-01:40 : Crew at counter, Cargo at aircraft
-H-01:30 : Crew bus
-H-01:20 : Agent at gate, Crew at gate
-H-01:10 : Cleaning, Catering, Loading, Fueling
-H-01:00 : LDS sent
-H-00:50 : Boarding, OK Cabin
-H-00:40 : PMR / Remote, Pax bus
-H-00:30 : Servicing
-H-00:20 : Dep GPU, Bulk closed, Bag search
-H-00:10 : Dep jetbridge, Marshaller, Pushback ready
-H-00:00 : DEPART
-
-**Comportement**
-- Checkbox par jalon : validation manuelle, persiste localStorage (`cabin_otp_checks`)
-- Rafraichissement automatique toutes les 30s
-- Horloge temps reel HH:MM dans le header
+### Animation d'entree des modules
+`fadeIn` : `opacity 0 -> 1`, `translateY(4px -> 0)`, 200ms ease.
 
 ---
 
-### 6. Rapport de vol
+## Module 1 — Briefing (`mod-briefing`)
 
-**Etat cabine par zone** (carte large)
-- 11 zones : Business, Premium, Economy avant, Economy centre, Economy arriere, Galley avant, Galley milieu, Galley arriere, Toilettes avant, Toilettes milieu, Toilettes arriere
-- 3 boutons par zone : OK (vert), ATT (orange), KO (rouge)
-- Statut persiste en localStorage (`cabin_zones`)
+Module affiche par defaut a l'ouverture de l'app.
 
-**Journal d'incidents** (carte large)
-- Bouton "+ Ajouter un incident" ouvrant la modale
-- Liste des incidents enregistres : horodatage | type (tag colore) | [siege] description
+### En-tete du module
+- Titre `Briefing vol`
+- Horloge temps reel (`briefingClock`) mise a jour toutes les 30s, affichage HH:MM
 
-**Modale creation d'incident**
-- Type : Medical, Securite, Comportement passager, Equipement cabine, Service, Autre
-- Siege concerne (optionnel, texte libre)
-- Description libre (textarea)
-- Gravite : Faible (vert) / Moyen (orange) / Grave (rouge) — boutons selecteurs
-- Horodatage automatique a l'enregistrement (HH:MM)
-- Enregistrement en localStorage (`cabin_incidents`)
-- Mise a jour du badge icone (App Badge API) apres chaque ajout
+### Grille de briefing (`briefing-grid`)
+2 colonnes, gap 10px. Les cartes `.brief-card.wide` occupent les 2 colonnes.
 
-**Notes generales** (carte large)
-- Textarea libre persistee en localStorage (`cabin_report_notes`)
+#### Carte 1 — Informations vol (wide)
+KPIs en ligne : Vol (SS 901), Route (ORY -> RUN), Appareil (B787-9), Immat. (F-OLRA), Duree (11h15), STD (14:00 — editable indirectement via OTP).
 
-**Resume chiffre** (carte large)
-- 6 KPIs : Passagers (total), Embarques, Incidents, Zones OK (X/11), Checks faits, Repas speciaux
+**Profil de vol** (`flightProfile`) : ligne horizontale avec dots — **non SVG curve**. Implementation via elements DOM :
+- `.fp-line` : ligne absolue horizontale, 2px, couleur `rgba(82,167,190,0.2)`, centree verticalement
+- 5 points `.fp-point` positiones en flexbox : Depart ORY (14:00, dot `.dep` bleu premium), TOC FL390 (14:32), Croisiere, TOD (00:38), Arrivee RUN (01:15, dot `.arr` vert)
+- Chaque point : temps au dessus, dot colore, label en dessous
 
----
+#### Carte 2 — Passagers
+- KPIs : Total, Business, Premium, Economy (calcules depuis les donnees mock)
+- Barre de chargement (`briefLoadBar`) : couleur adaptive (vert >90%, bleu 70-90%, jaune <70%)
+- Section **Particularites** : boutons tags cliquables (`pax-tags`) — UM, WCHR, VIP, Repas sp., Nourrissons, Non embarques. Chaque tag affiche un compteur sur fond arrondi et redirige vers le module Passagers avec le filtre pre-selectionne.
 
-## Donnees mock
-
-Toutes les donnees passagers sont generees aleatoirement a chaque chargement de page (`genPax()`) :
-
-- **Taux de remplissage** : ~82% des sieges occupes (selection aleatoire)
-- **Noms** : combinaison de 28 noms de famille (francophones + reunionnais : PAYET, HOARAU, RIVIERE, GRONDIN, DIJOUX, CADET, MAILLOT...) x 31 prenoms
-- **PNR** : 6 caracteres alphanumeriques aleatoires (sans I, O)
-- **Nationalites** : FR (x4 poids), RE (x2), MU, MG, IN, CN, JP, GB, DE, US
-- **Repas speciaux** : VGML, VLML, HNML, DBML, CHML, AVML, KSML (les vides representent ~60% = Standard)
-- **Remarques passager** : UM, WCHR, DEAF, BLND, PETC, VIP, MAAS (les vides representent ~60%)
-- **Check-in** : ~92% oui (probabilite > 0.08)
-- **Embarquement** : ~85% a bord (probabilite > 0.15)
-- **Bagages** : 0, 1 ou 2 pieces (aleatoire)
-- **Nourrisson** : ~5% (probabilite > 0.95)
-- **FFN** : ~30% des passagers ont un numero "SS" + 7 chiffres
-
-**Equipage (fixe)**
+#### Carte 3 — Equipage cabine
+Bouton `Assigner aux portes` (inline-btn) ouvre la modale d'assignation.
+Liste de 8 PNC avec avatar circulaire (initiales), nom, role et porte assignee :
 - LEFEBVRE Sophie — CCP — Porte 1L
 - DUPONT Marc — CC1 Business — Porte 1R
 - PAYET Nathalie — CC2 Premium — Porte 2L
@@ -335,60 +202,314 @@ Toutes les donnees passagers sont generees aleatoirement a chaque chargement de 
 - GRONDIN Lea — CC6 Eco arriere — Porte 4L
 - DIJOUX Sarah — CC7 Galley — Porte 4R
 
----
+Avatar CCP : fond `--corsair-bleu-premium`. Avatar CC : fond `#3d4280`.
 
-## Flux de donnees
+#### Carte 4 — Cabin Status
+Bouton `+ Defaut` ouvre la modale defaut cabine.
+Liste des defauts enregistres (`cabinDefects`) : zone, description, impact (Mineur/Majeur/GO-IF). Si aucun defaut : message `Aucun defaut signale`.
 
-**Architecture actuelle (tout local)**
-1. Chargement page -> `genPax()` genere les passagers en memoire
-2. Toutes les interactions -> lecture/ecriture localStorage
-3. Aucune persistance entre deux chargements de page (passagers re-generes)
-4. SW met en cache les assets statiques au premier chargement
+#### Carte 5 — Themes de briefing (wide)
+4 items statiques affichant les themes du briefing :
+- Securite : verification portes armees avant push-back
+- Service : nouveau menu long-courrier, presentation plateau Business
+- Communication : annonces bilingues FR/EN systematiques
+- Ponctualite : objectif D-0, respecter les jalons OTP
 
-**Architecture cible**
-1. Ouverture app -> sync depuis API (passagers, repas, equipage, infos vol)
-2. Pendant le vol (offline) -> tout en local (localStorage / IndexedDB)
-3. Retour connectivite -> push rapport et incidents vers API
+Chaque item : fond `rgba(255,255,255,0.03)`, `border-radius: 10px`, pas de bordure coloree.
 
----
+#### Carte 6 — Informations manageriales (wide)
+3 items statiques avec contexte visuel par fond arrondi (pas de bordure gauche) :
+- Info (fond bleu tenu) : rappel badge obligatoire (note DS 2025-14)
+- Info : formation CRM disponible sur portail, deadline 15 avril
+- Warn (fond rouge tenu) : controles DGAC renforces sur annonces securite
 
-## Couche API (a brancher)
-
-Fichier `api.js` a creer. Fonctions prevues :
-- `fetchFlightInfo(flightNumber)` — informations vol (route, avion, STD)
-- `fetchPassengers(flightNumber)` — liste passagers avec repas et remarques
-- `fetchCrewList(flightNumber)` — composition equipage et portes par defaut
-- `pushReport(flightNumber, report)` — envoi rapport de vol
-- `pushIncidents(flightNumber, incidents)` — envoi journal d'incidents
-- `syncChecklistState(flightNumber, state)` — synchronisation checklists
+#### Carte 7 — Notes de briefing (wide)
+Textarea libre persistee en `localStorage` (cle `cabin_briefing_notes`).
+Bouton `Tester une notification` : compte rebours 5s puis declenche une notification OS simulant une alerte medicale au siege 22K.
 
 ---
 
-## Contraintes iPad / Safari
+## Module 2 — Checklist (`mod-checklist`)
 
-- **Stockage** : localStorage (pas IndexedDB actuellement) — limite ~5 MB sur Safari
-- **Purge Safari** : donnees effacees apres 7 jours sans ouverture (acceptable : vols < 16h)
-- **Notifications push** : requiert iOS 16.4 minimum + PWA installee depuis Safari (Partager -> Sur l'ecran d'accueil)
-- **Notifications refusees** : fallback vers notification in-app (centre de notifications integre)
-- **App Badge API** : `navigator.setAppBadge()` supporte sur iOS 16.4+ en PWA installee
-- **Web Share API** : `navigator.share()` disponible sur iOS Safari, declenche la feuille native (AirDrop)
-- **Orientation** : paysage forcee dans le manifest, `user-scalable=no` dans le viewport
-- **Touch** : `-webkit-tap-highlight-color: transparent`, `user-select: none`, cibles minimum 44px
-- **Police** : Gilroy chargee via `@font-face` local (pas de Google Fonts, fonctionnel offline)
-- **iPad source de verite** : non — re-sync systematique depuis API a chaque ouverture est le comportement cible
+### En-tete
+Titre `Procedures & Checklists`, badge `X / Y` (items valides / total).
+
+### Vue tuiles (`checklistTiles`)
+Grille 2 colonnes de tuiles `.cl-tile` avec `border-radius: 14px`, shadow, pas de bordure.
+4 categories, chacune avec icone SVG Lucide colore et sous-tuiles :
+
+#### Prevol (icone : check-square, bleu premium)
+- Check pre-vol (9 items) : equipements de secours, extincteurs, issues, toboggans, materiel medical, ceintures, eclairage de secours, compartiments bagages, proprete
+- Avant fermeture portes (7 items) : comptage, bagages, tablettes, ceintures, hublots, appareils electroniques, portes armees et cross-check
+
+#### En vol (icone : avion, bleu economie)
+- Montee (4 items) : consigne ceintures, serviettes chaudes, service boissons, verification cabine
+- Descente (5 items) : annonce, cabine securisee, tablettes, ceintures, portes desarmee
+- Turbulences (5 items) : annonce, service interrompu, verification ceintures, galley arrime, chariots freines
+
+#### Annonces (icone : micro, jaune)
+- Bienvenue a bord (3 items) : annonce FR complete, annonce EN complete, demo securite
+- Service en vol (4 items) : 2 annonces boissons/repas FR/EN, 2 annonces duty-free FR/EN
+- Preparation arrivee (4 items) : 2 annonces descente FR/EN, 2 annonces temperature/heure FR/EN
+
+**Catalogue d'annonces bilingues FR/EN complet** : les textes des annonces sont integres directement dans les items de checklist (pas de fichier separe).
+
+#### Memo (icone : document, rouge)
+- Descente d'urgence (4 items) : masques O2, pression cabine, position brace, evacuation
+- Feu cabine (5 items) : localiser, alerter CDB, extincteur, evacuer, surveiller
+- PAXI passager indiscipline (5 items) : evaluer menace, de-escalade, isoler, informer CDB, rediger PV
+- FORDEC (6 items) : Faits, Options, Risques, Decision, Execution, Controle
+
+### Vue detail (`checklistDetail`)
+Affichee en remplacement des tuiles. Bouton Retour -> re-affiche les tuiles.
+Liste d'items cliquables : case a cocher SVG Lucide (polyline), texte. Item valide : opacite 0.5, texte barre, case fond `#257A6C`. Etat persiste en `localStorage` (cle `cabin_checklist`).
 
 ---
 
-## Prochaines etapes
+## Module 3 — Passagers (`mod-passengers`)
 
-- [ ] Creer la couche API mockee (`api.js`) avec fetch real ou json local
-- [ ] Migrer la persistance vers IndexedDB pour les donnees structurees (passagers, incidents)
-- [ ] Implementer la sync offline/online (background sync via SW)
-- [ ] Persister les donnees passagers entre rechargements (IndexedDB ou API)
-- [ ] Tests sur iPad reel (Safari 16.4+) — validation tactile et notifications
-- [ ] Authentification equipage (OAuth2 ou certificats clients)
-- [ ] Chiffrement des donnees PNR dans IndexedDB
-- [ ] Push notifications serveur (alertes meteo, retards, demandes sol)
-- [ ] Export rapport de vol en PDF (Print API ou canvas)
-- [ ] Ajouter MOML et SPML dans les codes repas
-- [ ] Internationalisation EN pour les annonces (module Annonces)
+### Barre d'outils
+- **Barre de recherche** : fond `--bg-surface`, `border-radius: 12px`, icone loupe SVG, input placeholder `Rechercher un passager...`. Recherche en temps reel sur : nom, PNR, siege, remarque, repas.
+- **Filtres** : 8 boutons pill (`border-radius: 20px`) :
+  - Tous (actif par defaut)
+  - Occupes
+  - Libres
+  - Repas spe.
+  - UM
+  - WCHR
+  - Non embarques
+  - Marques
+
+### Plan de cabine (`cabinPlan`)
+Contenu dans `.cabin-container` (fond `--bg-surface`, `border-radius: 14px`, shadow, scroll horizontal).
+
+#### Configuration du B787-9 (CABIN_CONFIG)
+- **Business** : rangs 1-8, layout `K . . | . F E | . . A` (sieges largeurs 1-2-3)
+- **Premium** : rangs 9-14, layout `K J . | F E D | . B A`
+- **Economy avant** : rangs 15-29, layout `K J H | F E D | C B A`
+- **Economy arriere** : rangs 30-47, layout `K J H | F E D | C B A`
+- Separateurs galley entre sections : Business->Premium (`GAL`), Economy avant->arriere (`GAL/LAV`)
+- Rangees de sortie (`EXIT_ROWS`) : 1, 9, 15, 30, 46 — trait vert `#257A6C` au dessus
+
+#### Style des sieges
+- Taille : 22x22px, `border-radius: 3px`, margin 1px
+- Vide : fond `--seat-empty`, bordure `--seat-empty-border`
+- Occupe Business : fond `--corsair-bleu-premium`
+- Occupe Premium : fond `--corsair-bleu-economie`
+- Occupe Economy : fond `--seat-eco`
+- Selectionne : bordure blanche + glow blanc
+- Attenue (filtre actif, non correspondant) : opacite 0.15, pas d'interaction
+
+#### Indicateur bookmark sur siege
+Triangle rouge en coin superieur droit (classe `bookmarked`) :
+```
+border-style: solid; border-width: 0 7px 7px 0;
+border-color: transparent var(--corsair-rouge-vermillon) transparent transparent;
+```
+Aucun point indicateur pour repas speciaux ni fauteuil roulant (`.seat.special-meal::after, .seat.wheelchair::after { display: none }`).
+
+#### Animation "breathing" (filtre actif)
+Classe `breathing` (et non `highlighted`) : animation `breathe` 3s ease-in-out infinite, glow pulsant `rgba(82,167,190,0.3)`.
+
+### Statistiques cabine (`cabinStats`)
+Barre horizontale sous le plan : % Remplissage, Business, Premium, Economy, Repas spe., Marques. Fond `--bg-surface`, `border-radius: 12px`, shadow.
+
+### Panneau inferieur passagers (`paxBottomPanel`)
+Panel fixe sous le plan, `border-radius: 14px`, `max-height: 260px`, shadow. Deux vues exclusives :
+
+#### Vue liste (`paxListView`)
+- En-tete : titre `Liste passagers` (ou `Resultat filtre` si filtre actif) + badge compteur
+- Scroll : liste des passagers filtres, triee par numero de siege. Chaque ligne : siege (bleu accent), nom, tags repas (jaune) et remarque (bleu).
+- Clic sur une ligne -> bascule vers vue detail
+
+#### Vue detail inline (`paxDetailView`)
+- Bouton Retour -> vue liste
+- En-tete : badge siege colore par classe, nom, classe + FFN
+- Bouton bookmark (SVG bookmark Lucide) — rempli rouge si active
+- Grille info 2 colonnes : PNR, Nationalite, Embarquement (vert/jaune), Check-in, Repas, Remarque, Bagages, Nourrisson
+- Section notes PNC : textarea + bouton `Enregistrer la note` (feedback `Enregistre !` 1.5s)
+
+### Panel overlay passager (paxOverlay)
+Modal centree pour clic direct sur siege dans le plan. Memes informations que la vue detail inline. Bouton fermer X circulaire.
+
+---
+
+## Module 4 — Repas (`mod-meals`)
+
+En-tete : titre `Service repas & boissons`, badge `X speciaux`.
+
+### Carte 1 — Comptage repas (wide)
+KPIs dynamiques : nombre de repas par type (STD, VGML, VLML, HNML, DBML, CHML, AVML, KSML), tries par frequence decroissante.
+
+### Carte 2 — Repas speciaux attribution par siege (wide)
+Liste scrollable (`max-height: 260px`) des passagers avec repas speciaux, triee par siege. Chaque ligne : siege (bleu), nom (beige), type de repas (jaune).
+
+### Carte 3 — Service 1 Repas
+Tracker de progression par classe (Business/Premium/Economy) avec barres de progression cliquables. Clic -> ajoute 10% de progression. Etat persiste (`cabin_services`).
+- Business : barre bleu premium
+- Premium : barre bleu economie
+- Economy : barre `#3d4280`
+
+### Carte 4 — Service 2 Collation
+Meme structure que Service 1.
+
+---
+
+## Module 5 — Ponctualite OTP (`mod-punctuality`)
+
+En-tete : titre `Ponctualite — Depart ORY`, horloge temps reel (`otpClock`).
+
+### Saisie STD
+Input `time` editable (valeur initiale 14:00). Changement -> recalcul immediat de la timeline.
+
+### Timeline OTP (`timelineContainer`)
+27 jalons regroupes par offset de temps par rapport au STD, de H-120min a H-DEPART.
+
+**Groupes de jalons** (offset en minutes relatif au STD) :
+- H-02:00 : Check-in ouvert, Security check, Tow in
+- H-01:50 : Crew pick up, Security search
+- H-01:40 : Crew at counter, Cargo at aircraft
+- H-01:30 : Crew bus
+- H-01:20 : Agent at gate, Crew at gate
+- H-01:10 : Cleaning, Catering, Loading, Fueling
+- H-01:00 : LDS sent
+- H-00:50 : Boarding, OK Cabin
+- H-00:40 : PMR/Remote, Pax bus
+- H-00:30 : Servicing
+- H-00:20 : Dep GPU, Bulk closed, Bag search
+- H-00:10 : Dep jetbridge, Marshaller, Pushback ready
+- H — DEPART
+
+Chaque jalon affiche : offset relatif, heure absolue calculee, label, statut (Fait/En cours/A venir/Retard), case a cocher SVG. Statuts avec codes couleur :
+- Fait : fond vert translucide, texte vert
+- En cours (diff <= 5 min) : fond bleu translucide
+- Retard : fond rouge translucide, texte rouge
+- A venir : texte beige attenue
+
+Cases cochees persistees en `localStorage` (cle `cabin_otp_checks`). Mise a jour automatique toutes les 30s.
+
+---
+
+## Module 6 — Rapport (`mod-report`)
+
+### Carte 1 — Etat cabine (wide)
+Grille 2 colonnes de 11 zones cabine, chacune avec 3 boutons d'etat :
+- **OK** : fond `#257A6C` si actif
+- **ATT** : fond `#b64b32` si actif
+- **KO** : fond `--corsair-rouge-vermillon` si actif
+
+Zones : Business, Premium, Economy avant, Economy centre, Economy arriere, Galley avant, Galley milieu, Galley arriere, Toilettes avant, Toilettes milieu, Toilettes arriere.
+Etat persiste (`cabin_zones`).
+
+### Carte 2 — Incidents & evenements (wide)
+Liste des incidents enregistres. Chaque incident : heure, tag type colore (low bleu / med jaune / high rouge), description avec siege optionnel.
+Bouton `+ Ajouter un incident` (bordure pointillee) -> ouvre la modale incident.
+
+### Carte 3 — Remarques generales (wide)
+Textarea libre persistee (`cabin_report_notes`).
+
+### Carte 4 — Resume du vol (wide)
+Grille 3 colonnes de 6 KPIs calcules : Passagers, Embarques, Incidents, Zones OK (X/11), Checks faits, Repas spe.
+
+---
+
+## Modales (overlays)
+
+Toutes les modales utilisent la classe `.pax-panel-overlay` (fond semi-transparent) avec `.pax-panel` (fond `--bg-surface`, `border-radius: 16px`, `max-height: 85vh`, shadow profonde). Fermeture : bouton X (SVG Lucide, round), clic sur fond.
+
+### Modal Passager (paxOverlay)
+Detail complet d'un passager : badge siege colore, nom, classe/FFN, bookmark SVG, grille info 8 champs, notes PNC avec sauvegarde.
+
+### Modal Incident (incidentOverlay)
+- Select type : Medical, Securite, Comportement passager, Equipement cabine, Service, Autre
+- Input siege (optionnel)
+- Textarea description
+- Boutons gravite : Faible / Moyen / Grave (codes couleur bleu/jaune/rouge)
+- Bouton Enregistrer -> ajoute a `incidents[]`, persiste, rafraichit rapport, met a jour badge applicatif
+
+### Modal Partager (shareOverlay)
+Selecteurs cases a cocher par categorie : Briefing vol, Liste passagers, Repas speciaux, Checklists, Incidents, Rapport cabine.
+Bouton `Partager` -> utilise **Web Share API** (`navigator.share`) si disponible (iOS -> AirDrop). Fallback : copie dans le presse-papier (`navigator.clipboard`). Le texte partage est construit dynamiquement depuis les donnees en memoire.
+
+### Modal Assignation portes (doorOverlay)
+Grille 2 colonnes : 8 PNC avec select dropdown pour chaque porte (1L/1R/2L/2R/3L/3R/4L/4R). Sauvegarde -> met a jour `doorAssignments`, persiste, rafraichit le briefing.
+
+### Modal Defaut cabine (defectOverlay)
+- Select zone : Business, Premium, Economy avant, Economy arriere, Galley, Toilettes, Autre
+- Textarea description
+- Boutons impact : Mineur / Majeur / GO-IF (codes couleur bleu/jaune/rouge)
+- Sauvegarde -> ajoute a `cabin_defects`, persiste, rafraichit le briefing
+
+---
+
+## Centre de notifications (notifCenter)
+
+Panel fixe en dessous du header, cote droit, `width: 380px`, `border-radius: 14px`, shadow, affiche/masque via classe `visible`.
+
+- En-tete : titre `NOTIFICATIONS`, bouton `Tout effacer` (rouge)
+- Liste scrollable d'items, max 50 notifications
+- Chaque notification : icone ronde (lettre `i` ou `!`) sur fond colore (rouge = alert, bleu = info, orange-rouge = warn), titre bold, corps, heure
+- **Swipe gauche** pour supprimer (seuil -80px) : animation `dismissed` translateX(-100%) + opacity 0
+- Bouton dismiss `×` visible au hover/touch
+- Message vide si aucune notification
+
+### Types de notifications
+- `alert` : icone `!`, fond rouge vermillon
+- `info` : icone `i`, fond bleu premium
+- `warn` : icone `i`, fond `#b64b32`
+
+### Notifications OS (Push)
+- Via `navigator.serviceWorker.ready.then(r => r.showNotification(...))` si SW actif
+- Fallback via `new Notification(...)` si permission accordee
+- Options : icone `icons/icon-192.svg`, badge meme icone, vibration `[200,100,200]`, `renotify: true`
+- Badge applicatif (`navigator.setAppBadge`) : nombre de passagers non embarques + incidents
+
+---
+
+## Donnees mock (passengers)
+
+Generateur `genPax()` appele une fois a l'init, resultat stocke dans la constante `passengers` (objet siege -> donnees passager). Taux d'occupation : ~82% des sieges.
+
+Champs par passager :
+- `name` : NOM Prenom (pool de 28 noms de famille et 31 prenoms)
+- `pnr` : 6 caracteres alphanumeriques
+- `class` : `business` | `premium` | `economy`
+- `meal` : code IATA repas special ou vide (VGML/VLML/HNML/DBML/CHML/AVML/KSML)
+- `remark` : UM / WCHR / DEAF / BLND / PETC / VIP / MAAS ou vide
+- `nationality` : code pays (FR/RE/MU/MG/IN/CN/JP/GB/DE/US)
+- `checkedIn` : boolean (false ~8%)
+- `boarded` : boolean (false ~15%)
+- `bags` : 0-2 bagages cabine
+- `infant` : boolean (true ~5%)
+- `ffn` : numero fidelite `SS` + 7 chiffres (present ~30% des cas)
+
+---
+
+## Persistence localStorage
+
+| Cle | Type | Contenu |
+|---|---|---|
+| `cabin_theme` | string | `dark` ou `light` |
+| `cabin_bookmarks` | object | `{ "14A": true, ... }` |
+| `cabin_notes` | object | `{ "14A": "note texte" }` |
+| `cabin_otp_checks` | object | `{ "12": timestamp, ... }` |
+| `cabin_checklist` | object | `{ "Prevol_Check pre-vol_0": true }` |
+| `cabin_incidents` | array | `[{ time, type, seat, desc, severity }]` |
+| `cabin_zones` | object | `{ "Business": "OK", ... }` |
+| `cabin_services` | object | `{ s1: { biz: N }, s2: { ... } }` |
+| `cabin_doors` | object | `{ "LEFEBVRE Sophie": "1L" }` |
+| `cabin_notifications` | array | `[{ id, title, body, type, time }]` |
+| `cabin_defects` | array | `[{ zone, desc, impact }]` |
+| `cabin_briefing_notes` | string | Texte libre |
+| `cabin_report_notes` | string | Texte libre |
+
+---
+
+## Comportements globaux
+
+- `user-select: none` sur `body` (sauf textareas avec `-webkit-user-select: text`)
+- `-webkit-tap-highlight-color: transparent`
+- `overflow: hidden` sur `html, body` (scroll uniquement dans `.content`)
+- Taille minimale touchable : `min-height: 36px; min-width: 36px` sur tous les boutons
+- Clocks : `updateClocks()` toutes les 30s, `buildTimeline()` toutes les 30s
+- Init complete a la fin de `app.js` : `buildBriefing()`, `buildCabinPlan()`, `buildPaxList()`, `buildMeals()`, `buildTimeline()`, `buildChecklists()`, `buildReport()`, `updateClocks()`, `updateAppBadge()`, `renderNotifCenter()`, `updateNotifBadge()`
