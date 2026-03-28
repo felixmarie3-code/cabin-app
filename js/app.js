@@ -172,14 +172,14 @@ document.getElementById('shareConfirm').addEventListener('click',()=>{
 // BRIEFING
 // ============================================================
 const CREW=[
-  {name:'LEFEBVRE Sophie',role:'CCP',rank:'ccp',door:'1G'},
-  {name:'DUPONT Marc',role:'CC1 \u2014 Business',rank:'cc',door:'1D'},
-  {name:'PAYET Nathalie',role:'CC2 \u2014 Premium',rank:'cc',door:'2G'},
-  {name:'HOARAU Kevin',role:'CC3 \u2014 \u00c9co avant',rank:'cc',door:'2D'},
-  {name:'MARTIN Julie',role:'CC4 \u2014 \u00c9co centre',rank:'cc',door:'3G'},
-  {name:'RIVI\u00c8RE Paul',role:'CC5 \u2014 \u00c9co arri\u00e8re',rank:'cc',door:'3D'},
-  {name:'GRONDIN L\u00e9a',role:'CC6 \u2014 \u00c9co arri\u00e8re',rank:'cc',door:'4G'},
-  {name:'DIJOUX Sarah',role:'CC7 \u2014 Galley',rank:'cc',door:'4D'}
+  {name:'LEFEBVRE Sophie',trigramme:'LFS',role:'CCP',rank:'CCP',rankCls:'ccp',door:'1G'},
+  {name:'DUPONT Marc',trigramme:'DPM',role:'CC1 \u2014 Business',rank:'CC',rankCls:'cc',door:'1D'},
+  {name:'PAYET Nathalie',trigramme:'PYN',role:'CC2 \u2014 Premium',rank:'CC',rankCls:'cc',door:'2G'},
+  {name:'HOARAU Kevin',trigramme:'HRK',role:'CC3 \u2014 \u00c9co avant',rank:'HST',rankCls:'hst',door:'2D'},
+  {name:'MARTIN Julie',trigramme:'MTJ',role:'CC4 \u2014 \u00c9co centre',rank:'CC',rankCls:'cc',door:'3G'},
+  {name:'RIVI\u00c8RE Paul',trigramme:'RVP',role:'CC5 \u2014 \u00c9co arri\u00e8re',rank:'CC',rankCls:'cc',door:'3D'},
+  {name:'GRONDIN L\u00e9a',trigramme:'GDL',role:'CC6 \u2014 \u00c9co arri\u00e8re',rank:'CC',rankCls:'cc',door:'4G'},
+  {name:'DIJOUX Sarah',trigramme:'DJS',role:'CC7 \u2014 Galley',rank:'HST',rankCls:'hst',door:'4D'}
 ];
 const DOORS=['1G','1D','2G','2D','3G','3D','4G','4D'];
 
@@ -231,7 +231,10 @@ function buildBriefing(){
   const crewEl=el('briefCrew');crewEl.textContent='';
   CREW.forEach(c=>{
     const row=document.createElement('div');row.className='crew-member';
-    const av=document.createElement('div');av.className='crew-avatar '+c.rank;av.textContent=c.name.split(' ').map(w=>w[0]).join('');
+    const av=document.createElement('div');av.className='crew-avatar '+c.rankCls;
+    const triSpan=document.createElement('span');triSpan.className='crew-tri';triSpan.textContent=c.trigramme;
+    const rankSpan=document.createElement('span');rankSpan.className='crew-rank-label';rankSpan.textContent=c.rank;
+    av.appendChild(triSpan);av.appendChild(rankSpan);
     const info=document.createElement('div');
     const nm=document.createElement('div');nm.className='crew-name';
     const saved=doorAssignments[c.name];
