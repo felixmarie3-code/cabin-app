@@ -172,14 +172,14 @@ document.getElementById('shareConfirm').addEventListener('click',()=>{
 // BRIEFING
 // ============================================================
 const CREW=[
-  {name:'LEFEBVRE Sophie',trigramme:'LFS',role:'CC1 \u2014 Business',rank:'CCP',rankCls:'ccp',door:'1G'},
-  {name:'DUPONT Marc',trigramme:'DPM',role:'CC2 \u2014 Business',rank:'CC',rankCls:'cc',door:'1D'},
-  {name:'PAYET Nathalie',trigramme:'PYN',role:'CC3 \u2014 Premium',rank:'CC',rankCls:'cc',door:'2G'},
-  {name:'HOARAU Kevin',trigramme:'HRK',role:'CC4 \u2014 \u00c9co avant',rank:'HST',rankCls:'hst',door:'2D'},
-  {name:'MARTIN Julie',trigramme:'MTJ',role:'CC5 \u2014 \u00c9co centre',rank:'CC',rankCls:'cc',door:'3G'},
-  {name:'RIVI\u00c8RE Paul',trigramme:'RVP',role:'CC6 \u2014 \u00c9co arri\u00e8re',rank:'CC',rankCls:'cc',door:'3D'},
-  {name:'GRONDIN L\u00e9a',trigramme:'GDL',role:'CC7 \u2014 \u00c9co arri\u00e8re',rank:'CC',rankCls:'cc',door:'4G'},
-  {name:'DIJOUX Sarah',trigramme:'DJS',role:'CC8 \u2014 Galley',rank:'HST',rankCls:'hst',door:'4D'}
+  {name:'LEFEBVRE Sophie',trigramme:'LFS',role:'Responsable cabine',rank:'CCP',rankCls:'ccp',door:'1G'},
+  {name:'DUPONT Marc',trigramme:'DPM',role:'Business',rank:'CC',rankCls:'cc',door:'1D'},
+  {name:'PAYET Nathalie',trigramme:'PYN',role:'Premium',rank:'HST',rankCls:'hst',door:'2G'},
+  {name:'HOARAU Kevin',trigramme:'HRK',role:'\u00c9co avant',rank:'HST',rankCls:'hst',door:'2D'},
+  {name:'MARTIN Julie',trigramme:'MTJ',role:'\u00c9co centre',rank:'HST',rankCls:'hst',door:'3G'},
+  {name:'RIVI\u00c8RE Paul',trigramme:'RVP',role:'\u00c9co arri\u00e8re',rank:'HST',rankCls:'hst',door:'3D'},
+  {name:'GRONDIN L\u00e9a',trigramme:'GDL',role:'\u00c9co arri\u00e8re',rank:'HST',rankCls:'hst',door:'4G'},
+  {name:'DIJOUX Sarah',trigramme:'DJS',role:'Galley',rank:'HST',rankCls:'hst',door:'4D'}
 ];
 const DOORS=['1G','1D','2G','2D','3G','3D','4G','4D'];
 
