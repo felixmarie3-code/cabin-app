@@ -47,13 +47,25 @@ let appNotifications=lsGet('cabin_notifications',[]);
 
 // === Cabin Config ===
 const CABIN_CONFIG = {
-  business:{label:'Business',cls:'business',rows:[1,2,3,4,5,6,7,8],layout:['K','.','.','|','.','F','E','|','.','.','A']},
-  premium:{label:'Premium',cls:'premium',rows:[9,10,11,12,13,14],layout:['K','J','.','|','F','E','D','|','.','B','A']},
-  economy_front:{label:'Economy',cls:'economy',rows:[15,16,17,18,19,20,21,22,23,24,25,26,27,28,29],layout:['K','J','H','|','F','E','D','|','C','B','A']},
+  business:{label:'Business',cls:'business',rows:[1,2,3,4,5],layout:['K','.','.','|','.','F','E','|','.','.','A']},
+  premium:{label:'Premium',cls:'premium',rows:[6,7,8],layout:['K','J','.','|','F','E','D','|','.','B','A']},
+  economy_front:{label:'Economy',cls:'economy',rows:[9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29],layout:['K','J','H','|','F','E','D','|','C','B','A']},
   economy_rear:{label:'',cls:'economy',rows:[30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47],layout:['K','J','H','|','F','E','D','|','C','B','A']}
 };
+// Per-row layout overrides (special seat configurations)
+const ROW_OVERRIDES={
+  9: ['K','J','H','|','.','.','.','|','C','B','A'],          // row 9: no DEF
+  29:['.','.','.',  '|','F','E','D','|','.','.','.' ],        // row 29: DEF only (lav replaces ABC & HJK)
+  30:['.','.','.',  '|','F','E','D','|','.','.','.' ],        // row 30: DEF only
+  47:['.','.','.',  '|','F','E','D','|','C','B','A']          // row 47: lav replaces HJK
+};
+// Lavatory indicators on specific rows
+const ROW_LAVS={
+  29:{positions:['K','J','H','C','B','A']},  // lav where ABC and HJK would be
+  47:{positions:['K','J','H']}               // lav where HJK would be
+};
 const ALL_POSITIONS=['K','J','H','|','F','E','D','|','C','B','A'];
-const EXIT_ROWS=[1,9,15,30,46];
+const EXIT_ROWS=[1,6,9,30,46];
 const GALLEY_AFTER={business:'GAL',economy_front:'GAL/LAV'};
 
 // === Mock Passengers ===
@@ -65,7 +77,10 @@ function genPax(){
   const nats=['FR','FR','FR','FR','RE','RE','MU','MG','IN','CN','JP','GB','DE','US'];
   const abc='ABCDEFGHJKLMNPQRSTUVWXYZ';
   const p={};const all=[];
-  Object.values(CABIN_CONFIG).forEach(s=>s.rows.forEach(r=>s.layout.forEach(c=>{if(c!=='.'&&c!=='|')all.push({seat:r+c,cls:s.cls});})));
+  Object.values(CABIN_CONFIG).forEach(s=>s.rows.forEach(r=>{
+    const layout=ROW_OVERRIDES[r]||s.layout;
+    layout.forEach(c=>{if(c!=='.'&&c!=='|')all.push({seat:r+c,cls:s.cls});});
+  }));
   const sh=all.sort(()=>Math.random()-0.5).slice(0,Math.floor(all.length*0.82));
   sh.forEach(({seat,cls})=>{let pnr='';for(let i=0;i<6;i++)pnr+=abc[Math.floor(Math.random()*abc.length)];
     p[seat]={name:ln[Math.floor(Math.random()*ln.length)]+' '+fn[Math.floor(Math.random()*fn.length)],pnr,class:cls,
@@ -232,7 +247,7 @@ function buildBriefing(){
   el('briefPaxTotal').textContent=total;el('briefPaxBiz').textContent=biz;el('briefPaxPrem').textContent=prem;el('briefPaxEco').textContent=eco;
 
   // Load bar
-  const allSeats=[];Object.values(CABIN_CONFIG).forEach(s=>s.rows.forEach(r=>s.layout.forEach(p=>{if(p!=='.'&&p!=='|')allSeats.push(1);})));
+  const allSeats=[];Object.values(CABIN_CONFIG).forEach(s=>s.rows.forEach(r=>{const layout=ROW_OVERRIDES[r]||s.layout;layout.forEach(p=>{if(p!=='.'&&p!=='|')allSeats.push(1);});}));
   const pct=Math.round(total/allSeats.length*100);
   const bar=el('briefLoadBar');bar.textContent='';
   const fill=document.createElement('div');fill.className='brief-bar-fill';fill.style.width=pct+'%';
@@ -564,10 +579,10 @@ function buildCabinPlan(){
     if(si>0){
       const prevKey=['business','premium','economy_front','economy_rear'][si-1];
       const galleyLabel=GALLEY_AFTER[prevKey];
-      // Galley between sections: door number is si+1 (biz→prem=door2, eco_f→eco_r=door3)
-      const doorNum=si===1?'2':si===3?'3':null;
+      // Galley between sections: biz→prem=door2, eco_f→eco_r=door3
+      const doorNum=si===1?2:si===3?3:null;
       if(galleyLabel||doorNum){
-        const g=buildGalleyCol(galleyLabel||'',doorNum||String(si+1));
+        const g=buildGalleyCol(galleyLabel||'',doorNum||(si+1));
         c.appendChild(g);
       }else{const d=document.createElement('div');d.className='section-divider';c.appendChild(d);}
     }
@@ -575,8 +590,18 @@ function buildCabinPlan(){
     const sl=document.createElement('div');sl.className='section-label '+cfg.cls;sl.textContent=cfg.label;sec.appendChild(sl);
     const cols=document.createElement('div');cols.className='cabin-columns';
     cfg.rows.forEach(rn=>{const col=document.createElement('div');col.className='cabin-col';if(EXIT_ROWS.includes(rn))col.classList.add('exit-row');
-      cfg.layout.forEach(pos=>{if(pos==='|'){const a=document.createElement('div');a.className='aisle';col.appendChild(a);}
-        else if(pos==='.'){const n=document.createElement('div');n.className='seat no-seat';col.appendChild(n);}
+      const rowLayout=ROW_OVERRIDES[rn]||cfg.layout;
+      const lavPositions=ROW_LAVS[rn]?ROW_LAVS[rn].positions:[];
+      rowLayout.forEach((pos,pi)=>{if(pos==='|'){const a=document.createElement('div');a.className='aisle';col.appendChild(a);}
+        else if(pos==='.'){
+          // Check if this position should show a lav icon
+          const origPos=ALL_POSITIONS[pi];
+          if(lavPositions.includes(origPos)){
+            const lv=document.createElement('div');lv.className='seat seat-lav';lv.title='Toilettes';
+            lv.innerHTML='<svg viewBox="0 0 24 24" fill="currentColor" width="12" height="12" opacity="0.3"><path d="M9 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6zm6 0a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM5 10h4.5v12h-2v-5h-.5v5H5V10zm7.5 0H17v12h-2v-5h-.5v5h-2V10z"/></svg>';
+            col.appendChild(lv);
+          }else{const n=document.createElement('div');n.className='seat no-seat';col.appendChild(n);}
+        }
         else{const sid=rn+pos,se=document.createElement('div');se.className='seat';se.dataset.seat=sid;se.textContent=pos;
           const pax=passengers[sid];if(pax){se.classList.add('occupied',cfg.cls);if(pax.meal)se.classList.add('special-meal');if(pax.remark==='WCHR')se.classList.add('wheelchair');if(pax.remark==='UM')se.classList.add('um');}else se.classList.add('empty');
           if(bookmarks[sid])se.classList.add('bookmarked');se.addEventListener('click',ev=>{ev.stopPropagation();showPaxDetail(sid);});col.appendChild(se);}});
