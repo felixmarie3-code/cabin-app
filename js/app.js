@@ -1583,8 +1583,8 @@ buildBriefing();buildCabinPlan();cacheFilterBadges();cacheTotalSeats();buildPaxL
   if (!isStandalone) {
     var bar = document.createElement('div');
     bar.id = 'installBanner';
-    bar.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M12 5v14M5 12l7 7 7-7"/></svg>' +
-      '<span>Pour une exp\u00e9rience optimale, installez CabinReady sur l\u2019\u00e9cran d\u2019accueil</span>' +
+    bar.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>' +
+      '<span>Installez CabinReady : appuyez sur <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" style="vertical-align:-2px;margin:0 2px"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg> puis <b>Sur l\u2019\u00e9cran d\u2019accueil</b></span>' +
       '<button id="installBannerClose">\u00d7</button>';
     document.body.prepend(bar);
     document.getElementById('installBannerClose').addEventListener('click', function() {
