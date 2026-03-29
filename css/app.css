@@ -850,6 +850,24 @@ button, [role="button"] { min-height: 36px; min-width: 36px; }
   background: none; border: none; color: white; font-size: 18px;
   cursor: pointer; padding: 0 4px; opacity: 0.7;
 }
+/* Animated arrow pointing to Safari share button */
+.install-arrow {
+  position: absolute;
+  top: -32px;
+  right: 25%;
+  animation: arrow-bounce 1.2s ease-in-out infinite;
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.4));
+  pointer-events: none;
+}
+/* Landscape: share button shifts toward center-right */
+@media (orientation: landscape) {
+  .install-arrow { right: 42%; }
+}
+@keyframes arrow-bounce {
+  0%, 100% { transform: translateY(0); opacity: 1; }
+  50% { transform: translateY(-10px); opacity: 0.7; }
+}
+
 /* In browser mode, shift header down to make room for the banner */
 [data-mode="browser"] .app-header { top: 36px; }
 [data-mode="browser"] .content { padding-top: 36px; }
