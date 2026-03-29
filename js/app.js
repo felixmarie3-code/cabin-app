@@ -69,6 +69,53 @@ if ('serviceWorker' in navigator) {
     .catch(err => console.error('SW error:', err));
 }
 
+// === IndexedDB Mirror (safety net for localStorage) ===
+var idb=null;
+(function initIDB(){
+  if(!window.indexedDB)return;
+  var req=indexedDB.open('CabinReadyBackup',1);
+  req.onupgradeneeded=function(e){e.target.result.createObjectStore('kv');};
+  req.onsuccess=function(e){idb=e.target.result;};
+  req.onerror=function(){idb=null;};
+})();
+function idbSet(k,v){
+  if(!idb)return;
+  try{var tx=idb.transaction('kv','readwrite');tx.objectStore('kv').put(v,k);}catch(e){}
+}
+function idbGet(k){
+  if(!idb)return Promise.resolve(undefined);
+  return new Promise(function(resolve){
+    try{
+      var tx=idb.transaction('kv','readonly');
+      var req=tx.objectStore('kv').get(k);
+      req.onsuccess=function(){resolve(req.result);};
+      req.onerror=function(){resolve(undefined);};
+    }catch(e){resolve(undefined);}
+  });
+}
+// Restore from IDB if localStorage was purged (runs after IDB is ready)
+function restoreFromIDB(){
+  if(!idb)return;
+  var keys=['cabin_bookmarks','cabin_notes','cabin_otp_checks','cabin_checklist',
+    'cabin_incidents','cabin_zones','cabin_services','cabin_doors','cabin_notifications',
+    'cabin_defects','cabin_rest_tour','cabin_otp_remarks',
+    'cabin_briefing_notes','cabin_report_notes','cabin_theme'];
+  var restored=false;
+  keys.forEach(function(k){
+    if(localStorage.getItem(k)===null){
+      idbGet(k).then(function(v){
+        if(v!==undefined){
+          localStorage.setItem(k,typeof v==='string'?v:JSON.stringify(v));
+          restored=true;
+          console.log('IDB restore:',k);
+        }
+      });
+    }
+  });
+}
+// Trigger restore check once IDB is open
+setTimeout(restoreFromIDB,500);
+
 // === Theme Toggle ===
 const savedTheme = localStorage.getItem('cabin_theme') || 'dark';
 document.documentElement.setAttribute('data-theme', savedTheme);
@@ -78,7 +125,7 @@ document.getElementById('themeToggle').addEventListener('click', () => {
   const cur = document.documentElement.getAttribute('data-theme');
   const next = cur === 'dark' ? 'light' : 'dark';
   document.documentElement.setAttribute('data-theme', next);
-  localStorage.setItem('cabin_theme', next);
+  localStorage.setItem('cabin_theme', next);idbSet('cabin_theme',next);
   updateThemeIcon(next);
 });
 function updateThemeIcon(theme) {
@@ -102,7 +149,7 @@ if (window.location.hash) handleHash();
 
 // === Persistence ===
 function lsGet(k,d){try{return JSON.parse(localStorage.getItem(k))||d;}catch{return d;}}
-function lsSet(k,v){localStorage.setItem(k,JSON.stringify(v));}
+function lsSet(k,v){var s=JSON.stringify(v);localStorage.setItem(k,s);idbSet(k,s);}
 let bookmarks=lsGet('cabin_bookmarks',{}), notes=lsGet('cabin_notes',{});
 let milestoneChecks=lsGet('cabin_otp_checks',{}), checklistState=lsGet('cabin_checklist',{});
 let incidents=lsGet('cabin_incidents',[]), cabinZones=lsGet('cabin_zones',{});
@@ -412,7 +459,7 @@ function buildBriefing(){
 
   // Briefing notes
   const notesEl=el('briefingNotes');notesEl.value=localStorage.getItem('cabin_briefing_notes')||'';
-  notesEl.addEventListener('input',()=>localStorage.setItem('cabin_briefing_notes',notesEl.value));
+  notesEl.addEventListener('input',()=>{localStorage.setItem('cabin_briefing_notes',notesEl.value);idbSet('cabin_briefing_notes',notesEl.value);});
 }
 
 // Door assignment modal — mini cabin plan with doors on each side
@@ -1074,7 +1121,7 @@ function buildReport(){
   const list=document.getElementById('incidentsList');list.textContent='';incidents.forEach(inc=>{const row=document.createElement('div');row.className='incident-row';const time=document.createElement('span');time.className='incident-time';time.textContent=inc.time;const tag=document.createElement('span');tag.className='incident-type-tag '+inc.severity;tag.textContent=inc.type;const desc=document.createElement('span');desc.className='incident-desc';desc.textContent=(inc.seat?'['+inc.seat+'] ':'')+inc.desc;row.appendChild(time);row.appendChild(tag);row.appendChild(desc);list.appendChild(row);});
   const summary=document.getElementById('reportSummary');summary.textContent='';const occ=Object.keys(passengers).length,boarded=Object.values(passengers).filter(p=>p.boarded).length;
   [{v:''+occ,l:'Passagers'},{v:''+boarded,l:'Embarqu\u00e9s'},{v:''+incidents.length,l:'Incidents'},{v:Object.values(cabinZones).filter(v=>v==='OK').length+'/'+CABIN_ZONES_LIST.length,l:'Zones OK'},{v:''+Object.values(checklistState).filter(Boolean).length,l:'Checks faits'},{v:''+Object.values(passengers).filter(p=>p.meal).length,l:'Repas sp\u00e9.'}].forEach(s=>{const d=document.createElement('div');d.className='report-stat';const v=document.createElement('div');v.className='report-stat-value';v.textContent=s.v;const l=document.createElement('div');l.className='report-stat-label';l.textContent=s.l;d.appendChild(v);d.appendChild(l);summary.appendChild(d);});
-  const notesEl=document.getElementById('reportNotes');notesEl.value=localStorage.getItem('cabin_report_notes')||'';notesEl.addEventListener('input',()=>localStorage.setItem('cabin_report_notes',notesEl.value));
+  const notesEl=document.getElementById('reportNotes');notesEl.value=localStorage.getItem('cabin_report_notes')||'';notesEl.addEventListener('input',()=>{localStorage.setItem('cabin_report_notes',notesEl.value);idbSet('cabin_report_notes',notesEl.value);});
 }
 document.getElementById('addIncidentBtn').addEventListener('click',()=>document.getElementById('incidentOverlay').classList.add('visible'));
 document.getElementById('incidentClose').addEventListener('click',()=>document.getElementById('incidentOverlay').classList.remove('visible'));
