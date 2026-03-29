@@ -1132,6 +1132,139 @@ document.getElementById('incidentSave').addEventListener('click',()=>{const desc
   document.getElementById('incidentDesc').value='';document.getElementById('incidentSeat').value='';document.getElementById('incidentOverlay').classList.remove('visible');buildReport();updateAppBadge();});
 
 // ============================================================
+// REPORT PHOTOS (IndexedDB storage, canvas resize)
+// ============================================================
+var PHOTO_MAX_PX = 1600;  // max dimension (keeps detail for zoom)
+var PHOTO_QUALITY = 0.82; // JPEG quality (good balance)
+var photoDb = null;
+
+(function initPhotoDB() {
+  if (!window.indexedDB) return;
+  var req = indexedDB.open('CabinReadyPhotos', 1);
+  req.onupgradeneeded = function(e) {
+    var db = e.target.result;
+    if (!db.objectStoreNames.contains('photos')) {
+      db.createObjectStore('photos', { keyPath: 'id' });
+    }
+  };
+  req.onsuccess = function(e) { photoDb = e.target.result; renderPhotos(); };
+  req.onerror = function() { photoDb = null; };
+})();
+
+function resizePhoto(file) {
+  return new Promise(function(resolve) {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      var img = new Image();
+      img.onload = function() {
+        var w = img.width, h = img.height;
+        if (w > PHOTO_MAX_PX || h > PHOTO_MAX_PX) {
+          if (w > h) { h = Math.round(h * PHOTO_MAX_PX / w); w = PHOTO_MAX_PX; }
+          else { w = Math.round(w * PHOTO_MAX_PX / h); h = PHOTO_MAX_PX; }
+        }
+        var canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, w, h);
+        canvas.toBlob(function(blob) { resolve(blob); }, 'image/jpeg', PHOTO_QUALITY);
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function savePhoto(blob) {
+  if (!photoDb) return Promise.resolve();
+  var id = Date.now() + '_' + Math.random().toString(36).slice(2, 8);
+  return new Promise(function(resolve) {
+    var tx = photoDb.transaction('photos', 'readwrite');
+    tx.objectStore('photos').put({ id: id, blob: blob, date: new Date().toISOString() });
+    tx.oncomplete = function() { resolve(); };
+    tx.onerror = function() { resolve(); };
+  });
+}
+
+function deletePhoto(id) {
+  if (!photoDb) return Promise.resolve();
+  return new Promise(function(resolve) {
+    var tx = photoDb.transaction('photos', 'readwrite');
+    tx.objectStore('photos').delete(id);
+    tx.oncomplete = function() { resolve(); };
+    tx.onerror = function() { resolve(); };
+  });
+}
+
+function getAllPhotos() {
+  if (!photoDb) return Promise.resolve([]);
+  return new Promise(function(resolve) {
+    var tx = photoDb.transaction('photos', 'readonly');
+    var req = tx.objectStore('photos').getAll();
+    req.onsuccess = function() { resolve(req.result || []); };
+    req.onerror = function() { resolve([]); };
+  });
+}
+
+function renderPhotos() {
+  var grid = document.getElementById('photoGrid');
+  var storageLabel = document.getElementById('photoStorage');
+  if (!grid) return;
+  getAllPhotos().then(function(photos) {
+    grid.textContent = '';
+    var totalBytes = 0;
+    photos.forEach(function(p) {
+      totalBytes += p.blob.size || 0;
+      var thumb = document.createElement('div');
+      thumb.className = 'photo-thumb';
+      var img = document.createElement('img');
+      img.src = URL.createObjectURL(p.blob);
+      img.addEventListener('load', function() { URL.revokeObjectURL(img.src); });
+      img.addEventListener('click', function() { openLightbox(p.blob); });
+      var del = document.createElement('button');
+      del.className = 'photo-delete';
+      del.textContent = '\u00d7';
+      del.addEventListener('click', function(e) {
+        e.stopPropagation();
+        deletePhoto(p.id).then(renderPhotos);
+      });
+      thumb.appendChild(img);
+      thumb.appendChild(del);
+      grid.appendChild(thumb);
+    });
+    if (storageLabel) {
+      if (photos.length === 0) storageLabel.textContent = '';
+      else storageLabel.textContent = photos.length + ' photo' + (photos.length > 1 ? 's' : '') + ' \u2014 ' + (totalBytes / 1024 / 1024).toFixed(1) + ' MB';
+    }
+  });
+}
+
+function openLightbox(blob) {
+  var lb = document.getElementById('photoLightbox');
+  if (!lb) {
+    lb = document.createElement('div');
+    lb.id = 'photoLightbox';
+    lb.className = 'photo-lightbox';
+    lb.innerHTML = '<button class="photo-lightbox-close">\u00d7</button><img>';
+    lb.addEventListener('click', function(e) { if (e.target === lb || e.target.classList.contains('photo-lightbox-close')) { lb.classList.remove('visible'); } });
+    document.body.appendChild(lb);
+  }
+  var img = lb.querySelector('img');
+  img.src = URL.createObjectURL(blob);
+  img.onload = function() { URL.revokeObjectURL(img.src); };
+  lb.classList.add('visible');
+}
+
+// File input handler
+document.getElementById('photoInput').addEventListener('change', function(e) {
+  var files = Array.from(e.target.files);
+  if (!files.length) return;
+  Promise.all(files.map(function(f) { return resizePhoto(f); }))
+    .then(function(blobs) { return Promise.all(blobs.map(function(b) { return savePhoto(b); })); })
+    .then(function() { renderPhotos(); });
+  e.target.value = '';
+});
+
+// ============================================================
 // OTP
 // ============================================================
 // Crew-relevant milestones only
