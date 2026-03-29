@@ -1136,7 +1136,10 @@ document.getElementById('incidentSave').addEventListener('click',()=>{const desc
 // ============================================================
 var PHOTO_MAX_PX = 1600;  // max dimension (keeps detail for zoom)
 var PHOTO_QUALITY = 0.82; // JPEG quality (good balance)
+var PHOTO_LIMIT_BYTES = 100 * 1024 * 1024; // 100 MB
+var PHOTO_WARN_BYTES = 80 * 1024 * 1024;   // 80 MB warning
 var photoDb = null;
+var photoTotalBytes = 0;
 
 (function initPhotoDB() {
   if (!window.indexedDB) return;
@@ -1231,9 +1234,17 @@ function renderPhotos() {
       thumb.appendChild(del);
       grid.appendChild(thumb);
     });
+    photoTotalBytes = totalBytes;
     if (storageLabel) {
-      if (photos.length === 0) storageLabel.textContent = '';
-      else storageLabel.textContent = photos.length + ' photo' + (photos.length > 1 ? 's' : '') + ' \u2014 ' + (totalBytes / 1024 / 1024).toFixed(1) + ' MB';
+      if (photos.length === 0) { storageLabel.textContent = ''; storageLabel.style.color = ''; }
+      else {
+        var mb = (totalBytes / 1024 / 1024).toFixed(1);
+        var maxMb = (PHOTO_LIMIT_BYTES / 1024 / 1024).toFixed(0);
+        storageLabel.textContent = photos.length + ' photo' + (photos.length > 1 ? 's' : '') + ' \u2014 ' + mb + ' / ' + maxMb + ' MB';
+        if (totalBytes >= PHOTO_LIMIT_BYTES) storageLabel.style.color = 'var(--corsair-rouge-vermillon)';
+        else if (totalBytes >= PHOTO_WARN_BYTES) storageLabel.style.color = '#e8a838';
+        else storageLabel.style.color = '';
+      }
     }
   });
 }
@@ -1258,8 +1269,25 @@ function openLightbox(blob) {
 document.getElementById('photoInput').addEventListener('change', function(e) {
   var files = Array.from(e.target.files);
   if (!files.length) return;
+  if (photoTotalBytes >= PHOTO_LIMIT_BYTES) {
+    alert('Limite de stockage photos atteinte (100 MB). Supprimez des photos avant d\u2019en ajouter.');
+    e.target.value = '';
+    return;
+  }
   Promise.all(files.map(function(f) { return resizePhoto(f); }))
-    .then(function(blobs) { return Promise.all(blobs.map(function(b) { return savePhoto(b); })); })
+    .then(function(blobs) {
+      var saved = [];
+      var running = photoTotalBytes;
+      for (var i = 0; i < blobs.length; i++) {
+        if (running + blobs[i].size > PHOTO_LIMIT_BYTES) {
+          alert('Limite 100 MB atteinte. ' + saved.length + '/' + blobs.length + ' photos ajout\u00e9es.');
+          break;
+        }
+        running += blobs[i].size;
+        saved.push(blobs[i]);
+      }
+      return Promise.all(saved.map(function(b) { return savePhoto(b); }));
+    })
     .then(function() { renderPhotos(); });
   e.target.value = '';
 });
@@ -1546,4 +1574,23 @@ buildBriefing();buildCabinPlan();cacheFilterBadges();cacheTotalSeats();buildPaxL
     document.getElementById('notifPromptOverlay').classList.remove('visible');
     localStorage.setItem('cabin_notif_prompt_dismissed','1');
   });
+})();
+
+// Standalone vs browser detection
+(function(){
+  var isStandalone = window.navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches;
+  document.documentElement.setAttribute('data-mode', isStandalone ? 'standalone' : 'browser');
+  if (!isStandalone) {
+    var bar = document.createElement('div');
+    bar.id = 'installBanner';
+    bar.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M12 5v14M5 12l7 7 7-7"/></svg>' +
+      '<span>Pour une exp\u00e9rience optimale, installez CabinReady sur l\u2019\u00e9cran d\u2019accueil</span>' +
+      '<button id="installBannerClose">\u00d7</button>';
+    document.body.prepend(bar);
+    document.getElementById('installBannerClose').addEventListener('click', function() {
+      bar.remove();
+      sessionStorage.setItem('cabin_install_dismissed','1');
+    });
+    if (sessionStorage.getItem('cabin_install_dismissed')) bar.remove();
+  }
 })();
