@@ -850,10 +850,10 @@ button, [role="button"] { min-height: 36px; min-width: 36px; }
   background: none; border: none; color: white; font-size: 18px;
   cursor: pointer; padding: 0 4px; opacity: 0.7;
 }
-/* Animated arrow pointing to Safari share button (below banner, arrow up) */
+/* Animated arrow pointing to Safari share button (bottom toolbar on iPad) */
 .install-arrow {
   position: fixed;
-  top: 40px;
+  bottom: 14px;
   right: 25%;
   z-index: 9999;
   animation: arrow-bounce 1s ease-in-out infinite;
@@ -866,7 +866,7 @@ button, [role="button"] { min-height: 36px; min-width: 36px; }
 }
 @keyframes arrow-bounce {
   0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
+  50% { transform: translateY(8px); }
 }
 
 /* In browser mode, shift header down to make room for the banner */
