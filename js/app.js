@@ -1257,10 +1257,53 @@ function openAnnonceChapter(ch){
   var detail=document.getElementById('checklistDetail');detail.style.display='';
   document.getElementById('checklistDetailTitle').textContent=ch.chapter;
   var list=document.getElementById('checklistDetailItems');list.textContent='';
+
+  // Check if this chapter has any station-specific sections
+  var chapterHasStations=ch.sections.some(function(sec){return !!ANNONCE_STATIONS[sec.title];});
+
+  // IATA filter bar (only if chapter has station-specific announcements)
+  if(chapterHasStations){
+    var filterBar=document.createElement('div');filterBar.className='annonce-filter-bar';
+    // "Toutes" button
+    var allBtn=document.createElement('button');
+    allBtn.className='annonce-filter-btn'+(currentAnnonceFilter===null?' active':'');
+    allBtn.textContent='Toutes';
+    allBtn.addEventListener('click',function(){currentAnnonceFilter=null;openAnnonceChapter(ch);});
+    filterBar.appendChild(allBtn);
+    // Collect IATA codes relevant to this chapter
+    var chapterCodes=[];
+    ch.sections.forEach(function(sec){
+      var codes=ANNONCE_STATIONS[sec.title];
+      if(codes)codes.forEach(function(c){if(chapterCodes.indexOf(c)===-1)chapterCodes.push(c);});
+    });
+    // Sort by ANNONCE_IATA_ALL order
+    chapterCodes.sort(function(a,b){return ANNONCE_IATA_ALL.indexOf(a)-ANNONCE_IATA_ALL.indexOf(b);});
+    chapterCodes.forEach(function(code){
+      var btn=document.createElement('button');
+      btn.className='annonce-filter-btn'+(currentAnnonceFilter===code?' active':'');
+      btn.textContent=code;
+      btn.addEventListener('click',function(){currentAnnonceFilter=code;openAnnonceChapter(ch);});
+      filterBar.appendChild(btn);
+    });
+    list.appendChild(filterBar);
+  }
+
+  // Section rows (filtered)
   ch.sections.forEach(function(sec){
+    var stationCodes=ANNONCE_STATIONS[sec.title]; // undefined = general
+    // If filter active: show general (no codes) + matching codes
+    if(currentAnnonceFilter && stationCodes && stationCodes.indexOf(currentAnnonceFilter)===-1) return;
+
     var row=document.createElement('div');row.className='cl-subtile';
     var st=document.createElement('div');st.className='cl-subtile-title';st.textContent=sec.title;
     var right=document.createElement('div');right.className='cl-subtile-right';
+    // Station badges
+    if(stationCodes){
+      stationCodes.forEach(function(c){
+        var badge=document.createElement('span');badge.className='annonce-station-badge';
+        badge.textContent=c;right.appendChild(badge);
+      });
+    }
     if(sec.tags&&sec.tags.length){
       sec.tags.forEach(function(t){
         var tag=document.createElement('span');tag.className='annonce-tag '+t.replace(/\s+/g,'-');
@@ -1296,6 +1339,7 @@ function openChecklistDetail(cat,sub,items){
 document.getElementById('checklistBack').addEventListener('click',function(){
   document.getElementById('checklistTiles').style.display='';
   document.getElementById('checklistDetail').style.display='none';
+  currentAnnonceFilter=null;
 });
 
 // Lucide-style SVG icons for annonces chapters
@@ -1339,10 +1383,8 @@ function openAnnonceDetail(chapterTitle,sec){
     var wrapper=document.createElement('div');wrapper.className='annonce-block';
     var flag=document.createElement('span');flag.className='annonce-flag';
     if(lang==='en') flag.textContent='\uD83C\uDDEC\uD83C\uDDE7';      // 🇬🇧
-    else if(lang==='cr-re') flag.textContent='\uD83C\uDDF7\uD83C\uDDEA'; // 🇷🇪
-    else if(lang==='cr-mq') flag.textContent='\uD83C\uDDF2\uD83C\uDDF6'; // 🇲🇶
-    else if(lang==='cr-gp') flag.textContent='\uD83C\uDDEC\uD83C\uDDF5'; // 🇬🇵
-    else flag.textContent='\uD83C\uDDEB\uD83C\uDDF7';                    // 🇫🇷
+    else if(lang==='cr') flag.textContent='CR';                         // Créole
+    else flag.textContent='\uD83C\uDDEB\uD83C\uDDF7';                  // 🇫🇷
     wrapper.appendChild(flag);
     if(lang==='en'){
       var em=document.createElement('em');
@@ -1358,15 +1400,11 @@ function openAnnonceDetail(chapterTitle,sec){
   list.appendChild(content);
 }
 
-// Detect language of a text block: 'fr', 'en', 'cr-re', 'cr-mq', 'cr-gp'
+// Detect language of a text block: 'fr', 'en', 'cr'
 function detectBlockLang(text){
   var t=text.trim();
-  // Creole Reunion: "zot", "lekipaj", "gayar", "caillou", "lokal"
-  if(/\b(zot|lekipaj|gayar|caillou|na le plaisir|ti caillou|heure lokal|deor i fait)\b/i.test(t))return 'cr-re';
-  // Creole Martinique: "Mesie ze danm", "Matinik", "asou", "lekipaj-li"
-  if(/\b(Mesie ze danm|Matinik|Misie|koumandan de bow|anle Airbus|Korse|dekolaj-la)\b/i.test(t))return 'cr-mq';
-  // Creole Guadeloupe: "Mesye ze dam", "Gwadloup", "Komandan la"
-  if(/\b(Gwadloup|Komandan la|senti a zot|Cosair pou|onpil davwa|chwazi)\b/i.test(t))return 'cr-gp';
+  // Creole (any variant): common Creole markers
+  if(/\b(zot|lekipaj|gayar|ti caillou|lokal|deor i fait|Mesie ze danm|Matinik|koumandan de bow|dekolaj-la|Gwadloup|Komandan la|senti a zot|onpil davwa|chwazi|Korse|lekipaj-li|risive|risouwe|Mesye ze dam)\b/i.test(t))return 'cr';
   // English detection
   if(/^Ladies and Gentlemen/i.test(t))return 'en';
   if(/^(Please |Thank you|Your |The |In the event|Due to|May I|Would you|Are you|Do you|Have you|Could I|Good morning|Captain |Passengers |To all passengers|Cabin crew|WIFI is|We inform|Drinks will|Headphones|You are trav|If ever you|Cases of Mpox|For future|If you have any|Buses operating|Further to|Flight and duty|Following on|The Captain|We are|We have|We will|We remind|We ask|We invite|We welcome|We would|We carry|We may|Correctly|Put on|Pull down|Make sure|Fasten|Keep your|Wait for|You will|Then,|Emergency|When opening|Only cash|Kiosks|An identity|Payments|A circulation|Ministry|Ocean users|The Mauritian|For your safety|Mobile phones|Please note|When the illuminated|You can find|In business|All electronic|Your laptop|In case of|The life jacket|The product used|To comply|Tampering|Recharging|The crew member|We also inform|For transit|The cabin crew|It is|Swimming)\b/i.test(t))return 'en';
@@ -1376,6 +1414,26 @@ function detectBlockLang(text){
   if(enWords>frWords&&enWords>=3)return 'en';
   return 'fr';
 }
+
+// === IATA station filter for announcements ===
+// Map section titles → IATA codes they apply to. Absent = all stations.
+var ANNONCE_STATIONS={
+  '5.6 D\u00e9sinsectisation':['RUN','DZA','FDF','PTP','MRU','TNR'],
+  '5.8.3 Vol sans WIFI ABJ':['ABJ'],
+  '5.18 Mesures sanitaires Antilles':['FDF','PTP'],
+  '5.19 Agriculture MRU':['MRU'],
+  '5.20 Agriculture RUN':['RUN'],
+  '5.21 Fi\u00e8vre aphteuse Oc\u00e9an Indien':['MRU','RUN','DZA','TNR'],
+  '5.22 \u00c9pid\u00e9mie de Chikungunya RUN / DZA':['RUN','DZA'],
+  '5.23 \u00c9pid\u00e9mie de Dengue vol retour de TNR et MRU':['TNR','MRU'],
+  '5.24 Variole B, Mpox arriv\u00e9e/d\u00e9part TNR':['TNR'],
+  '5.28 ORY - Train + Air':['ORY'],
+  '7.3 Pr\u00e9sentation passeport':['MRU','TNR','ABJ','BKO','COO','DZA'],
+  '8.1 Arriv\u00e9e CDG':['CDG']
+};
+// All IATA codes used in filters
+var ANNONCE_IATA_ALL=['ORY','CDG','RUN','MRU','DZA','TNR','FDF','PTP','ABJ','BKO','COO','CAY'];
+var currentAnnonceFilter=null; // null = all
 
 // ============================================================
 // REPORT

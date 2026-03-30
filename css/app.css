@@ -1231,6 +1231,36 @@ button, [role="button"] { min-height: 36px; min-width: 36px; }
 .annonce-tag.pop-up { background: rgba(200,184,154,0.2); color: var(--corsair-beige-sable); }
 .annonce-tag.effectuer { background: rgba(37,122,108,0.15); color: var(--corsair-vert-emeraude); }
 
+/* IATA filter bar */
+.annonce-filter-bar {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  padding: 10px 0 14px; border-bottom: 1px solid var(--border);
+  margin-bottom: 4px;
+}
+.annonce-filter-btn {
+  padding: 5px 12px; border-radius: 8px; border: 1.5px solid var(--border);
+  background: transparent; color: var(--text-muted);
+  font-family: 'Gilroy', Arial, sans-serif;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.5px;
+  cursor: pointer; transition: all 0.15s ease;
+}
+.annonce-filter-btn.active {
+  background: var(--corsair-bleu-economie); color: white;
+  border-color: var(--corsair-bleu-economie);
+}
+.annonce-filter-btn:not(.active):active { opacity: 0.7; }
+
+/* Station badge on section rows */
+.annonce-station-badge {
+  display: inline-block; font-size: 9px; font-weight: 700;
+  letter-spacing: 0.3px; padding: 2px 6px; border-radius: 5px;
+  background: rgba(82,167,190,0.1); color: var(--corsair-bleu-economie);
+  margin-right: 4px;
+}
+
+/* Creole flag label */
+.annonce-flag { min-width: 22px; text-align: center; }
+
 /* === Checklist Tiles === */
 .checklist-tiles { display: flex; flex-direction: column; gap: 12px; }
 .cl-tile {
