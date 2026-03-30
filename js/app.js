@@ -1,65 +1,124 @@
 // === Splash Screen ===
 (function() {
-  const splash = document.getElementById('splash');
+  var splash = document.getElementById('splash');
   if (!splash) return;
-  const splashBg = document.getElementById('splash-bg');
-  const splashPlane = document.getElementById('splash-plane');
-  const splashBrand = document.getElementById('splash-brand');
+  var splashBg = document.getElementById('splash-bg');
+  var splashPlane = document.getElementById('splash-plane');
+  var splashLoader = document.getElementById('splash-loader');
 
-  const BRAND_PAUSE = 3000;   // 3s brand visible
-  const RISE_DURATION = 2800; // 2.8s plane traversal
-  const FADE_IN = 600;        // plane fade-in ms
+  var BRAND_PAUSE = 3000;    // 3s brand + loader visible
+  var TRAVEL_MS   = 2800;    // 2.8s plane traversal
+  var FADE_IN     = 500;     // plane opacity fade-in
+  var WING_MID    = 0.35;    // wing position from nose (% of plane length)
 
-  // Clip follows wing sweep at ~30° angle
-  var WING_MID = 0.38; // clip level at fuselage center (% of plane height) — above wing mid-chord so wings cover the line
+  var vh = window.innerHeight;
+  var vw = window.innerWidth;
+  var isLandscape = vw > vh;
 
-  // Park plane below viewport (translate3d for GPU compositing)
-  splashPlane.style.transform = 'translate3d(0,' + (window.innerHeight + 60) + 'px,0)';
+  /* ---------- setup plane orientation ---------- */
+  if (isLandscape) {
+    splashPlane.classList.add('landscape');
+    // img is rotated 90° via CSS, sized to 100vh
+    // Visual dims after rotation: width ≈ vh*aspectRatio, height = vh
+    // We translate the container to move plane left→right
+    splashPlane.style.transform = 'translate3d(' + (-(vw / 2 + vh * 0.6 + 60)) + 'px,0,0)';
+  } else {
+    // Portrait: park below viewport
+    splashPlane.style.transform = 'translate3d(0,' + (vh + 60) + 'px,0)';
+  }
 
+  /* ---------- fade out loader before plane starts ---------- */
   setTimeout(function() {
-    // Measure plane height after layout
+    if (splashLoader) {
+      splashLoader.style.transition = 'opacity 0.4s ease';
+      splashLoader.style.opacity = '0';
+    }
+  }, BRAND_PAUSE - 500);
+
+  /* ---------- start plane animation ---------- */
+  setTimeout(function() {
     splashPlane.style.opacity = '1';
     splashPlane.style.transition = 'opacity ' + FADE_IN + 'ms ease-out';
-    var planeH = splashPlane.getBoundingClientRect().height || window.innerHeight * 0.9;
-    var vh = window.innerHeight;
-    var vw = window.innerWidth;
-    var startY = vh + 60;
-    var endY = -(planeH + 60);
-    var brandFaded = false;
+
     var startTime = performance.now();
 
-    function frame(now) {
-      var elapsed = now - startTime;
-      var raw = Math.min(elapsed / RISE_DURATION, 1);
-      // Ease-out cubic (smooth deceleration)
-      var eased = 1 - Math.pow(1 - raw, 3);
-      var curY = startY + (endY - startY) * eased;
-      splashPlane.style.transform = 'translate3d(0,' + curY + 'px,0)';
+    if (isLandscape) {
+      /* ---- LANDSCAPE: left → right ---- */
+      // Plane img is 100vh tall (pre-rotation), aspect ~1:1.1 → pre-rot width ≈ vh/1.1 ≈ vh*0.9
+      // After 90° rotation: visual width ≈ vh, visual height ≈ vh*0.9
+      var planeVisW = vh;           // visual width after rotation (approximate)
+      var margin = 60;
+      var startX = -(vw / 2 + planeVisW / 2 + margin);
+      var endX   =  (vw / 2 + planeVisW / 2 + margin);
 
-      // Clip with 30° angled V-shape following wing sweep
-      var centerPct = ((curY + planeH * WING_MID) / vh) * 100;
-      // 30° angle: offset = tan(30°) * half-viewport-width / vh * 100
-      var angleOff = (0.577 * vw * 0.5) / vh * 100;
-      var cY = Math.min(110, centerPct);
-      var eY = Math.min(110, cY + angleOff);
-      splashBg.style.clipPath = 'polygon(' +
-        '0% 0%,100% 0%,' +
-        '100% ' + eY + '%,' +
-        '50% ' + cY + '%,' +
-        '0% ' + eY + '%)';
+      function frameLandscape(now) {
+        var t = Math.min((now - startTime) / TRAVEL_MS, 1); // linear = constant speed
+        var curX = startX + (endX - startX) * t;
+        splashPlane.style.transform = 'translate3d(' + curX + 'px,0,0)';
 
-      // Brand is inside splash-bg, so it gets clipped with it automatically
-      if (raw < 1) {
-        requestAnimationFrame(frame);
-      } else {
-        splash.remove();
+        // Wing line X on screen (plane center + offset toward nose)
+        // Nose is on the right after rotation; wings at WING_MID from nose
+        var planeCenterX = vw / 2 + curX;
+        var wingX = planeCenterX + planeVisW * (0.5 - WING_MID);
+        // Shift clip line slightly toward plane so wings mask the edge
+        wingX -= planeVisW * 0.08;
+        var cPct = (wingX / vw) * 100;
+        // 30° angle offset: V-shape vertical
+        var aOff = (0.577 * vh * 0.5) / vw * 100;
+        var cX = Math.min(110, cPct);
+        var eX = Math.min(110, cX + aOff);
+
+        splashBg.style.clipPath = 'polygon(' +
+          eX + '% 0%,100% 0%,100% 100%,' +
+          eX + '% 100%,' +
+          cX + '% 50%)';
+
+        if (t < 1) requestAnimationFrame(frameLandscape);
+        else splash.remove();
       }
+      requestAnimationFrame(frameLandscape);
+
+    } else {
+      /* ---- PORTRAIT: bottom → top ---- */
+      var img = document.getElementById('splash-plane-img');
+      var imgRect = img.getBoundingClientRect();
+      var planeH = imgRect.height || vh * 0.9;
+      var planeW = imgRect.width  || vw;
+      var startY = vh + 60;
+      var endY   = -(planeH + 60);
+
+      function framePortrait(now) {
+        var t = Math.min((now - startTime) / TRAVEL_MS, 1); // linear = constant speed
+        var curY = startY + (endY - startY) * t;
+        splashPlane.style.transform = 'translate3d(0,' + curY + 'px,0)';
+
+        // Wing line Y on screen
+        // img is centered in container → visual top = vh/2 - planeH/2 + containerTY
+        var imgVisualTop = vh / 2 - planeH / 2 + curY;
+        var wingY = imgVisualTop + planeH * WING_MID;
+        // Shift clip up slightly so wings mask the edge
+        wingY -= planeH * 0.06;
+        var cPct = (wingY / vh) * 100;
+        // 30° angle offset: V-shape horizontal
+        var aOff = (0.577 * vw * 0.5) / vh * 100;
+        var cY = Math.min(110, cPct);
+        var eY = Math.min(110, cY + aOff);
+
+        splashBg.style.clipPath = 'polygon(' +
+          '0% 0%,100% 0%,' +
+          '100% ' + eY + '%,' +
+          '50% ' + cY + '%,' +
+          '0% ' + eY + '%)';
+
+        if (t < 1) requestAnimationFrame(framePortrait);
+        else splash.remove();
+      }
+      requestAnimationFrame(framePortrait);
     }
-    requestAnimationFrame(frame);
   }, BRAND_PAUSE);
 
-  // Fallback
-  setTimeout(function() { if (splash.parentNode) splash.remove(); }, BRAND_PAUSE + RISE_DURATION + 1000);
+  // Fallback safety remove
+  setTimeout(function() { if (splash.parentNode) splash.remove(); }, BRAND_PAUSE + TRAVEL_MS + 1500);
 })();
 
 // === Service Worker Registration ===
