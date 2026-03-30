@@ -478,31 +478,9 @@ function buildBriefing(){
     }
   });
 
-  // Crew — sorted by assigned door
+  // Crew — sorted by door order, with door badge
   const crewEl=el('briefCrew');crewEl.textContent='';
-  const doorOrder={'G':0,'D':1};
-  const sortedCrew=[...CREW].sort((a,b)=>{
-    const da=doorAssignments[a.name]||a.door;
-    const db=doorAssignments[b.name]||b.door;
-    const na=parseInt(da),nb=parseInt(db);
-    if(na!==nb)return na-nb;
-    return (doorOrder[da.slice(-1)]||0)-(doorOrder[db.slice(-1)]||0);
-  });
-  sortedCrew.forEach(c=>{
-    const row=document.createElement('div');row.className='crew-member';
-    const av=document.createElement('div');av.className='crew-avatar '+c.rankCls;
-    av.textContent=c.trigramme;
-    const info=document.createElement('div');info.className='crew-info';
-    const nm=document.createElement('div');nm.className='crew-name';nm.textContent=c.name;
-    const rl=document.createElement('div');rl.className='crew-role';rl.textContent=c.rank;
-    info.appendChild(nm);info.appendChild(rl);
-    const saved=doorAssignments[c.name];
-    const door=(saved&&DOORS.includes(saved))?saved:c.door;
-    const doorEl=document.createElement('div');doorEl.className='crew-door';doorEl.textContent=door;
-    row.appendChild(av);row.appendChild(info);row.appendChild(doorEl);
-    row.addEventListener('click',()=>showCrewDetail(c));
-    crewEl.appendChild(row);
-  });
+  buildCrewList(crewEl);
 
   // Cabin defects
   const defList=el('cabinDefects');defList.textContent='';
@@ -521,88 +499,203 @@ function buildBriefing(){
   notesEl.addEventListener('input',()=>{localStorage.setItem('cabin_briefing_notes',notesEl.value);idbSet('cabin_briefing_notes',notesEl.value);});
 }
 
-// Door assignment modal — mini cabin plan with doors on each side
-document.getElementById('assignDoorsBtn').addEventListener('click',()=>{
-  const grid=document.getElementById('doorGrid');grid.textContent='';
-  // Doors are paired: 1G/1D, 2G/2D, 3G/3D, 4G/4D — displayed top to bottom
-  const pairs=[['1G','1D'],['2G','2D'],['3G','3D'],['4G','4D']];
-  const sectionLabels={0:'BUSINESS',1:'PREMIUM',2:'ECONOMY AV.',3:'ECONOMY ARR.'};
-  pairs.forEach(([doorG,doorD],idx)=>{
-    // Section label
-    if(sectionLabels[idx]){const lbl=document.createElement('div');lbl.className='door-pair-label';lbl.textContent=sectionLabels[idx];grid.appendChild(lbl);}
-    const row=document.createElement('div');row.className='door-row';
-    // Left door (Gauche)
-    const slotG=buildDoorSlot(doorG);
-    // Label
-    const rlbl=document.createElement('div');rlbl.className='door-row-label';rlbl.textContent='Porte '+String(idx+1);
-    // Right door (Droite)
-    const slotD=buildDoorSlot(doorD);
-    row.appendChild(slotG);row.appendChild(rlbl);row.appendChild(slotD);
-    grid.appendChild(row);
+// === Crew list builder + inline door edit with drag & drop ===
+function getCrewSorted(){
+  const doorOrder={'G':0,'D':1};
+  return [...CREW].sort((a,b)=>{
+    const da=doorAssignments[a.name]||a.door;
+    const db=doorAssignments[b.name]||b.door;
+    const na=parseInt(da),nb=parseInt(db);
+    if(na!==nb)return na-nb;
+    return (doorOrder[da.slice(-1)]||0)-(doorOrder[db.slice(-1)]||0);
   });
-  document.getElementById('doorOverlay').classList.add('visible');
-  setTimeout(validateDoorAssignments,0);
-});
-function buildDoorSlot(doorName){
-  const slot=document.createElement('div');slot.className='door-slot';
-  const label=document.createElement('div');label.style.cssText='font-size:9px;color:var(--text-muted);letter-spacing:0.3px;';label.textContent=doorName;
-  const sel=document.createElement('select');sel.className='door-assign-select';sel.dataset.door=doorName;
-  const emptyOpt=document.createElement('option');emptyOpt.value='';emptyOpt.textContent='— Libre —';sel.appendChild(emptyOpt);
-  CREW.forEach(c=>{
-    const o=document.createElement('option');o.value=c.name;
-    o.textContent=c.trigramme+' — '+c.rank;
-    sel.appendChild(o);
-  });
-  // Find who's assigned to this door
-  const assigned=Object.entries(doorAssignments).find(([,d])=>d===doorName);
-  if(assigned)sel.value=assigned[0];
-  else{const def=CREW.find(c=>c.door===doorName);if(def)sel.value=def.name;}
-  if(sel.value)slot.classList.add('assigned');
-  sel.addEventListener('change',()=>{slot.classList.toggle('assigned',!!sel.value);validateDoorAssignments();});
-  slot.appendChild(label);slot.appendChild(sel);
-  return slot;
-}
-document.getElementById('doorClose').addEventListener('click',()=>document.getElementById('doorOverlay').classList.remove('visible'));
-document.getElementById('doorOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)document.getElementById('doorOverlay').classList.remove('visible');});
-// Validate door assignments in real-time
-function validateDoorAssignments(){
-  const warn=document.getElementById('doorWarning');
-  const selects=document.querySelectorAll('#doorGrid .door-assign-select');
-  const issues=[];
-  // Check unassigned doors
-  const unassigned=[];
-  selects.forEach(s=>{if(!s.value)unassigned.push(s.dataset.door);});
-  if(unassigned.length)issues.push('Portes non assignées : '+unassigned.join(', '));
-  // Check duplicates
-  const crewCount={};
-  selects.forEach(s=>{if(s.value){crewCount[s.value]=(crewCount[s.value]||0)+1;}});
-  Object.entries(crewCount).forEach(([name,count])=>{
-    if(count>1){const c=CREW.find(cr=>cr.name===name);issues.push((c?c.trigramme:name)+' assigné(e) à '+count+' portes');}
-  });
-  // Check unassigned crew
-  const assignedNames=new Set();selects.forEach(s=>{if(s.value)assignedNames.add(s.value);});
-  const unassignedCrew=CREW.filter(c=>!assignedNames.has(c.name));
-  if(unassignedCrew.length)issues.push('PN non assignés : '+unassignedCrew.map(c=>c.trigramme).join(', '));
-  if(issues.length){warn.textContent=issues.join(' · ');warn.style.display='';}
-  else{warn.style.display='none';warn.textContent='';}
 }
 
-document.getElementById('doorSave').addEventListener('click',()=>{
-  // Read all selects BEFORE closing overlay
-  const selects=Array.from(document.querySelectorAll('#doorGrid .door-assign-select'));
-  const newAssign={};
-  selects.forEach(s=>{
-    const crewName=s.value;const door=s.dataset.door;
-    if(crewName&&door)newAssign[crewName]=door;
+function buildCrewList(container){
+  container.textContent='';
+  const sorted=getCrewSorted();
+  sorted.forEach((c,i)=>{
+    const row=document.createElement('div');row.className='crew-member';
+    row.dataset.crewName=c.name;
+    // Door badge
+    const saved=doorAssignments[c.name];
+    const door=(saved&&DOORS.includes(saved))?saved:c.door;
+    const badge=document.createElement('div');badge.className='crew-door-badge';badge.textContent=door;
+    // Avatar
+    const av=document.createElement('div');av.className='crew-avatar '+c.rankCls;
+    av.textContent=c.trigramme;
+    // Info
+    const info=document.createElement('div');info.className='crew-info';
+    const nm=document.createElement('div');nm.className='crew-name';nm.textContent=c.name;
+    const rl=document.createElement('div');rl.className='crew-role';rl.textContent=c.rank;
+    info.appendChild(nm);info.appendChild(rl);
+    row.appendChild(badge);row.appendChild(av);row.appendChild(info);
+    row.addEventListener('click',()=>{if(!crewEditMode)showCrewDetail(c);});
+    container.appendChild(row);
   });
-  // Replace doorAssignments
+}
+
+// --- Door edit mode state ---
+var crewEditMode=false;
+var dragState=null; // {ghost, sourceRow, startY, currentGap}
+
+document.getElementById('editDoorsBtn').addEventListener('click',function(){
+  if(!crewEditMode) enterDoorEditMode();
+  else exitDoorEditMode();
+});
+
+function enterDoorEditMode(){
+  crewEditMode=true;
+  const btn=document.getElementById('editDoorsBtn');
+  btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Valider';
+  btn.classList.add('validate');
+  // Add editing class to all crew rows
+  document.querySelectorAll('#briefCrew .crew-member').forEach(row=>{
+    row.classList.add('editing');
+  });
+  // Attach touch listeners
+  attachDragListeners();
+}
+
+function exitDoorEditMode(){
+  crewEditMode=false;
+  const btn=document.getElementById('editDoorsBtn');
+  btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg> Modifier';
+  btn.classList.remove('validate');
+  // Read current DOM order and map to doors
+  const rows=document.querySelectorAll('#briefCrew .crew-member');
+  const newAssign={};
+  rows.forEach((row,i)=>{
+    const name=row.dataset.crewName;
+    if(name&&DOORS[i]) newAssign[name]=DOORS[i];
+  });
+  // Save
   Object.keys(doorAssignments).forEach(k=>delete doorAssignments[k]);
   Object.assign(doorAssignments,newAssign);
   lsSet('cabin_doors',doorAssignments);
-  // Close overlay and rebuild
-  document.getElementById('doorOverlay').classList.remove('visible');
-  buildBriefing();buildCabinPlan();
-});
+  // Rebuild crew list with updated badges + rebuild cabin plan
+  const crewEl=document.getElementById('briefCrew');
+  buildCrewList(crewEl);
+  buildCabinPlan();
+  detachDragListeners();
+}
+
+// --- Touch drag & drop (iOS style) ---
+var longPressTimer=null;
+var touchHandlers={};
+
+function attachDragListeners(){
+  const container=document.getElementById('briefCrew');
+  touchHandlers.start=function(e){
+    const row=e.target.closest('.crew-member.editing');
+    if(!row)return;
+    const touch=e.touches[0];
+    const startY=touch.clientY;
+    longPressTimer=setTimeout(function(){
+      startDrag(row,touch);
+    },400);
+    // Store to cancel on move before threshold
+    touchHandlers._startY=startY;
+    touchHandlers._row=row;
+  };
+  touchHandlers.move=function(e){
+    if(longPressTimer){
+      // Cancel long press if finger moves too much before activation
+      const dy=Math.abs(e.touches[0].clientY-touchHandlers._startY);
+      if(dy>10){clearTimeout(longPressTimer);longPressTimer=null;}
+    }
+    if(dragState){
+      e.preventDefault();
+      moveDrag(e.touches[0]);
+    }
+  };
+  touchHandlers.end=function(e){
+    if(longPressTimer){clearTimeout(longPressTimer);longPressTimer=null;}
+    if(dragState) endDrag();
+  };
+  container.addEventListener('touchstart',touchHandlers.start,{passive:true});
+  container.addEventListener('touchmove',touchHandlers.move,{passive:false});
+  container.addEventListener('touchend',touchHandlers.end,{passive:true});
+  container.addEventListener('touchcancel',touchHandlers.end,{passive:true});
+}
+
+function detachDragListeners(){
+  const container=document.getElementById('briefCrew');
+  if(touchHandlers.start){
+    container.removeEventListener('touchstart',touchHandlers.start);
+    container.removeEventListener('touchmove',touchHandlers.move);
+    container.removeEventListener('touchend',touchHandlers.end);
+    container.removeEventListener('touchcancel',touchHandlers.end);
+  }
+}
+
+function startDrag(row,touch){
+  try{navigator.vibrate(10);}catch(e){}
+  // Create ghost
+  const rect=row.getBoundingClientRect();
+  const ghost=row.cloneNode(true);
+  ghost.className='crew-drag-ghost';
+  ghost.style.width=rect.width+'px';
+  ghost.style.height=rect.height+'px';
+  ghost.style.left=rect.left+'px';
+  ghost.style.top=rect.top+'px';
+  ghost.style.background=getComputedStyle(document.documentElement).getPropertyValue('--bg-surface')||'#1a1a2e';
+  document.body.appendChild(ghost);
+  row.classList.add('dragging');
+  row.classList.remove('editing'); // stop wiggle on placeholder
+  dragState={ghost:ghost,sourceRow:row,startY:touch.clientY,offsetY:touch.clientY-rect.top,currentGapRow:null};
+}
+
+function moveDrag(touch){
+  if(!dragState)return;
+  const ghost=dragState.ghost;
+  ghost.style.top=(touch.clientY-dragState.offsetY)+'px';
+  // Find which row the finger is over
+  const container=document.getElementById('briefCrew');
+  const rows=Array.from(container.querySelectorAll('.crew-member:not(.dragging)'));
+  // Clear previous gap
+  rows.forEach(r=>r.classList.remove('drag-gap'));
+  dragState.currentGapRow=null;
+  const fingerY=touch.clientY;
+  for(var i=0;i<rows.length;i++){
+    const r=rows[i];
+    const rRect=r.getBoundingClientRect();
+    const mid=rRect.top+rRect.height/2;
+    if(fingerY<mid){
+      r.classList.add('drag-gap');
+      dragState.currentGapRow=r;
+      break;
+    }
+  }
+}
+
+function endDrag(){
+  if(!dragState)return;
+  const container=document.getElementById('briefCrew');
+  const ghost=dragState.ghost;
+  const srcRow=dragState.sourceRow;
+  const gapRow=dragState.currentGapRow;
+  // Remove ghost
+  ghost.remove();
+  // Remove gap classes
+  container.querySelectorAll('.crew-member').forEach(r=>r.classList.remove('drag-gap'));
+  // Move DOM node
+  srcRow.classList.remove('dragging');
+  srcRow.classList.add('editing');
+  if(gapRow){
+    container.insertBefore(srcRow,gapRow);
+  } else {
+    // Dropped below all → append at end
+    container.appendChild(srcRow);
+  }
+  // Update door badges based on new order
+  const allRows=container.querySelectorAll('.crew-member');
+  allRows.forEach((row,i)=>{
+    const badge=row.querySelector('.crew-door-badge');
+    if(badge&&DOORS[i]) badge.textContent=DOORS[i];
+  });
+  dragState=null;
+}
 
 // Crew detail — opens in the pax detail panel (passengers tab)
 function showCrewDetail(c){

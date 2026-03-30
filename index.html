@@ -145,7 +145,10 @@
           <div class="brief-card-title">&Eacute;quipage cabine
             <span class="crew-btns">
               <button class="inline-btn" id="restTourBtn">Tour de repos</button>
-              <button class="inline-btn" id="assignDoorsBtn">Assigner aux portes</button>
+              <button class="crew-edit-btn" id="editDoorsBtn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
+                Modifier
+              </button>
             </span>
           </div>
           <div class="brief-crew-list" id="briefCrew"></div>
@@ -443,24 +446,7 @@
     </div>
   </div>
 
-  <!-- Door assignment modal -->
-  <div class="pax-panel-overlay" id="doorOverlay">
-    <div class="pax-panel" style="max-width:480px">
-      <div class="pax-panel-header">
-        <div class="pax-panel-title"><div class="pax-name">Assignation aux portes</div></div>
-        <div class="pax-panel-actions">
-          <button class="pax-action-btn close-btn" id="doorClose">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-          </button>
-        </div>
-      </div>
-      <div class="pax-panel-body">
-        <div class="door-grid" id="doorGrid"></div>
-        <div class="door-warning" id="doorWarning" style="display:none"></div>
-        <button class="pax-save-note" id="doorSave" style="width:100%;margin-top:12px">Enregistrer</button>
-      </div>
-    </div>
-  </div>
+  <!-- Door assignment: now inline in crew card (drag & drop) -->
 
   <nav class="tab-bar" id="tabBar">
     <button class="tab active" data-module="briefing">
