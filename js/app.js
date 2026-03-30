@@ -7,7 +7,7 @@
   var splashLoader = document.getElementById('splash-loader');
 
   var BRAND_PAUSE = 3000;    // 3s brand + loader visible
-  var TRAVEL_MS   = 1600;    // 1.6s plane traversal
+  var TRAVEL_MS   = 1000;    // 1s plane traversal
   var FADE_IN     = 500;     // plane opacity fade-in
   var WING_MID    = 0.38;    // wing position from nose (% of plane length)
 
