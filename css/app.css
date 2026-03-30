@@ -163,7 +163,7 @@
 /* Plane image — portrait: full width bottom-to-top */
 #splash-plane-img {
   display: block;
-  width: 100%;
+  width: 115%;
   height: auto;
   position: absolute;
   left: 50%;
@@ -171,10 +171,10 @@
   transform: translate(-50%, -50%);
 }
 
-/* Landscape: rotate plane 90° CW (nose → right), size to viewport height */
+/* Landscape: rotate plane 90° CW (nose → right), size to viewport height + overflow */
 #splash-plane.landscape #splash-plane-img {
   width: auto;
-  height: 100vh;
+  height: 115vh;
   transform: translate(-50%, -50%) rotate(90deg);
 }
 
