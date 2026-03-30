@@ -740,7 +740,12 @@ button, [role="button"] { min-height: 36px; min-width: 36px; }
 .crew-name { font-size: 13px; font-weight: 600; color: white; }
 .crew-role { font-size: 10px; color: var(--corsair-beige-sable); letter-spacing: 0.5px; }
 
-/* Door badge — small colored square */
+/* Crew row: two-part layout — fixed door badge + draggable crew card */
+.crew-row {
+  display: flex; align-items: center; gap: 8px;
+}
+
+/* Door badge — small colored square (fixed, never moves) */
 .crew-door-badge {
   width: 28px; height: 28px; border-radius: 7px; flex-shrink: 0;
   display: flex; align-items: center; justify-content: center;
@@ -748,26 +753,35 @@ button, [role="button"] { min-height: 36px; min-width: 36px; }
   background: var(--corsair-bleu-economie);
 }
 
-/* Edit mode: wiggle animation */
-.crew-member.editing {
-  animation: crew-wiggle 0.25s ease-in-out infinite alternate;
-  cursor: grab;
-}
-.crew-member.editing:nth-child(even) { animation-delay: 0.12s; }
-@keyframes crew-wiggle {
-  from { transform: rotate(-0.8deg); }
-  to   { transform: rotate(0.8deg); }
+/* Crew card (the draggable part) */
+.crew-member {
+  display: flex; align-items: center; gap: 10px; padding: 8px 10px;
+  background: rgba(255,255,255,0.03); border-radius: 10px;
+  transition: opacity 0.2s ease, box-shadow 0.2s ease;
+  position: relative; flex: 1; min-width: 0;
+  -webkit-user-select: none; user-select: none;
 }
 
-/* Dragging: placeholder ghost */
-.crew-member.dragging {
-  opacity: 0.25;
-  animation: none;
+/* Grip handle — hidden by default, shown in edit mode */
+.crew-grip {
+  display: none;
+  flex-shrink: 0; width: 20px; height: 20px;
+  color: var(--text-muted); opacity: 0.5;
+  touch-action: none;
 }
-.crew-member.drag-gap {
-  margin-top: 54px;
-  transition: margin-top 0.2s ease;
+.crew-row.editing .crew-grip { display: flex; }
+.crew-row.editing .crew-member { cursor: grab; background: rgba(255,255,255,0.06); }
+
+/* Dragging: placeholder */
+.crew-row.dragging .crew-member {
+  opacity: 0.2;
+  border: 1.5px dashed rgba(82,167,190,0.3);
+  background: transparent;
 }
+.crew-row.dragging .crew-member > * { visibility: hidden; }
+
+/* Gap indicator for drop target */
+.crew-row.drag-gap { margin-top: 52px; transition: margin-top 0.15s ease; }
 
 /* Floating ghost following finger */
 .crew-drag-ghost {
@@ -779,6 +793,7 @@ button, [role="button"] { min-height: 36px; min-width: 36px; }
   box-shadow: 0 8px 32px rgba(0,0,0,0.35);
   border-radius: 10px;
   will-change: transform;
+  display: flex; align-items: center; gap: 10px;
 }
 
 /* Edit button styling */
