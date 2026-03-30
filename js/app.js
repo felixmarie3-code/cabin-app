@@ -1140,25 +1140,7 @@ const CHECKLISTS = {
   },
   'Annonces': {
     icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>', color: 'annonces',
-    subs: {
-      'Bienvenue \u00e0 bord': [
-        'FR \u2014 Mesdames et Messieurs, bienvenue \u00e0 bord de ce vol CORSAIR SS 901 \u00e0 destination de La R\u00e9union. Notre temps de vol pr\u00e9vu est de 11 heures et 15 minutes.',
-        'EN \u2014 Ladies and Gentlemen, welcome aboard this CORSAIR flight SS 901 to R\u00e9union Island. Our estimated flight time is 11 hours and 15 minutes.',
-        'D\u00e9mo s\u00e9curit\u00e9 / vid\u00e9o lanc\u00e9e'
-      ],
-      'Service en vol': [
-        'FR \u2014 Nous allons proc\u00e9der au service des boissons suivi du repas. N\'h\u00e9sitez pas \u00e0 solliciter notre \u00e9quipage.',
-        'EN \u2014 We will now begin our beverage and meal service. Please do not hesitate to call our crew.',
-        'FR \u2014 La vente \u00e0 bord est disponible. D\u00e9couvrez notre catalogue duty-free CORSAIR.',
-        'EN \u2014 Our onboard duty-free shop is now open. Please browse our CORSAIR catalog.'
-      ],
-      'Pr\u00e9paration arriv\u00e9e': [
-        'FR \u2014 Mesdames et Messieurs, nous commen\u00e7ons notre descente vers La R\u00e9union. Veuillez regagner votre si\u00e8ge et attacher votre ceinture.',
-        'EN \u2014 Ladies and Gentlemen, we are beginning our descent into R\u00e9union. Please return to your seat and fasten your seatbelt.',
-        'FR \u2014 La temp\u00e9rature au sol est de 28 degr\u00e9s. L\'heure locale est [heure]. Nous esp\u00e9rons que vous avez pass\u00e9 un agr\u00e9able voyage.',
-        'EN \u2014 The local temperature is 28 degrees. Local time is [time]. We hope you enjoyed your flight with CORSAIR.'
-      ]
-    }
+    isManual: true
   },
   'M\u00e9mo': {
     icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>', color: 'memo',
@@ -1199,12 +1181,15 @@ function buildChecklists(){
   const tiles=document.getElementById('checklistTiles');tiles.textContent='';
   let totalItems=0,doneItems=0;
   Object.entries(CHECKLISTS).forEach(([catName,cat])=>{
+    // Special case: Annonces tile uses ANNONCES_MANUAL data
+    if(cat.isManual){
+      buildAnnoncesTile(tiles,catName,cat);
+      return;
+    }
     const tile=document.createElement('div');tile.className='cl-tile';
-    // Header: icon + title + badge
     const header=document.createElement('div');header.className='cl-tile-header';
     const icon=document.createElement('div');icon.className='cl-tile-icon';icon.innerHTML=cat.icon;
     const title=document.createElement('div');title.className='cl-tile-title';title.textContent=catName;
-    // Count total for this category
     let catTotal=0,catDone=0;
     Object.entries(cat.subs).forEach(([subName,items])=>{
       catTotal+=items.length;
@@ -1215,7 +1200,6 @@ function buildChecklists(){
     badge.textContent=catDone+'/'+catTotal;
     header.appendChild(icon);header.appendChild(title);header.appendChild(badge);
     tile.appendChild(header);
-    // Sub-items as list rows
     const subs=document.createElement('div');subs.className='cl-subtiles';
     Object.entries(cat.subs).forEach(([subName,items])=>{
       const subTile=document.createElement('div');subTile.className='cl-subtile';
@@ -1234,6 +1218,41 @@ function buildChecklists(){
     tile.appendChild(subs);tiles.appendChild(tile);
   });
   document.getElementById('checklistBadge').textContent=doneItems+' / '+totalItems;
+}
+
+// Build the Annonces tile using ANNONCES_MANUAL chapters
+function buildAnnoncesTile(container,catName,cat){
+  if(typeof ANNONCES_MANUAL==='undefined')return;
+  // One tile per chapter
+  ANNONCES_MANUAL.forEach(function(ch){
+    var tile=document.createElement('div');tile.className='cl-tile';
+    var header=document.createElement('div');header.className='cl-tile-header';
+    var iconWrap=document.createElement('div');iconWrap.className='cl-tile-icon';
+    iconWrap.innerHTML=ANNONCE_ICONS[ch.icon]||ANNONCE_ICONS['book-open'];
+    var title=document.createElement('div');title.className='cl-tile-title';title.textContent=ch.chapter;
+    var badge=document.createElement('div');badge.className='cl-tile-badge';
+    badge.textContent=ch.sections.length;
+    header.appendChild(iconWrap);header.appendChild(title);header.appendChild(badge);
+    tile.appendChild(header);
+    var subs=document.createElement('div');subs.className='cl-subtiles';
+    ch.sections.forEach(function(sec){
+      var sub=document.createElement('div');sub.className='cl-subtile';
+      var st=document.createElement('div');st.className='cl-subtile-title';st.textContent=sec.title;
+      var right=document.createElement('div');right.className='cl-subtile-right';
+      if(sec.tags&&sec.tags.length){
+        sec.tags.forEach(function(t){
+          var tag=document.createElement('span');tag.className='annonce-tag '+t.replace(/\s+/g,'-');
+          tag.textContent=t;right.appendChild(tag);
+        });
+      }
+      var arrow=document.createElement('div');arrow.className='cl-subtile-arrow';arrow.textContent='\u203A';
+      right.appendChild(arrow);
+      sub.appendChild(st);sub.appendChild(right);
+      sub.addEventListener('click',function(){openAnnonceDetail(ch.chapter,sec);});
+      subs.appendChild(sub);
+    });
+    tile.appendChild(subs);container.appendChild(tile);
+  });
 }
 
 function openChecklistDetail(cat,sub,items){
@@ -1258,15 +1277,10 @@ function openChecklistDetail(cat,sub,items){
 }
 document.getElementById('checklistBack').addEventListener('click',function(){
   document.getElementById('checklistTiles').style.display='';
-  document.getElementById('annoncesTiles').style.display='';
-  document.getElementById('annoncesSectionTitle').style.display='';
   document.getElementById('checklistDetail').style.display='none';
 });
 
-// ============================================================
-// ANNONCES MANUAL — build chapter cards
-// ============================================================
-// Lucide-style SVG icons keyed by icon name
+// Lucide-style SVG icons for annonces chapters
 var ANNONCE_ICONS={
   'book-open':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>',
   'languages':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg>',
@@ -1278,47 +1292,10 @@ var ANNONCE_ICONS={
   'alert-circle':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>'
 };
 
-function buildAnnonces(){
-  if(typeof ANNONCES_MANUAL==='undefined')return;
-  var tiles=document.getElementById('annoncesTiles');tiles.textContent='';
-  ANNONCES_MANUAL.forEach(function(ch){
-    var tile=document.createElement('div');tile.className='cl-tile';
-    // Header
-    var header=document.createElement('div');header.className='cl-tile-header';
-    var iconWrap=document.createElement('div');iconWrap.className='cl-tile-icon';
-    iconWrap.innerHTML=ANNONCE_ICONS[ch.icon]||ANNONCE_ICONS['book-open'];
-    var title=document.createElement('div');title.className='cl-tile-title';title.textContent=ch.chapter;
-    var badge=document.createElement('div');badge.className='cl-tile-badge';
-    badge.textContent=ch.sections.length+' annonces';
-    header.appendChild(iconWrap);header.appendChild(title);header.appendChild(badge);
-    tile.appendChild(header);
-    // Sub-tiles (sections)
-    var subs=document.createElement('div');subs.className='cl-subtiles';
-    ch.sections.forEach(function(sec){
-      var sub=document.createElement('div');sub.className='cl-subtile';
-      var st=document.createElement('div');st.className='cl-subtile-title';st.textContent=sec.title;
-      var right=document.createElement('div');right.className='cl-subtile-right';
-      // Tags
-      if(sec.tags&&sec.tags.length){
-        sec.tags.forEach(function(t){
-          var tag=document.createElement('span');tag.className='annonce-tag '+t.replace(/\s+/g,'-');
-          tag.textContent=t;right.appendChild(tag);
-        });
-      }
-      var arrow=document.createElement('div');arrow.className='cl-subtile-arrow';arrow.textContent='\u203A';
-      right.appendChild(arrow);
-      sub.appendChild(st);sub.appendChild(right);
-      sub.addEventListener('click',function(){openAnnonceDetail(ch.chapter,sec);});
-      subs.appendChild(sub);
-    });
-    tile.appendChild(subs);tiles.appendChild(tile);
-  });
-}
+// buildAnnonces is now integrated into buildChecklists via buildAnnoncesTile
 
 function openAnnonceDetail(chapterTitle,sec){
   document.getElementById('checklistTiles').style.display='none';
-  document.getElementById('annoncesTiles').style.display='none';
-  document.getElementById('annoncesSectionTitle').style.display='none';
   var detail=document.getElementById('checklistDetail');detail.style.display='';
   document.getElementById('checklistDetailTitle').textContent=sec.title;
   var list=document.getElementById('checklistDetailItems');list.textContent='';
@@ -1331,10 +1308,69 @@ function openAnnonceDetail(chapterTitle,sec){
     });
     list.appendChild(tagRow);
   }
-  // Content
+  // Content — split by \n\n blocks, detect English blocks and italicize
   var content=document.createElement('div');content.className='annonce-content';
-  content.textContent=sec.content;
+  var blocks=sec.content.split('\n\n');
+  blocks.forEach(function(block,idx){
+    if(idx>0){
+      var spacer=document.createElement('div');spacer.style.height='12px';
+      content.appendChild(spacer);
+    }
+    var isEnglish=isEnglishBlock(block);
+    if(isEnglish){
+      var em=document.createElement('em');em.style.display='block';
+      em.textContent=block;
+      content.appendChild(em);
+    } else {
+      var span=document.createElement('span');
+      span.textContent=block;
+      content.appendChild(span);
+    }
+  });
   list.appendChild(content);
+}
+
+// Detect if a text block is English
+function isEnglishBlock(text){
+  var t=text.trim();
+  // Common English starts
+  if(/^Ladies and Gentlemen/i.test(t))return true;
+  if(/^We /i.test(t)&&!/^We\s/.test(t)===false)return true;
+  if(/^Please /i.test(t))return true;
+  if(/^Thank you/i.test(t))return true;
+  if(/^Your /i.test(t))return true;
+  if(/^The /i.test(t)&&t.length>20)return true;
+  if(/^In the event/i.test(t))return true;
+  if(/^Due to/i.test(t))return true;
+  if(/^May I/i.test(t))return true;
+  if(/^Would you/i.test(t))return true;
+  if(/^Are you/i.test(t))return true;
+  if(/^Do you/i.test(t))return true;
+  if(/^Have you/i.test(t))return true;
+  if(/^Could I/i.test(t))return true;
+  if(/^Good morning/i.test(t))return true;
+  if(/^Captain /i.test(t))return true;
+  if(/^Passengers /i.test(t))return true;
+  if(/^To all passengers/i.test(t))return true;
+  if(/^Cabin crew/i.test(t))return true;
+  if(/^WIFI is/i.test(t))return true;
+  if(/^We inform you/i.test(t))return true;
+  if(/^Drinks will/i.test(t))return true;
+  if(/^Headphones/i.test(t))return true;
+  if(/^You are travel/i.test(t))return true;
+  if(/^If ever you/i.test(t))return true;
+  if(/^Cases of Mpox/i.test(t))return true;
+  if(/^For future/i.test(t))return true;
+  if(/^If you have any/i.test(t))return true;
+  if(/^Buses operating/i.test(t))return true;
+  if(/^Further to/i.test(t))return true;
+  if(/^Flight and duty/i.test(t))return true;
+  if(/^Following on/i.test(t))return true;
+  if(/^The Captain/i.test(t))return true;
+  // Heuristic: count English indicator words vs French
+  var enWords=(t.match(/\b(the|and|you|your|please|that|this|with|from|have|will|are|for|our|not|can|all|must|been|seat|belt|cabin|crew|board|flight|passengers)\b/gi)||[]).length;
+  var frWords=(t.match(/\b(les|des|nous|vous|est|une|sur|dans|pour|que|votre|notre|sont|pas|avec|aux|ses|qui|par|ont|mesdames|messieurs|bord|ceinture|siege|cabine)\b/gi)||[]).length;
+  return enWords>frWords&&enWords>=3;
 }
 
 // ============================================================
@@ -1784,7 +1820,7 @@ function tickTimer(){
 
 // Header date (28MAR26 format)
 (function(){const d=new Date();const m=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];document.getElementById('headerDate').textContent=String(d.getDate()).padStart(2,'0')+m[d.getMonth()]+String(d.getFullYear()).slice(-2);})();
-buildBriefing();buildCabinPlan();cacheFilterBadges();cacheTotalSeats();buildPaxList();buildMeals();buildTimeline();buildChecklists();buildAnnonces();buildReport();updateClocks();updateAppBadge();renderNotifCenter();updateNotifBadge();
+buildBriefing();buildCabinPlan();cacheFilterBadges();cacheTotalSeats();buildPaxList();buildMeals();buildTimeline();buildChecklists();buildReport();updateClocks();updateAppBadge();renderNotifCenter();updateNotifBadge();
 
 // Notification permission prompt on launch
 (function(){

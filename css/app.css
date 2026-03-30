@@ -1208,14 +1208,6 @@ button, [role="button"] { min-height: 36px; min-width: 36px; }
 }
 .door-select option { background: var(--bg-surface); }
 
-/* === Annonces section title === */
-.annonces-section-title {
-  font-family: 'Gilroy', Arial, sans-serif;
-  font-size: 14px; font-weight: 700; color: var(--text-muted);
-  letter-spacing: 1px; text-transform: uppercase;
-  margin: 24px 0 8px; padding: 0 4px;
-}
-
 /* Annonce detail content */
 .annonce-content {
   font-size: 13px; line-height: 1.6; color: var(--text);
