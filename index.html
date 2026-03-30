@@ -198,11 +198,15 @@
     <!-- ==================== CHECKLIST (2e position) ==================== -->
     <section class="module" id="mod-checklist">
       <div class="module-header">
-        <h2>Proc&eacute;dures &amp; Checklists</h2>
+        <h2>Proc&eacute;dures &amp; Annonces</h2>
         <span class="badge" id="checklistBadge">0 / 0</span>
       </div>
+      <!-- Checklists -->
       <div class="checklist-tiles" id="checklistTiles"></div>
-      <!-- Checklist detail sub-view -->
+      <!-- Annonces du manuel -->
+      <h3 class="annonces-section-title" id="annoncesSectionTitle">Manuel d'annonces PNC</h3>
+      <div class="checklist-tiles" id="annoncesTiles"></div>
+      <!-- Detail sub-view (shared by checklists + annonces) -->
       <div class="checklist-detail" id="checklistDetail" style="display:none">
         <button class="back-btn" id="checklistBack">&larr; Retour</button>
         <h3 class="checklist-detail-title" id="checklistDetailTitle"></h3>
@@ -553,6 +557,7 @@
     </div>
   </div>
 
+  <script src="js/annonces.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

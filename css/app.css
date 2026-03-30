@@ -1208,6 +1208,28 @@ button, [role="button"] { min-height: 36px; min-width: 36px; }
 }
 .door-select option { background: var(--bg-surface); }
 
+/* === Annonces section title === */
+.annonces-section-title {
+  font-family: 'Gilroy', Arial, sans-serif;
+  font-size: 14px; font-weight: 700; color: var(--text-muted);
+  letter-spacing: 1px; text-transform: uppercase;
+  margin: 24px 0 8px; padding: 0 4px;
+}
+
+/* Annonce detail content */
+.annonce-content {
+  font-size: 13px; line-height: 1.6; color: var(--text);
+  white-space: pre-line; padding: 12px 16px;
+}
+.annonce-tag {
+  display: inline-block; font-size: 9px; font-weight: 700;
+  letter-spacing: 0.5px; text-transform: uppercase;
+  padding: 2px 8px; border-radius: 6px; margin-right: 6px; margin-bottom: 4px;
+}
+.annonce-tag.pre-recorded { background: rgba(82,167,190,0.15); color: var(--corsair-bleu-economie); }
+.annonce-tag.pop-up { background: rgba(200,184,154,0.2); color: var(--corsair-beige-sable); }
+.annonce-tag.effectuer { background: rgba(37,122,108,0.15); color: var(--corsair-vert-emeraude); }
+
 /* === Checklist Tiles === */
 .checklist-tiles { display: flex; flex-direction: column; gap: 12px; }
 .cl-tile {

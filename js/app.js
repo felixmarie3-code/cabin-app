@@ -1238,6 +1238,8 @@ function buildChecklists(){
 
 function openChecklistDetail(cat,sub,items){
   document.getElementById('checklistTiles').style.display='none';
+  document.getElementById('annoncesTiles').style.display='none';
+  document.getElementById('annoncesSectionTitle').style.display='none';
   const detail=document.getElementById('checklistDetail');detail.style.display='';
   document.getElementById('checklistDetailTitle').textContent=cat+' \u2014 '+sub;
   const list=document.getElementById('checklistDetailItems');list.textContent='';
@@ -1254,7 +1256,86 @@ function openChecklistDetail(cat,sub,items){
     list.appendChild(item);
   });
 }
-document.getElementById('checklistBack').addEventListener('click',()=>{document.getElementById('checklistTiles').style.display='';document.getElementById('checklistDetail').style.display='none';});
+document.getElementById('checklistBack').addEventListener('click',function(){
+  document.getElementById('checklistTiles').style.display='';
+  document.getElementById('annoncesTiles').style.display='';
+  document.getElementById('annoncesSectionTitle').style.display='';
+  document.getElementById('checklistDetail').style.display='none';
+});
+
+// ============================================================
+// ANNONCES MANUAL — build chapter cards
+// ============================================================
+// Lucide-style SVG icons keyed by icon name
+var ANNONCE_ICONS={
+  'book-open':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>',
+  'languages':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg>',
+  'crown':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7z"/><path d="M5 16h14v4H5z"/></svg>',
+  'plane-takeoff':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M2 22h20"/><path d="M6.36 17.4 4 17l-2-4 1.1-.55a2 2 0 0 1 1.8 0l.17.1a2 2 0 0 0 1.8 0L8 12 5 6l.9-.45a2 2 0 0 1 2.09.2l4.02 3a2 2 0 0 0 2.1.2L22 4.5"/></svg>',
+  'plane':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.4-.1.9.3 1.1l5.2 3L6 14l-2-1c-.4-.2-.9-.1-1.1.3l-.4.6c-.2.4-.1.8.2 1.1l4 3 3 4c.3.3.7.4 1.1.2l.6-.4c.4-.2.5-.7.3-1.1l-1-2 2.9-2.9 3 5.2c.2.4.7.5 1.1.3l.5-.3c.4-.2.6-.6.5-1.1z"/></svg>',
+  'alert-triangle':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+  'plane-landing':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M2 22h20"/><path d="M3.77 10.77 2 9l2-4.5 1.1.55c.55.28.9.84.9 1.45s.35 1.17.9 1.45L8 8.5l3-6 1.05.53a2 2 0 0 1 1.09 1.52l.72 5.4a2 2 0 0 0 1.09 1.52l7.55 3.78"/></svg>',
+  'alert-circle':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>'
+};
+
+function buildAnnonces(){
+  if(typeof ANNONCES_MANUAL==='undefined')return;
+  var tiles=document.getElementById('annoncesTiles');tiles.textContent='';
+  ANNONCES_MANUAL.forEach(function(ch){
+    var tile=document.createElement('div');tile.className='cl-tile';
+    // Header
+    var header=document.createElement('div');header.className='cl-tile-header';
+    var iconWrap=document.createElement('div');iconWrap.className='cl-tile-icon';
+    iconWrap.innerHTML=ANNONCE_ICONS[ch.icon]||ANNONCE_ICONS['book-open'];
+    var title=document.createElement('div');title.className='cl-tile-title';title.textContent=ch.chapter;
+    var badge=document.createElement('div');badge.className='cl-tile-badge';
+    badge.textContent=ch.sections.length+' annonces';
+    header.appendChild(iconWrap);header.appendChild(title);header.appendChild(badge);
+    tile.appendChild(header);
+    // Sub-tiles (sections)
+    var subs=document.createElement('div');subs.className='cl-subtiles';
+    ch.sections.forEach(function(sec){
+      var sub=document.createElement('div');sub.className='cl-subtile';
+      var st=document.createElement('div');st.className='cl-subtile-title';st.textContent=sec.title;
+      var right=document.createElement('div');right.className='cl-subtile-right';
+      // Tags
+      if(sec.tags&&sec.tags.length){
+        sec.tags.forEach(function(t){
+          var tag=document.createElement('span');tag.className='annonce-tag '+t.replace(/\s+/g,'-');
+          tag.textContent=t;right.appendChild(tag);
+        });
+      }
+      var arrow=document.createElement('div');arrow.className='cl-subtile-arrow';arrow.textContent='\u203A';
+      right.appendChild(arrow);
+      sub.appendChild(st);sub.appendChild(right);
+      sub.addEventListener('click',function(){openAnnonceDetail(ch.chapter,sec);});
+      subs.appendChild(sub);
+    });
+    tile.appendChild(subs);tiles.appendChild(tile);
+  });
+}
+
+function openAnnonceDetail(chapterTitle,sec){
+  document.getElementById('checklistTiles').style.display='none';
+  document.getElementById('annoncesTiles').style.display='none';
+  document.getElementById('annoncesSectionTitle').style.display='none';
+  var detail=document.getElementById('checklistDetail');detail.style.display='';
+  document.getElementById('checklistDetailTitle').textContent=sec.title;
+  var list=document.getElementById('checklistDetailItems');list.textContent='';
+  // Tags row
+  if(sec.tags&&sec.tags.length){
+    var tagRow=document.createElement('div');tagRow.style.cssText='margin-bottom:8px;';
+    sec.tags.forEach(function(t){
+      var tag=document.createElement('span');tag.className='annonce-tag '+t.replace(/\s+/g,'-');
+      tag.textContent=t;tagRow.appendChild(tag);
+    });
+    list.appendChild(tagRow);
+  }
+  // Content
+  var content=document.createElement('div');content.className='annonce-content';
+  content.textContent=sec.content;
+  list.appendChild(content);
+}
 
 // ============================================================
 // REPORT
@@ -1703,7 +1784,7 @@ function tickTimer(){
 
 // Header date (28MAR26 format)
 (function(){const d=new Date();const m=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];document.getElementById('headerDate').textContent=String(d.getDate()).padStart(2,'0')+m[d.getMonth()]+String(d.getFullYear()).slice(-2);})();
-buildBriefing();buildCabinPlan();cacheFilterBadges();cacheTotalSeats();buildPaxList();buildMeals();buildTimeline();buildChecklists();buildReport();updateClocks();updateAppBadge();renderNotifCenter();updateNotifBadge();
+buildBriefing();buildCabinPlan();cacheFilterBadges();cacheTotalSeats();buildPaxList();buildMeals();buildTimeline();buildChecklists();buildAnnonces();buildReport();updateClocks();updateAppBadge();renderNotifCenter();updateNotifBadge();
 
 // Notification permission prompt on launch
 (function(){

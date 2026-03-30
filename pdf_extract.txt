@@ -1,0 +1,1271 @@
+I have now extracted the complete PDF content (80 pages). Here is the full structure and content of the Corsair airline cabin crew announcements manual:
+
+---
+
+# MANUEL D'ANNONCES PNC
+**Revision Number:** 1.0
+**Revision Date:** 19 MAR 2026
+
+---
+
+## CHAPTER 1 - INTRODUCTION
+
+### 1.1 GENERALE
+
+Toutes les annonces peuvent etre effectuees par le CCP, le CC et tous PNC reglementaires.
+La table des matieres vous est proposee dans l'ordre chronologique d'un vol. Vous trouverez des pictogrammes sur les pages ainsi qu'un code couleur dans les tables de matieres et Index vous aidant a identifier rapidement le support de l'annonce :
+- Des annonces pre enregistrees dans le systeme IFE (speaker icon)
+- Des POP-UP defilant sur les ecrans de notre clientele (speech bubble icon)
+- Les modifications sont identifiees a gauche du paragraphe.
+
+N.B. : en cas de vol affrete requerant une specificite de langue, les annonces seront disponibles, dans la mesure du possible, dans le dossier de vol.
+
+### 1.2 CONSEILS PRATIQUES
+
+Ne parlez pas trop pres du micro -- Afin d'eviter les chuintements.
+Souriez -- Un sourire s'entend toujours.
+Soyez vivant -- Insistez sur les mots clefs, respectez la ponctuation et les liaisons, le ton utilise suscitera de l'attention a votre information, gardez la tete levee lorsque vous lisez l'annonce.
+Lisez -- Ne faites pas confiance a votre memoire.
+Presentez des excuses -- En cas d'erreur ou de lapsus dans votre annonce.
+Preparez votre texte en cas d'annonce improvisee.
+
+### 1.3 LEXIQUE ANGLAIS AERONAUTIQUE / SECOURISME
+
+**Technical crew:** Captain, First Officer, Flight Engineer
+**Cabin crew:** Instructor, Chief Purser, Purser, Flight Attendants (Hostess, Steward)
+**Ground staff:** Station Manager, Coordinator, Ground Mechanic, Clearing
+**The plane:** Cockpit, Engine, Landing gear, Wing, Spoilers, Rudder, Ailerons, Windows
+
+**Appel d'un client souffrant:**
+May I help you?
+Can I be of any assistance Madam / Sir?
+Is everything all right?
+Are you feeling all right Madam / Sir?
+I don't feel well / I don't feel too good (americain).
+I feel sick / awful / hot / cold / feverish / dizzy.
+
+---
+
+## CHAPTER 2 - LEXIQUE ANGLAIS SECOURISME / COMMERCIAL
+
+### 2.1 DIAGNOSTIC
+
+Are you in pain / diabetic / nervous /pregnant?
+Where does it hurt? Does it hurt here?
+What are the symptoms? Where exactly?
+Do you have heart problems?
+Have you had this problem before?
+Have you got a headache / toothache / stomach ache / a pain in the chest?
+Do you feel dizzy?
+Are you taking medication / treatment?
+Have you eaten something you might be allergic to?
+Have you eaten recently?
+Have you had an operation (or been operated recently)?
+
+### 2.2 TRAITEMENT
+
+Would you like me to get you a paracetamol / an air sickness tablet?
+Is there anything I can get you?
+Would you care for a glass of water / some more air / do you want your meal now?
+Can you make it to the lavatory? Would you like a sick bag?
+Do you have any medicine to take?
+Please lie down / put your legs up / breathe into this sick bag (you have to breathe your own air).
+I'm going to put a bandage on you / to give you some oxygen.
+Would you like a wheel chair on arrival?
+
+### 2.3 PREVOL
+
+Could I have some more cartons of orange juice / trolleys / blankets / pillows / earphones from the hold, please? I need more plastic glasses / headsets.
+The menu / bin bags are missing.
+
+### 2.4 EMBARQUEMENT
+
+Good morning / afternoon / evening -- Welcome on board Madam / Sir.
+May I have your boarding pass please?
+Please go through the galley then turn left / right.
+Your seat is at the front / rear of the plane / next to the exit door / a window seat / an aisle seat / a middle seat / on the left-hand side / on the right-hand side / in the middle.
+The seat numbers are on the overhead lockers.
+One of my colleagues will show you your seat / May I show you your seat.
+May I help you with your luggage, coat...? You seem to be loaded down with luggage, May I help you?
+Your luggage is stored at the front / rear of the cabin, don't forget to ask for it before you leave the plane.
+We are very sorry, you cannot be upgraded, and there are no available seats.
+There are only separated seats left. Please take your seat for the moment. After take-off, we will do our best to assign you seats together.
+Would you mind switching seats with a family who has a baby so that we can set up a cradle for him/her. Thank you very much. There is a young child separated from his/her family. Would you mind switching seats with him/her?
+May I get the load sheet / passenger manifest (seat chart) / a waiver of responsibility / catering supply form?
+
+### 2.5 ROULAGE
+
+Would you mind fastening your seat belt, please?
+Please, tighten your seat belt, it is too loose.
+Please put your seat in upright position / fold your table away.
+
+### 2.6 CROISIERE
+
+You can move to another seat now if you want.
+May I show you how your video works and the facilities which are available?
+
+### 2.7 SERVICE REPAS
+
+May I offer you a drink, a glass of Champagne, an aperitif, a liqueur?
+We have vermouth, whisky, gin, Pastis ...? Would you like some ice cubes with your drink / some tea / some herbal tea / a hot towel?
+Wine and beer are complimentary and we charge for spirits. I will have to ask you to pay for your drinks now, please. We will be serving wine at the same time, Would you prefer red or white wine?
+Did you order a special meal? (Vegetarian/kosher/seafood/unsalted/Hindu/diabetic meal/gluten free).
+Have you chosen your dish?
+Do you want some wine / beer with your meal Madam / Sir? We have a Chateau... which is a Claret, a Burgundy. May I take away your tray Madam / Sir?
+
+### 2.8 DUTY FREE
+
+Are you interested in any duty free items? May I have your order form please? The CORSAIR shop will open after the meal service. Articles and prices are listed in the inflight magazine. Yes, we do sell cigarettes, Which brand would you like? It is a spicy / flowery / fruity perfume. A young / middle-aged person would like this eau de toilette / perfume.
+The (exchange) rate is... $CAN to 1. You can pay in cash or with a credit card. I will give you the change. How much do I owe you? Would you mind if I give you the change in..? Here is your change / the receipt for your credit card / the guarantee.
+
+### 2.9 MOVIE / NIGHT FLIGHT
+
+Please low you window shade for a better viewing / so that the daylight does not come in. There is a reading light above your head; the switch is on your armrest. An open bar is available next to the galley. If you feel hot / cold, you can turn the air-conditioning on /off. If you plan to rest, we suggest you fasten your seat belt over your blankets so we can avoid disturbing you if the fasten seat belt sign is turned on during the flight...
+
+### 2.10 CARTES DE DEBARQUEMENT
+
+Do you have the same name? In that case you have to fill in 2 customs forms.
+Please fill in the form in block letters. It must be legible. Please do not cross out. Food cannot be brought into the country; you risk a fine. You must go through customs (proceed to customs) with all your personal belongings.
+Time difference... (nom du pays) is... hours behind us / ahead of us.
+
+### 2.11 DEBARQUEMENT
+
+You have to ask the ground staff for your confiscated goods.
+You will collect your pushchair on the carousel.
+Our ground staff will give you all the information you need.
+We shall hand the case over to our passenger relations department.
+
+### 2.12 MAL VOYANT
+
+Your tray is in front of you Sir / Madam
+The hot meal is in the middle, and the salad, cheese and dessert are above it. There is a glass of water on your right and a roll on your left. If you need some help for cutting your meat or buttering your bread, just let me know. We will serve tea and coffee later.
+The lavatories are... rows ahead of / behind you.
+
+### 2.13 BEBE
+
+This is for you Madam/Sir. It is a toiletry bag for your baby. Inside there are 2 jars of baby food (sweet and savoury), and a bag for dirty diapers and wipes. Let me show you a more convenient spot to change your baby. There are lavatories with changing tables at the front/middle/rear of the plane. These lavatories have a special symbol on the door.
+Sorry, we don't have any diapers. Please call me if you want to heat the bottle / baby food. Please tell me your baby's feeding time?
+After take-off, I will set up a cradle for your baby.
+
+### 2.14 EXPRESSIONS DE COURTOISIE
+
+A un simple "yes" preferez :
+Certainly / My pleasure / Of course, yes / That's right / Yes indeed / You are welcome
+
+A un simple "no" preferez :
+I don't think so / I don't believe so / Surely not / I'm afraid you are mistaken
+
+Believe me, I'll do my best / I am sorry to keep you waiting.
+Unfortunately, I am not entitled to grant you this / I apologize but there is nothing I can do to help you.
+Please excuse me Madam / Sir, I was mistaken.
+Please call me if you need anything / If I can be of any help, please let me know.
+I beg your pardon / Sorry but I missed what you were saying.
+Would you ... / May I remind you to ...
+Would you mind ... / I would advise you to
+
+---
+
+## CHAPTER 3 - FORMULE DE POLITESSE
+
+### 3.1 INTRODUCTION
+
+Il est d'usage de donner aux hautes personnalites politiques, aux chefs des missions diplomatiques, aux hauts fonctionnaires et aux militaires le titre de leur fonction.
+
+### 3.2 PERSONNALITES CIVILES
+
+- President de la Republique -> Monsieur le President de la Republique
+- Chef du Gouvernement -> Monsieur le Premier Ministre
+- Ministre (y compris les Ministres delegues et Secretaires d'Etat) -> Madame / Monsieur le Ministre
+- President de l'Assemblee et vice-Presidents -> Monsieur le President
+- Ministre de la justice / Garde des sceaux -> Madame/ Monsieur / le Garde des Sceaux
+
+Ces personnalites gardent leur titre une fois leur mandat acheve.
+
+- Ambassadeur -> Monsieur l'Ambassadeur
+- Ambassadrice -> Madame l'Ambassadrice
+- Ministre Plenipotentiaire -> Madame/ Monsieur le Ministre
+- Haut-Commissaire -> Madame/ Monsieur le Haut-Commissaire
+- Batonnier -> Madame/ Monsieur le Batonnier
+- Avocat ou Avocate -> Maitre
+- Medecin ou Doctoresse -> Docteur
+- Membre de l'Institut de l'Academie -> Maitre, Madame/Monsieur le Professeur de Medecine
+- Professeur d'Universite -> Madame/Monsieur le Professeur
+
+### 3.3 PERSONNALITES RELIGIEUSES
+
+- Pape -> Tres Saint Pere, Votre Saintete
+- Cardinal -> Eminence
+- Eveque -> Monseigneur l'Eveque
+- Pretre -> Mon Pere, Monsieur le Cure
+- Religieuse -> Ma soeur
+- Rabbin -> Monsieur/Madame le/la Rabbin(e)
+- Imam -> Monsieur/Madame l'Imam
+- Ministre Protestant -> Monsieur/Madame le/la Pasteur(e)
+
+### 3.4 PERSONNALITES MILITAIRES
+
+- General -> General
+- Colonel, Lieutenant-Colonel -> Colonel
+- Chef d'Escadron, Commandant -> Commandant
+- Capitaine -> Capitaine
+- Lieutenant, Sous-Lieutenant, Aspirant -> Lieutenant
+- Amiral -> Amiral
+- Vice-Amiral (General de Division) -> Amiral
+- Contre-Amiral (general de Brigade) -> Amiral
+- Capitaine de Vaisseau -> Commandant
+- Capitaine de Corvette -> Commandant
+- Lieutenant de Vaisseau -> Commandant
+- Enseigne de Vaisseau -> Lieutenant
+- Aspirant -> Lieutenant
+
+Une hotesse s'adressant a un officier doit dire : "Monsieur/Madame" jusqu'au grade de Lieutenant et l'appeler par son grade pour un Officier superieur.
+Un steward s'adressant a un Officier l'appellera par son grade en ajoutant "Mon/Ma"
+Lorsqu'un officier superieur exerce une importante fonction civile, le titre militaire lui sera donne de preference au titre civil toutes les fois qu'il voyagera en uniforme.
+Pour les policiers ; Lieutenants, Capitaines et Commandants, meme principe.
+Pour les Commissaires : Madame la Commissaire ou Monsieur le Commissaire.
+
+---
+
+## CHAPTER 4 - DEPART
+
+### 4.1 EMBARQUEMENT SANS AVITAILLEMENT (pre-recorded)
+
+**FR :** Mesdames et Messieurs,
+Bienvenue a bord,
+Nous vous demandons de respecter le numero de siege mentionne sur votre carte d'embarquement.
+Nous vous invitons a ranger vos bagages dans les coffres ou sous votre siege.
+Les portes et issues doivent rester degagees.
+Si vous transportez une lampe de plongee, elle doit etre demunie de ses piles. Nous vous rappelons que tous nos vols sont non-fumeur.
+
+**EN :** Ladies and Gentlemen,
+Welcome on board,
+We ask you to respect the seat number on your boarding pass.
+We invite you to store your luggage in the overhead compartments or under your seat.
+Doors and exits must be kept clear.
+If you are carrying a diving light, then remove the batteries. We remind you that all our flights are non-smoking.
+
+### 4.2 EMBARQUEMENT AVEC AVITAILLEMENT (pre-recorded)
+
+**FR :** Mesdames et Messieurs,
+Bienvenue a bord.
+Nous vous demandons de respecter le numero de siege mentionne sur votre carte d'embarquement.
+Nous vous invitons a ranger vos bagages dans les coffres ou sous votre siege.
+Les portes et issues doivent rester degagees.
+Si vous transportez une lampe de plongee, elle doit etre demunie de ses piles. Nous vous rappelons que tous nos vols sont non-fumeur.
+L'avitaillement en carburant est en cours, nous vous demandons de conserver votre ceinture detachee et de limiter vos deplacements.
+
+**EN :** Ladies and Gentlemen,
+Welcome on board.
+We ask you to respect the seat number on your boarding pass.
+We invite you to store your luggage in the overhead compartments or under your seat.
+Doors and exits must be kept clear.
+If you are carrying a diving light, then remove the batteries. We remind you that all our flights are non-smoking.
+Fueling is underway, please keep your seatbelt unfasten and limit your movements.
+
+### 4.3 EMBARQUEMENT RAPIDE (pre-recorded)
+
+**FR :** Mesdames et Messieurs,
+Afin de faciliter notre depart, nous vous demandons de bien vouloir prendre place rapidement.
+Merci
+
+**EN :** Ladies and Gentlemen
+In order to facilitate our departure, would you please take your seat as soon as possible.
+Thank you
+
+### 4.4 VOL AFFRETE
+
+**FR :** Mesdames et messieurs,
+Nous vous souhaitons la bienvenue sur ce vol ..., compagnie membre de l'union europeenne affrete aujourd'hui par Corsair.
+Des representants Corsair sont presents a bord, n'hesitez pas a les contacter.
+Nous vous souhaitons un agreable vol.
+
+**EN :** Ladies and Gentlemen,
+We welcome you on this flight ..., member company of the European Union chartered today by Corsair.
+Corsair flight attendants are present on board, please do not hesitate to contact them.
+We wish you a pleasant flight.
+
+### 4.5 APPEL PASSAGER
+
+**FR :** Mesdames et messieurs,
+Mr ou Mme ... est prie de se faire connaitre aupres de l'equipage et/ou du personnel sol.
+Merci.
+
+**EN :** Ladies and Gentlemen,
+Mrs. or Mr. ... is kindly requested to contact the flight attendants and/ our ground staff.
+Thank you
+
+### 4.6 COMPTAGE PASSAGERS (pre-recorded)
+
+**FR :** Mesdames et messieurs,
+Le personnel de cabine va proceder au comptage des passagers a bord. Nous vous prions de regagner le siege qui vous a ete attribue et de prendre votre bebe sur les genoux.
+Merci de votre cooperation.
+
+**EN :** Ladies and Gentlemen,
+The cabin crew is about to count the passengers onboard.
+To speed up the process, could you please return to your seat and hold your baby on your lap.
+Thank you for your cooperation.
+
+### 4.7 ANNONCE BATTERIES LITHIUM
+
+**FR :** Mesdames et messieurs,
+Nous vous informons que les batteries externes ainsi que les cigarettes electroniques ne doivent pas etre placees dans les coffres a bagages. Elles doivent rester sous votre surveillance pendant toute la duree du vol et demeurer facilement accessibles. Par ailleurs, l'utilisation et la recharge des cigarettes electroniques et des batteries externes sont strictement interdites a bord.
+
+**EN :** Ladies and Gentlemen,
+Please be advised that external batteries and e-cigarettes must not be placed in the overhead bins. They must remain under your supervision throughout the flight and be easily accessible. Furthermore, the using and the recharging of e-cigarettes and external batteries are strictly prohibited on board.
+
+### 4.8 VERIFICATION DE SURETE (pre-recorded)
+
+**FR :** Mesdames et messieurs,
+Le personnel de bord va proceder a une verification de surete. Nous vous demandons de bien vouloir rester assis, ceintures detachees et de prendre vos bagages et effets personnels sur vos genoux.
+Merci de votre cooperation.
+
+**EN :** Ladies and Gentlemen,
+The cabin crew is about to perform a safety check.
+Please remain seated with your seat belt unfasten and hold your luggage and personal belongings on your lap.
+Thank you for your cooperation
+
+---
+
+## CHAPTER 5 - EN VOL
+
+### 5.1 BIENVENUE
+
+**FR :** Madame et monsieur, bonjour/bonsoir
+Mon nom est ...je suis votre chef de cabine, le Commandant de Bord ..., et l'ensemble de l'equipage ont le plaisir de vous accueillir a bord de ce vol Corsair a destination de ... via ... notre premiere escale que nous atteindrons apres ... de vol.
+Pour le decollage, veuillez attacher votre ceinture, redresser votre dossier de siege ainsi que votre tablette.
+
+**EN :** Ladies and Gentlemen,
+My name is ... I am your Chief Purser, your Captain ..., and all the crew members are pleased to welcome you on board this Corsair flight to ... via ... our first stop that we will reach after ... flight time.
+For take-off, please fasten your seatbelt, straighten the back off your seat and put your table in the upright position.
+
+**IFE/ANNONCES AUDIO/DISPONIBLES EN CREOLE ET A DIFFUSER ou a effectuer:**
+GUADELOUPE/ GUYANE / MARTINIQUE/ MAYOTTE/ REUNION (pre-recorded)
+
+**BIENVENUE A BORD L'ILE DE LA REUNION:**
+Mesdames et messieurs, Bonjour/bonsoir
+Zot commandant de bord..., chefs de cabine... et toute l'equipage na le plaisir accueille a zot a bord d'cet Airbus a 330 900 de la compagnie Corsair a destination de ... que nous sa attein apres ... d'vol.
+Pou le decollage, attache zot ceinture, redresse zot dossier de siege et zot tablette.
+
+**BIENVENUE A BORD MARTINIQUE:**
+Mesie ze danm, Bel bonjou / Bel bonswe
+Misie ..... ki se koumandan de bow-la , se chef kabin zot-la ek tout letjipaj-la kontan we zot.
+Sa ka fe yo plezi risouwe zot anle Airbus A 330 900-tala, ki se an Airbus lakonpayi Corsair.
+Nou ka ale ......... e nou ke pran .......pou rive.
+Pou dekolaj-la, zot ni pou mare senti-zot, ridrese dosie siej-zot ek tablet-la ki douvan zot.
+
+**BIENVENUE A BORD GUADELOUPE:**
+Mesye ze dam
+Byen bonjou/ Byen bonswa.
+Komandan la, misye...(X) ..... Se responsab a kabin la, Eve tout ekipaj a-y kontan risive zot anle "air bus A330 900 a CORSAIR jodi la.
+Se apre ..(X).. ed tan pase ..(X).. minit nou ke rive :
+Avan nou dekole, gade vwe si senti a zot byen mare, e si zo byen ranje tout bagaj a zot adan se Kof-la.
+
+### 5.2 PREAMBULE DEMONSTRATION
+
+**FR :** Mesdames et Messieurs,
+Pour votre securite, veuillez respecter les consignes qui vont etre presentees.
+Merci de nous accorder votre attention.
+
+**EN :** Ladies and Gentlemen
+For your safety, please follow the instructions you are about to see.
+Thank you for your attention
+
+### 5.3 DEMONSTRATION DE SECURITE (pre-recorded)
+
+#### 5.3.1 CEINTURES DE SECURITE
+
+Votre ceinture et celle de votre bebe doivent etre correctement attachees et ajustees a chaque fois que le signal lumineux apparait.
+Correctly fasten and adjust your seat belt. Do the same for your baby when the seat belt signs is illuminated.
+
+Le personnel de bord vous montre comment : attacher, ajuster et detacher votre ceinture.
+The cabin crew show you how to fasten, adjust and unfasten your seat belt.
+
+En classe business, il est imperatif d'attacher votre ceinture trois points durant le decollage et l'atterrissage. En phase de croisiere, la ceinture a la taille suffit.
+In business class, your shoulder and lap belt must be securely fastened during take-off and landing. During our flight, the lap belt will suffice.
+
+Pendant la duree du voyage, tous les appareils electroniques doivent etre en mode avion.
+All electronic devices must be kept in airplane mode for the during all our flight.
+
+Vos ordinateurs doivent etre eteints et ranges durant le decollage et l'atterrissage.
+Your laptop must be switched off and stowed during take-off and landing.
+
+#### 5.3.2 ISSUES DE SECOURS
+
+En cas d'evacuation, laissez vos bagages dans les coffres. Les issues de secours sont situees a l'avant, au centre et a l'arriere. Reperez-les le plus vite possible. Elles peuvent se trouver derriere vous.
+In the case of emergency, leave your luggage items in the overhead compartments. Emergency exits are located at the front, in the middle, and at the rear of the aircraft. Please find the emergency exit as quickly as possible. They may be behind you.
+
+Suivez ensuite le marquage au sol et dirigez-vous rapidement vers l'issue la plus proche.
+Then, follow the emergency light on the floor and move quickly to the nearest emergency exit.
+
+#### 5.3.3 MASQUE A OXYGENE
+
+En cas de depressurisation, un masque tombera devant vous.
+In the event of a decompression, an oxygen mask will automatically fall in front of you.
+
+Tirez sur le masque, positionnez-le sur le visage, puis passez l'elastique derriere la tete.
+Pull down the mask, put it over your face, and thread the elastic band over your head.
+
+Assurez-vous que le masque soit bien ajuste avant d'aider vos enfants ou une personne en difficulte.
+Make sure your mask is securely fitted before assisting your children or person in difficulty.
+
+#### 5.3.4 GILETS DE SAUVETAGE
+
+Votre gilet de sauvetage peut se trouver sous votre siege ou bien sous l'accoudoir central.
+Your life jacket may be under your seat or under the central armrest.
+
+Il s'enfile par l'encolure.
+The life jacket is put on over your head
+
+Passez la sangle autour de votre taille et gonflez-le une fois sorti de l'avion en tirant sur le cordon rouge.
+Fastened the lap belt around your waist and inflate the jacket once you are outside the aircraft by pulling on the red string
+
+S'il ne fonctionne pas gonflez-le avec la bouche.
+You can also inflate by blowing into the tube
+
+#### 5.3.5 CONSIGNES DE SECURITE
+
+Vous pouvez retrouver l'ensemble des consignes de securite dans la pochette du siege devant vous.
+You can find the entire list of safety instructions in the pocket of the seat in front of you.
+
+Des turbulences peuvent se produire. Lorsque la consigne s'allume, regagnez le siege le plus proche et attachez votre ceinture. La ceinture a la taille suffit.
+We may encounter turbulence. When the illuminated sign is switched on, please return to your seat and fasten your seat belt. Your lap belt will suffice.
+
+Respectez l'interdiction de fumer y compris dans les toilettes pour ne pas vous exposer a des poursuites. La mise en charge de la cigarette electronique est interdite. En cas de defaillance ou de perte d'appareil electronique, informez immediatement le personnel de cabine et ne manipulez pas votre siege.
+We remind you that is illegal to smoke on our airplane, including in the toilets. The charging of electronic cigarettes is also prohibited. In case of failure or loss of your electronic device, inform the cabin crew before handling your seat.
+
+Veuillez prendre garde aux chutes d'objets a l'ouverture des coffres a bagages.
+Please take care when you opening the luggage compartments, some objects can full Down
+
+Avant le decollage ou l'atterrissage, le dossier de votre siege doit etre redresse. La tablette, le porte gobelet et les reposes pieds ranges, et les accoudoirs baisses. Quant aux caches hublots, ils doivent etre releves.
+Before take-off or landing, your seat back must be returned to the upright position. The tray table, cup holder, and footrests must be stowed, and the armrests lowered. As for the window shades, they must be raised.
+
+Le personnel munis d'un badge rouge est garant de votre securite a bord
+The crew member wearing a red badge is in charge of your safety on board
+
+Nous vous remercions de votre attention et vous souhaitons un agreable vol en notre compagnie.
+Thank you for your attention. We wish you a pleasant flight with us.
+
+### 5.4 DECOLLAGE / ATTERISSAGE EN LVO
+
+**FR :** Mesdames et messieurs,
+Compte tenu des conditions meteo, pour des raisons de securite, nous vous demandons d'eteindre des a present tous vos appareils electroniques y compris ceux places en mode avion.
+Merci
+
+**EN :** Ladies and Gentlemen,
+Due to weather conditions, for safety reasons, please turn off immediately all your electronic devies including those in flight mode.
+Thank you
+
+### 5.5 EXTINCTION NO SMOKING
+
+**FR :** Mesdames et messieurs,
+Nous vous prions de conserver votre ceinture de securite attachee au-dessus de votre couverture jusqu'a l'extinction du signal lumineux et de la maintenir attachee pendant le vol, si vous n'avez pas a vous deplacer.
+Nous vous rappelons que nos vols sont non-fumeur. L'usage et la recharge de cigarette electronique sont interdits a bord.
+Porter atteinte au fonctionnement des detecteurs de fumee est un delit passible de poursuites penales au meme titre qu'un etat d'ebriete susceptible de mettre en cause la securite du vol.
+Toute recharge d'appareils electroniques doit etre effectuee sous votre surveillance.
+En cas de defaillance en informer immediatement le personnel de cabine.
+Nous vous informons egalement de l'interdiction de filmer ou photogaphier le personnel de bord.
+Merci.
+
+**EN :** Ladies and Gentlemen,
+Please keep your safety belt fastened over your blanket until the seat belt sign is off and keep it fastened during the flight if you do not have to move.
+We remind you that our flights are non-smoking. The charging and the using of E cigarettes is prohibited on board.
+Tampering with smoke detectors is an offense punishable by law, as well as being under the influence of alcohol, which could endanger the safety of the flight.
+Recharging of electronic devices must be carried out under your supervision.
+In event of a failure immediately inform the cabin crew.
+We also inform you that taking photo or filming flight attendant is prohibited.
+Thank you
+
+### 5.6 DESINSECTISATION (pre-recorded)
+
+**FR :** Mesdames et messieurs,
+En application des reglements sanitaires, la cabine doit etre desinsectisee. Le produit utilise est conforme aux normes en vigueur et ne presente aucun danger pour votre sante. Si vous craignez d'etre incommodes, nous vous invitons a fermer les yeux ou a vous couvrir le visage pendant les quelques secondes que dure la pulverisation.
+Nous vous prions de bien vouloir rester assis pendant cette operation.
+Merci.
+
+**EN :** Ladies and Gentlemen,
+To comply with health requirements, the cabin must be disinsected. The product used is compliant with the standards in force and completely safe.
+If you feel that it may cause any inconvenience, please close your eyes or cover your face for a few seconds during the procedure.
+Please remain seated during this operation.
+Thank you.
+
+### 5.7 PED EN CLASSE BUSINESS
+
+**FR :** Mesdames et messieurs,
+Pour eviter tout risque d'ecrasement de vos appareils electroniques portatifs, nous vous demandons la plus grande vigilance lors de la manipulation de votre siege et de verifier qu'aucun bagage n'entrave son fonctionnement. En cas de defaillance de tout appareil electronique, informer immediatement le personnel.
+
+**EN :** Ladies and Gentlemen,
+To avoid any risk of crushing your portable electronic devices, we ask you to be very careful when handling your seat and checking that no luggage is interfering with its proper functioning. In the event of any electronic device malfunctioning, please inform immediately the flight staff.
+
+### 5.8 DEROULEMENT VOL (pre-recorded)
+
+#### 5.8.1 - Vol avec WIFI
+
+**FR :** Mesdames et messieurs,
+Nous vous informons que le WIFI est disponible sur ce vol. Nous vous invitons a suivre les recommandations affichees sur votre ecran afin d'acceder a ce service.
+Nous vous informons que des boissons seront a votre disposition au niveau des offices entre les phases de service et en dehors des phases de turbulences.
+La boutique Corsair situee dans l'office arriere de l'appareil ouvrira ses portes peu de temps apres le 1er service. Un message sera diffuse sur vos ecrans.
+Vous trouverez les articles proposes dans le catalogue dispose dans la pochette de siege devant vous.
+Nous vous souhaitons un agreable vol en notre compagnie.
+
+**EN :** Ladies and Gentlemen,
+WIFI is available on this flight. We invite you to follow the recommendations displayed on your screen to access this service.
+Drinks will be available at the office between the services and when no turbulence.
+The Corsair shop in the rear office of the aircraft will open shortly after the first service. A message will be displayed on your screens.
+You will find the items for sale in the catalogue in the seat pocket in front of you.
+We hope you will appreciate your flight with us.
+
+#### 5.8.2 - Vol sans WIFI
+
+**FR :** Mesdames et messieurs,
+Nous vous informons que le WIFI n'est pas disponible sur ce vol. Nous nous excusons de la gene occasionnee.
+Des boissons seront a votre disposition au niveau des offices entre les phases de service et en dehors des phases de turbulences.
+La boutique Corsair situee dans l'office arriere de l'appareil ouvrira ses portes peu de temps apres le 1er service. Un message sera diffuse sur vos ecrans.
+Vous trouverez les articles proposes dans le catalogue dispose dans la pochette de siege devant vous.
+Nous vous souhaitons un agreable vol en notre compagnie.
+
+**EN :** Ladies and Gentlemen,
+We inform you that WIFI is not available on this flight. We apologize for the inconvenience.
+Drinks will be available at the office between the services and when no turbulence.
+The Corsair shop, in the rear office of the aircraft will open shortly after the first service. A message will be displayed on your screens.
+You will find the items for sale in the catalogue in the seat pocket in front of you.
+We hope you will appreciate your flight with us.
+
+#### 5.8.3 - Vol sans WIFI ABJ
+
+**FR :** Mesdames et messieurs,
+Nous vous informons que le WIFI n'est pas disponible sur ce vol. Nous nous excusons de la gene occasionnee.
+Des boissons seront a votre disposition au niveau des offices entre les phases de service et en dehors des phases de turbulences.
+La boutique Corsair situee dans l'office arriere de l'appareil ouvrira ses portes peu de temps apres le 1er service. Un message sera diffuse sur vos ecrans.
+Vous trouverez les articles proposes dans le catalogue dispose dans la pochette de siege devant vous.
+Seules les especes sont acceptees en mode de paiement.
+Nous vous souhaitons un agreable vol en notre compagnie.
+
+**EN :** Ladies and Gentlemen,
+We inform you that WIFI is not available on this flight. We apologize for the inconvenience.
+Drinks will be available at the office between the services and when no turbulence.
+The Corsair shop, in the rear office of the aircraft will open shortly after the first service. A message will be displayed on your screens.
+You will find the items for sale in the catalogue in the seat pocket in front of you.
+Only cash payments will be accepted.
+We hope you will appreciate your flight with us.
+
+### 5.9 DEBARRASSAGE (a effectuer uniquement sur vol de jour)
+
+**FR :** Mesdames et messieurs,
+Nous allons a present vous desservir et vous proposer des boissons chaudes.
+Nous vous invitons a concerver le sucre et la petite cuillere si besoin.
+
+**EN :** Ladies and Gentlemen,
+We are now going to collect your trays and offer you hot drinks.
+We invite you to keep your sugar and teaspoon
+
+### 5.10 SERVICE ECOURTE
+
+**FR :** Mesdames et messieurs,
+Au vu des difficultes rencontrees, nous ne serons pas en mesure de poursuivre notre service.
+
+**EN :** Ladies and Gentlemen,
+In view of the difficulties encountered, we wil not be able to continue our service.
+
+### 5.11 FERMETURE CACHES HUBLOTS (pop-up)
+
+**FR :** Nous vous invitons a abaisser votre cache hublot et a conserver votre ceinture de securite visible et attachee sur votre couverture afin de ne pas etre derange, par le personnel en cas de turbulences
+
+**EN :** We invite you to lower the window shade and to keep your seatbelt visible and fastened over your blanket not to be disturbed, by the staff in case of turbulences.
+
+### 5.12 PROBLEME IFE
+
+**FR :** Mesdames et messieurs,
+En raison d'une panne technique, nous regrettons de ne pas etre en mesure d'assurer l'acces aux differents programmes de divertissements.
+Nous vous prions de bien vouloir nous excuser pour ce desagrement.
+
+**EN :** Ladies and Gentlemen,
+Due to a technical failure, we regret that we are not able to provide access to the various entertainment programs.
+We apologize for this inconvenience.
+
+### 5.13 OBJET TROUVE
+
+**FR :** Mesdames et messieurs,
+Un(e) ... (citer l'objet) a ete trouve(e) a bord. Son proprietaire est prie de se faire connaitre aupres d'un membre d'equipage. Merci.
+
+**EN :** Ladies and Gentlemen,
+A ... (citer l'objet) has been found on board. The owner is invited to contact the cabin crew. Thank You.
+
+### 5.14 CARTE DE DEBARQUEMENT
+
+**FR :** Mesdames et messieurs,
+Dans quelques instants, nous allons vous distribuer des cartes de debarquement a presenter dument remplies aux autorites locales, lors de votre arrivee.
+Nous vous remercions de votre attention.
+
+**EN :** Ladies and Gentlemen,
+We are about to hand out landing forms required for your arrival.
+These forms must be completed and given to the local authorities.
+Thank you.
+
+### 5.15 VENTE A BORD (OUVERTURE) (pop-up)
+
+**OUVERTURE**
+
+**FR :** La boutique Corsair situee dans l'office arriere de l'appareil est ouverte.
+Vous trouverez les articles proposes dans le catalogue dispose dans la pochette devant vous.
+Les paiements en especes ou carte de credit sont autorises. Une piece d'identite est alors exigee a partir de 75EUR pour tout reglement par carte bancaire.
+ABJ absence de WIFI : seuls les paiements en espece sont acceptes.
+
+**EN :** The duty-free shop is now open in the rear galley of the plane.
+You will find the items in the catalogue in the pocket in front of you.
+Payments in cash or credit card are allowed. An identity document is required for payments of 75EUR or more by credit card.
+ABJ no WIFI : We only accept cash payments.
+
+### 5.16 VENTE A BORD (FERMETURE ET INTERRUPTION) (pop-up)
+
+**FERMETURE ET INTERRUPTION**
+Utiliser le pop up iso effectuer l'annonce
+
+**FR :** Nous vous informons de la fermeture imminente de la Boutique Corsair.
+
+**EN :** We inform you that the Corsair Shop is about to close.
+
+**Interruption suite turbulences**
+L'associer a l'annonce de turbulence
+
+**FR :** L'ouverture de notre boutique reprendra des l'extinction de la consigne "ceinture attachee".
+
+**EN :** Our duty-free shop will reopen when the seat belt sign is turned off.
+
+### 5.17 COLLECTE DES CASQUES PREMIUM (pop-up)
+
+**FR :** Le personnel de bord va proceder a la collecte des casques audio, nous vous remercions de les tenir a disposition.
+
+**EN :** Headphones will be collected by the staff on board, so please keep them available.
+
+### 5.18 MESURES SANITAIRES ANTILLES aller a effectuer et retour (pre-recorded)
+
+**Annonce vol aller**
+
+**FR :** Mesdames et messieurs,
+Vous vous rendez dans une zone ou circulent les virus Zika, Dengue et Chikungunya, transmis par les moustiques. Pour votre sante, il est recommande de vous proteger des piqures, meme en journee, en utilisant des repulsifs et en portant des vetements longs et amples. Cette precaution est particulierement importante si vous etes enceinte ou souffrez de maladies chroniques.
+Si vous arrivez en Guadeloupe ou en Martinique, depuis la France hexagonale ou d'une zone a risque comme l'ocean Indien, ou circule le virus du Chikungunya, continuez a vous proteger des moustiques pendant les 3 semaines suivant votre arrivee. Cela permet d'eviter la transmission du virus sur la Gouadeloupe // Martinique.
+En cas de fievre, douleurs musculaires ou articulaires, maux de tete ou eruptions cutanees dans les jours suivant votre voyage, consultez rapidement un medecin et signalez votre sejour dans une zone a risque. Si vous etes enceinte, informez votre professionnel de sante.
+Pour toute information complementaire, contactez l'Agence Regionale de Sante de la Guadeloupe ou de la Martinique.
+
+**EN :** Ladies and Gentlemen,
+You are traveling to a region where mosquito-borne viruses such as Zika, Dengue, and Chikungunya are present. To protect your health, it is recommended to guard against mosquito bites even during the day by using repellents and wearing loose, long clothing.
+This is especially important if you are pregnant or have chronic health conditions.
+If you arrive in Guadeloupe or Martinique from France and a risk area such as the Indian Ocean region where the Chikungunya virus is circulating, continue to protect yourself from mosquitoes during the three weeks following your arrival. This helps prevent the transmission of the virus on Guadeloupe // Martinique.
+If you experience symptoms such as fever, muscle or joint pain, headaches, or skin rashes in the days following your trip, consult a doctor promptly and mention your recent travel to a risk area. If you are pregnant, inform your healthcare provider for appropriate follow-up.
+For more information, contact the Regional Health Agency of Guadeloupe or Martinique.
+
+**Annonce vol au retour de FDF et PTP**
+
+**FR :** Mesdames et messieurs,
+Vous revenez d'une zone ou peuvent circulent les virus Zika, Dengue et Chikungunya transmis par les moustiques.
+Si vous developpez, dans les 15 jours suivant votre retour des eruptions cutanees, une fievre ou des douleurs articulaires ou musculaires, signalez a votre medecin que vous avez voyage dans cette zone.
+Si vous etes enceinte, signalez votre retour pour votre suivi.
+
+**EN :** Ladies and Gentlemen,
+You are travelling back from an area where Zika, dengue and Chikungunya diseases transmitted by mosquitoes could be reported.
+If ever you develop a rash, fever, joint or muscle pains within 15 days after your return, and especially if pregnant, inform your doctor that you have travelled in such areas to ensure adequate follow-up.
+
+### 5.19 AGRICULTURE MRU (pre-recorded)
+
+**FR :** Mesdames et messieurs,
+L'administration sanitaire Mauricienne interdit l'importation de fleurs, de fruits et d'agrumes. Afin de respecter cette legislation le personnel de cabine va passer parmi vous afin de collecter les produits que vous pourriez avoir en votre possession.
+Nous vous rappelons que les plantes, les animaux ainsi que les produits animaliers doivent etre declares aupres des services de douane a votre arrivee.
+Merci.
+
+**EN :** Ladies and Gentlemen,
+The Mauritian health administration prohibits the import of flowers, fruits and citrus fruits. In order to comply with this legislation, the crew will now pass through the cabin to collect any products you may have in your possession.
+Please remember that all plants, animals and animal products must be declared to the customs authorities upon your arrival.
+Thank you
+
+### 5.20 AGRICULTURE RUN (pre-recorded)
+
+(A faire ou a diffuser en cas de panne du systeme Video et absence de film)
+
+**FR :** Mesdames et messieurs,
+Vous allez sejourner a la Reunion, haut lieu de la biodiversite, dont une grande partie du territoire est classee au Patrimoine mondial de l'humanite.
+Tout ramassage de coraux et de coquillages est interdit sur l'ensemble du littoral.
+Compte-tenu des risques d'introduction de maladies animales ou vegetales sur le territoire de La Reunion, nous vous rappelons qu'il est interdit d'introduire, a votre retour sur l'ile, tout produit d'origine animale issu d'un pays tiers a l'union europeenne et tout vegetal, sous toute forme, qu'elle que soit sa provenance. Les animaux ou leurs sous-produits doivent etre systematiquement presentes aux services de controle. Le non-respect de ces dispositions vous expose a de fortes amendes.
+Les usagers de la mer doivent rester vigilants face au risque requin. Differentes mesures ont ete prises par les autorites locales pour limiter l'exposition a ce risque.
+La baignade et la pratique de certaines activites nautiques peuvent s'effectuer dans le lagon et les zones surveillees et amenagees, notamment par des filets de protection sur certaines plages des communes littorales de saint Paul et de l'Etang-Sale.
+
+**EN :** Ladies and Gentlemen,
+You are going to stay in Reunion Island, a biodiversity hotspot, a large part of which has World Heritage status.
+Please note that it is forbidden to pick up coral or seashells along the coastline.
+Due to the risk of introduction of animal and plant pests and diseases in Reunion island, Authorities remind all passengers that it is strictly forbidden to enter the island with animal foodstuff, products of animal origin from countries outside the European Union as well as any plant and plant products from any country. Animals and animal's products must be declared to the authorities on arrival. Passengers will be liable to heavy fines for non-compliance to these measures.
+Ocean users must remain very cautious due to the shark risk. Swimming and some other water activities are regulated and can be practised in the lagoon, in some special supervised areas, especially by safety nets along Saint Paul and Etang-sale litoral.
+
+### 5.21 FIEVRE APHTEUSE OCEAN INDIEN (pre-recorded)
+
+(A faire ou a diffuser en cas de panne du systeme Video et absence de film)
+
+**FR :** Mesdames et messieurs,
+Le ministere de l'agriculture informe les voyageurs en provenance et a destination de l'ile Maurice, Rodrigues, La Reunion, Mayotte, Madagascar, les Seychelles et les Comores, qu'une epidemie de fievre aphteuse, maladie des animaux, sans danger pour l'homme vous interdit de rapporter :
+- des produits provenant du boeuf, mouton, porc, sanglier et chevre y compris les sandwichs, le lait et produit a base de lait,
+- des peaux et trophees de chasse non traites, ou toutes denrees animales ou d'origines animales.
+Tout produit interdit sera saisi et detruit et vous vous exposez a des poursuites penales et une amende.
+En outre, si vous visitez une ferme, un lieu de detention de ces animaux ou participer a une chasse dans un de ces pays, vous devez penser a nettoyer vos vetements et a desinfecter vos chaussures avec une solution desinfectante.
+Nous vous remercions pour votre collaboration
+
+**EN :** Ladies and Gentlemen,
+Ministry of agriculture informs travelers to and from the Island of Mauritius, Rodrigues, Reunion, Mayotte, Madagascar, Seychelles and Comoros, that foot and mouth disease is a contagious disease, that does not affect humans
+The importation of meat (beef, mutton, pork, wild boar and goat) and related products is strictly prohibited, including sandwiches, milk and milk-related products, all animals or animal-related food products are also banned.
+If you visit a farm (or place where such animals are kept), or if you have been on a hunting trip in any of these countries, wash your clothes and disinfect your shoes using a disinfectant.
+Any banned product found will be seized and destroyed. Offenders will be prosecuted.
+Thank you for your cooperation.
+
+### 5.22 EPIDEMIE DE CHIKUNGUNYA RUN / DZA (ANNONCE SUSPENDUE AU 03/09/25)
+
+**VOL ALLER**
+
+**FR :** Mesdames et messieurs,
+Une circulation active du virus du chikungunya, maladie transmise par les moustiques, est actuellement observee a La Reunion / Mayotte. Durant votre sejour, les autorites sanitaires vous recommandent de vous proteger contre les piqures de moustiques en utilisant des repulsifs, des moustiquaires, et en portant des vetements longs. En cas de fievre, maux de tete, douleurs articulaires ou musculaires, fatigue..., consultez rapidement un medecin et continuez a vous proteger afin de ne pas transmettre la maladie dans votre entourage.
+
+**EN :** Ladies and Gentlemen,
+A circulation of chikungunya virus, a disease transmitted by mosquitoes, is currently active in Reunion Island / Mayotte. During your stay, health authorities recommend protecting yourself from mosquito bites by using repellents, sleeping under mosquito nets, and wearing long clothing. In case of fever, headaches, joint or muscle pain, fatigue, etc., consult a doctor promptly and continue protecting yourself to avoid transmitting the disease to others.
+
+**VOL RETOUR**
+
+**FR :** Mesdames et messieurs,
+Vous quittez l'ile de La Reunion, ou le virus du chikungunya continue de circuler activement. Si dans les jours a venir, vous presentez de la fievre, des maux de tete, des douleurs articulaires ou musculaires, de la fatigue..., consultez immediatement un medecin. Continuez a vous proteger contre les piqures de moustiques, afin de ne pas transmettre la maladie sur l'ile de Mayotte, aux Antilles ou en metropole, ou le moustique tigre est present.
+
+**EN :** Ladies and Gentlemen,
+You are leaving Reunion Island, where the chikungunya virus is still actively circulating. If, in the coming days, you develop a fever, headaches, joint or muscle pain, fatigue, etc., seek medical attention immediately. Also, continue protecting yourself from mosquito bites to prevent transmitting the disease to others in Mayotte, the Caribbean, or mainland France, where the tiger mosquito is present.
+
+### 5.23 EPIDEMIE DE DENGUE VOL RETOUR DE TNR ET MRU
+
+**Vol RETOUR**
+
+**FR :** Mesdames et Messieurs,
+Vous quittez l'Ile Maurice/ l'Ile de Madagascar ou sevit actuellement une epidemie de Dengue.
+Si vous presentez dans les 7 jours a venir, des douleurs articulaires, douleurs musculaires, maux de tete, eruption cutanee avec ou sans fievre, conjonctivite, consultez un medecin.
+Meme si vous ne presentez pas ces symptomes, continuez egalement a vous proteger contre les piqures de moustiques afin de ne pas transmettre la maladie en Metropole ou aux Antilles ou est installe le moustique tigre qui est vecteur du virus de la Dengue
+
+**EN :** Ladies and Gentlemen,
+You are travelling back from Maurice Island/ Madagascar Island where there actually is a Dengue epidemic.
+If ever you develop a rash with or without fever, joint or muscle pains, headaches, conjunctivitis, within 7 days following your return, we advise you to consult a doctor.
+Even if you don't suffer from such symptoms, keep on protecting yourself from mosquito bites in order to avoid spreading the disease in mainland France or in the French west indies where the tiger mosquito, who is the main vector for Dengue virus, is located.
+
+### 5.24 VARIOLE B, MPOX ARRIVEE/DEPART TNR
+
+**Message a diffuser a destination des vols TNR**
+
+**Francais :** Des cas de variole B, anciennement appele Mpox, est en recrudecense a Madagascar. En prevention, pendant votre sejour, lavez-vous les mains, evitez tout contact etroit avec des personnes malades ou objets susceptibles d'etre contamines comme les vetements, linge de maison ou la vaisselle.
+En cas de fievre, fatigue, courbatures, maux de tete accompagnes de boutons, consultez rapidement un medecin. Dans l'attente d'un avis medical, isolez-vous et portez un masque en presence d'autres personnes
+
+**Anglais :** Cases of Mpox are on the rise in Madagascar. As a precaution, wash your hands frequently and avoid close contact with people who are unwell or with potentially contaminated items, such as clothes, household linen or crockery.
+In the event of fever, tiredness, aches and pains and headaches accompanied by a rash, consult a doctor as soon as possible. Pending medical advice, self-isolate and wear a face mask in the presence of other people.
+
+**Message a diffuser au depart des vols TNR**
+
+**Francais :** Des cas de variole B, anciennement appele Mpox, est en recrudecense a Madagascar. En cas de fievre, fatigue, courbatures, maux de tete accompagnes de boutons consultez rapidement un medecin ou appelez le 15. Dans l'attente d'un avis medical, isolez-vous et portez un masque en presence d'autres personnes.
+Pour vos prochains voyages, un vaccin existe, renseignez-vous aupres d'un medecin.
+Pour toute question, le numero vert "mpox info service" gratuit et anonyme est disponible au 0 801 90 80 69 tous les jours de 8h a 23h heure metropolitaine.
+
+**Anglais :** Cases of Mpox Cases of Mpox are on the rise in Madagascar. In the event of fever, tiredness, aches and pains and headaches accompanied by a rash, consult a doctor as soon as possible or dial 15. Pending medical advice, self-isolate and wear a face mask in the presence of other people.
+For future travel, we remind you that a vaccine exists. Ask your doctor about it.
+If you have any questions, call the free and anonymous "Mpox info service" on +33 (0) 801 90 80 69 every day from 8am to 11pm CET.
+
+### 5.25 DEBUT DE DESCENTE
+
+**FR :** Mesdames et Messieurs,
+Nous debutons notre descente. Les portes et issues doivent rester degagees.
+Nous vous invitons a ranger tous vos bagages ainsi que les appareils electroniques volumineux dans les coffres ou sous votre siege.
+Veuillez prendre garde aux chutes eventuelles d'objet a l'ouverture des coffres a bagages.
+
+**EN :** Ladies and Gentlemen,
+We are beginning our descent.
+Doors and exits must be cleared. Please stow all your luggage and any large electronic devices in the overhead lockers or under the seat in front of you.
+Please take care when opening the overhead lockers as some objects may fall out.
+
+### 5.26 FASTEN SEAT BELT
+
+**FR :** Mesdames et messieurs,
+Nous poursuivons notre descente.
+Nous vous invitons a regagner votre siege, attacher votre ceinture de securite, redresser votre dossier de siege, abaisser vos accoudoirs, relever vos tablettes, vos portes gobelets, vos caches hublots et ranger vos reposes pieds.
+Nous vous invitons a consulter les consignes de securite en vue de notre atterrissage.
+Les telephones portables doivent rester en mode avion, le wifi ne sera plus accessible d'ici quelques minutes.
+Nous vous informons egalement que les toilettes ne seront plus disponibles jusqu'a l'arrivee au parking
+
+**EN :** Ladies and Gentlemen,
+We carry on our descent.
+Would you please go back to your seat, fasten your seat belt, straighten up the back of your seat, low down your armrests, fold away your table, lift up your cup holder, your window shade and recline your footrests.
+Please check the safety cards instructions before landing.
+Mobile phones should remain in flight mode and wifi won't be able within a few minutes.
+We inform you that toilets will no longer be in use until we arrive to the parking stand.
+
+### 5.27 NO SMOKING (pre-recorded)
+
+**ATTERRISSAGE**
+
+**FR :** Mesdames et messieurs,
+Nous allons atterrir dans quelques instants a ..., nous vous demandons de verifier que votre ceinture soit bien attachee. Nous vous rappelons qu'en cas d'urgence, les bagages devront rester a bord et qu'il est interdit de fumer et d'utiliser la cigarette electronique.
+
+**EN :** Ladies and Gentlemen,
+We're about to land in ..., we ask you to check that your seatbelt is fastened. We remind you that in case of emergency, all luggage must remain on board.
+Smoking and using electronic cigarettes remain prohibited.
+
+### 5.28 ORY - TRAIN + AIR (pre-recorded)
+
+"Ne pas effectuer pour toute arrivee apres 17h00 locales"
+
+**FR :** Mesdames et messieurs,
+Nous invitons les passagers en correspondance a se presenter au personnel sol qui leur fournira toutes les informations necessaires a la poursuite de leur voyage. (voir avec escale)
+Les passagers en correspondance avec Train + Air sont pries de passer les formalites de douane munis de tous leurs bagages.
+La navette Train + Air relie Orly 4 a la gare de Massy TGV, elle vous attend sur le parking des bus.
+Corsair et son partenaire SNCF sont heureux de vous proposer ce service reliant Orly a de nombreuses villes de province.
+
+**EN :** Ladies and Gentlemen,
+Passengers with connecting flights are kindly requested to contact the ground staff, who will give them all the information they need to continue their trip.
+Passengers with Train + Air connections are requested to collect their luggage and clear customs.
+The Train + Air shuttle provides service from Orly 4 to the Massy TGV station. It is waiting for you in the bus parking area.
+Corsair and its partner SNCF are pleased to offer you this service connecting Orly airport to several other cities in France.
+
+---
+
+## CHAPTER 6 - ANNONCES PARTICULIERES
+
+### 6.1 APPEL MEDECIN
+
+**FR :** Mesdames et Messieurs,
+La sante d'un de nos passager necessite un avis medical, si il y a un medecin a bord, nous le remercions de se presenter aupres du personnel de bord a l'avant/ a l'arriere/ au centre de l'appareil rangee XXX muni de sa carte professionnelle.
+
+**EN :** Ladies and gentlemen,
+The health of one of our passengers requires medical advice, If there is a doctor on board, please report to the cabin crew at the front / Center/ rear of the aircraft row XXX with your accreditation.
+
+### 6.2 TURBULENCES LEGERES
+
+(a effectuer des la premiere zone de turbulences)
+
+**FR :** Mesdames et messieurs,
+Nous traversons une zone de turbulences, nous vous prions de regagner votre siege et d'attacher votre ceinture de securite au-dessus de votre couverture afin qu'elle soit visible par le personnel de bord. Les passagers accompagnes d'un bebe doivent imperativement le prendre sur les genoux et lui attacher sa ceinture de securite. Nous vous informons que les toilettes ne sont plus disponibles lors des phases de turbulences.
+Merci
+
+**EN :** Ladies and Gentlemen,
+We are going through an area turbulence, please return to your seat and fasten your seat belt over your blanket so that it is visible to the flight attendant during their checks. Passengers with babies must take them on their lap and fasten their seat belt. Please note that the toilets are not be available during turbulence.
+Thank you.
+
+### 6.3 TURBULENCES SEVERES
+
+**FR :** Mesdames et messieurs,
+Nous traversons une zone de fortes turbulences, nous vous demandons de verifier que votre ceinture soit correctement attachee.
+Turbulence en phase de service : Les turbulences ne nous permettent pas de poursuivre notre service. Merci de votre comprehension.
+
+**EN :** Ladies and Gentlemen,
+We are going through an area of strong turbulence, please ensure that your seat belt is properly fastened.
+Turbulence en phase de service : The turbulences does not allow us to continue our service. Thank you for your understanding.
+
+### 6.4 FUMEE CABINE (pre-recorded)
+
+**FR :** Mesdames et messieurs,
+Une fumee importante se degage en cabine.
+Afin de vous proteger des inhalations, nous vous invitons a utiliser votre couverture en la placant sur votre visage. Merci de votre attention.
+
+**EN :** Ladies and Gentlemen,
+There is heavy smoke in the cabin. In order to protect yourself, please place your blanquet over your face.
+Thank you for your attention.
+
+### 6.5 REMISE DE GAZ
+
+(a ne pas reiterer en cas de multiples remises de gaz)
+
+**FR :** Mesdames et messieurs,
+Nous avons interrompu notre approche, le commandant de bord nous donnera plus d'informations des que possible.
+Merci de votre attention.
+
+**EN :** Ladies and Gentlemen,
+We have aborted our approach. The Captain will give us futher information as soon as possible.
+Thank you for your attention.
+
+### 6.6 ATTERRISSAGE D'URGENCE
+
+**FR / EN (bilingue integre) :**
+
+Nous sommes obliges d'envisager un atterrissage de secours,
+We may have to make an emergency landing.
+
+Veuillez ecouter attentivement et executer IMPERATIVEMENT les consignes qui vont vous etre donnees. Votre securite depend de votre CALME et de votre DISCIPLINE. Faites confiance aux membres d'equipage qui ont suivi un entrainement special pour faire face a cette situation.
+Please listen very carefully. You MUST follow the instructions that are given. Your safety depends on you remaining CALM and DISCIPLINED. Please trust the crew, who has been specially trained for emergencies of this sort.
+
+Rester a vos places,
+Please remain seated,
+
+Degagez les issues, y faire placer les PAX REQUIS, placer les enfants entre les adultes. Lorsque les pax n'ont plus a se deplacer, reprendre l'annonce en marquant les pauses necessaires.
+
+Relevez votre tablette,
+Stow away your table,
+
+Enlevez tous les objets dangereux que vous portez sur vous,
+Remove any dangerous objects you are wearing or carrying,
+
+Le PNC en cabine indique lesquels (stylos, lunettes, ...) et conseille les pax.
+
+Mesdames, si vous portez des talons aiguilles, retirez vos chaussures,
+Ladies wearing high heels, please take your shoes off.
+
+Attachez votre ceinture et serrez-la fortement,
+Fasten your seat belt tightly,
+
+Le PNC en cabine distribue des couvertures ou des vetements,
+
+Avant l'impact, lorsque je crierai "Crispez-vous" prenez la position que nous vous montrons,
+Before we land, I will yell "Brace yourself" at which point you should assume the position we are now showing you,
+
+Le PNC en cabine montre la position "groupee" et "dressee" et explique les cas particuliers,
+
+Lorsque l'avion atterrira, il y aura plusieurs chocs.
+During landing, you will feel several bumps.
+
+Gardez votre ceinture attachee jusqu'a l'arret complet de l'avion
+Keep your seat belt fastened until the plane has come to a complete stop
+
+Attendez les ordres pour vous deplacer
+Wait for instructions before moving
+
+Vous laisserez vos bagages dans l'avion
+You will leave your(s) luggage(s) behind
+
+### 6.7 AMERRISSAGE
+
+**FR / EN (bilingue integre) :**
+
+Nous sommes obliges d'envisager un amerrissage de secours,
+We may have to make an emergency ditching.
+
+Veuillez ecouter attentivement et executer IMPERATIVEMENT les consignes qui vont vous etre donnees. Votre securite depend de votre CALME et de votre DISCIPLINE. Faites confiance aux membres d'equipage qui ont suivi un entrainement special pour faire face a cette situation.
+Please listen very carefully. You MUST follow the instructions that are given. Your safety depends on you remaining CALM and DISCIPLINED. Please trust the crew, who has been specially trained for emergencies of this sort.
+
+Rester a vos places,
+Please remain seated,
+
+Degagez les issues, y faire placer les PAX REQUIS, placer les enfants entre les adultes. Lorsque les pax n'ont plus a se deplacer, reprendre l'annonce en marquant les pauses necessaires.
+
+Relevez votre tablette,
+Stow away your table,
+
+Enlevez tous les objets dangereux que vous portez sur vous,
+Remove any dangerous objects you are wearing or carrying,
+
+Le PNC en cabine indique lesquels (stylos, lunettes, ...) et conseille les pax.
+
+Mesdames, si vous portez des talons aiguilles, retirez vos chaussures,
+Ladies wearing high heels, please take your shoes off.
+
+Mettez vos gilets de sauvetage mais gonflez-les uniquement en sortant de l'appareil. Nous gonflerons uniquement les gilets des enfants.(cf secu)
+Put on your jacket, but do not inflate it until you are leaving the plane. We will inflate children's life jackets only,
+
+Le PNC en cabine endosse leur gilet, distribue les gilets BB et aide les pax (particulierement les enfants) a endosser leurs gilets et gonfle ceux des enfants.
+
+Attachez votre ceinture et serrez-la fortement,
+Fasten your seat belt tightly,
+
+Le PNC en cabine distribue des couvertures ou des vetements,
+
+Avant l'impact, lorsque je crierai "Crispez-vous" prenez la position que nous vous montrons,
+Before we land, I will yell "Brace yourself" at which point you should assume the position we are now showing you,
+
+Le PNC en cabine montre la position "groupee" et "dressee" et explique les cas particuliers,
+
+Lorsque l'avion atterrira, il y aura plusieurs chocs.
+During landing, you will feel several bumps.
+
+Gardez votre ceinture attachee jusqu'a l'arret complet de l'avion
+Keep your seat belt fastened until the plane has come to a complete stop
+
+Attendez les ordres pour vous deplacer
+Wait for instructions before moving
+
+Vous laisserez vos bagages dans l'avion
+You will leave your(s) luggage(s) behind
+
+---
+
+## CHAPTER 7 - ARRIVEE
+
+### 7.1 TABLEAU DE CONVERSION
+
+(This section contains a conversion table image -- no text content extracted)
+
+### 7.2 ARRIVEE
+
+**FR :** Mesdames et messieurs,
+Il est ... nous venons de nous poser sur l'aeroport de ... ou la temperature est de .... Veuillez maintenir votre ceinture attachee jusqu'a l'extinction de la consigne lumineuse.
+
+**Vol direct:**
+Le Commandant de Bord M ... et l'ensemble de l'equipage ont eu plaisir a vous recevoir a bord de cet avion et vous remercient d'avoir choisi CORSAIR (affrete par ...). Nous vous souhaitons une agreable journee / apres-midi / soiree. Au revoir et merci.
+
+**Vol avec transit:**
+Le Commandant de Bord M ... et l'ensemble de l'equipage espere avoir le plaisir d'accueillir prochainement sur les lignes de CORSAIR (affrete par ...), les passagers nous quittant a cette escale.
+Selon l'escale d'arrivee :
+Nous vous invitons a vous munir de votre carte d'embarquement et de la presenter au personnel de bord avant de debarquer
+Ou
+Nous vous invitons a vous munir de votre carte d'embarquement et de la presenter au personnel sol.
+Nous vous souhaitons une agreable journee / apres-midi / soiree. Au revoir et merci.
+
+**Vol avec transit COO (double touche BKO):**
+Le Commandant de Bord M ... et l'ensemble de l'equipage espere avoir le plaisir d'accueillir prochainement sur les lignes de CORSAIR, les passagers nous quittant a cette escale.
+Nous vous invitons a vous munir de votre carte d'embarquement et de la presenter au personnel de bord avant de debarquer ainsi qu'au personnel sol au bas de la passerelle.
+Nous vous souhaitons une agreable journee / apres-midi / soiree. Au revoir et merci.
+Pour les passagers en transit, nous vous demandons de detacher votre ceinture de securite en vue d'un avitaillement en carburant et de limiter vos deplacements.
+
+**Escale de transit avec Passagers restant a bord :**
+Nous demandons a nos passagers a destination de ... :
+De bien vouloir rester assis afin de faciliter le passage des personnes debarquant a cette escale.
+Vous vous rendrez ensuite en salle de transit avec vos cartes d'acces a bord et tous vos bagages a main.
+Ou
+De bien vouloir rester a bord durant cette escale d'environ ... minutes/heure(s) et de respecter le siege qui vous a ete attribue. Merci.
+
+Si releve equipage -> Nous vous souhaitons un agreable voyage en compagnie de l'equipage de releve. Au revoir et merci.
+
+Arrivee MRU: Nous informons nos passagers n'ayant pas rempli en ligne, le formulaire numerique de voyage "tout en un" necessaire pour l'entree a l'Ile Maurice que des bornes sont a leur disposition avant le passage a l'immigration.
+
+**Avant l'arrivee au parking:**
+Le Personnel de bord viendra aider les passagers necessitant une assistance et les enfants non accompagnes en fin de debarquement
+L'ouverture des coffres a bagages peut entrainer la chute d'objets, nous vous recommandons d'y preter attention et de verifier que vous n'oubliez rien a bord. Nous vous remercions de bien vouloir laisser les ceintures et gilets des bebes sur votre siege avant de debarquer. Les couvertures doivent egalement rester a bord.
+Nous prions les passagers en correspondance de se presenter au personnel sol en quittant l'appareil. Les informations necessaires a la poursuite de leur voyage leur seront communiquees.
+Vous pouvez des a present desactiver le mode avion de vos telephones portables.
+
+**EN :** Ladies and Gentlemen,
+It is ... we have just landed at ... airport, the temperature is .... Please keep your seatbelt fastened until the warning light is switched off.
+
+**Vol direct:**
+Captain ... and his crew thank you for flying CORSAIR (operated for ...) Have a nice day / afternoon / evening. Goodbye and thank you.
+
+**Vol avec transit:**
+To all passengers leaving us here, Captain ... and his crew hope to have the pleasure of welcoming you again soon on CORSAIR flight (operated for ...).
+Depending on the arrival stopover :
+Please take out your boarding pass and show it to the crew before disembarking.
+Or
+Please take out your boarding pass and show it to the ground staff.
+Have a nice day / afternoon / evening. Goodbye and thank you.
+
+**Vol avec transit COO (double touche BKO):**
+To all passengers leaving us here, Captain ... and his crew hope to have the pleasure of welcoming you again soon on CORSAIR flight.
+Please take out your boarding pass and show it to the crew before disembarking and to the ground staff down the stairs.
+Have a nice day / afternoon / evening. Goodbye and thank you.
+For transit passengers, would you please undone your seat belt while refuelling will be in progress and remain seated.
+
+**Escale de Transit avec Passagers restant a bord:**
+Passengers flying on to ... are requested to remain seated to make way for passengers getting off at this stop.
+Then go to the transit lounge with your boarding pass and all your carry-on luggage.
+Or
+Please remain on board during this stopover of approximately ... minutes/hour(s) and respect the seat that has been assigned to you. Thank you.
+
+Si releve equipage -> Have a pleasant onward journey with the new crew that is taking over. Goodbye and thank you.
+
+Arrivee MRU: Kiosks are avalaible before immigration for passengers who have not completed on line the "all in one" digital travel forms that is required for entering into Mauricius island.
+
+**Avant l'arrivee au parking:**
+Cabin crew will assist passengers who need help and unaccompanied children upon the disembarkation.
+When opening the luggage compartments, objects can fall down. We recommend you to be careful, and check that you don't forget anything on board. Please leave baby seat belts and life jacket on your seat before disembarking. Blankets must also remain on board.
+Passengers in connection are kindly requested to present themselves to ground staff on leaving the aircraft. They will be given the necessary information to continue their trip.
+You can now deactivate the flight mode.
+
+**IFE/ANNONCES AUDIO/DISPONIBLES EN CREOLE ET A DIFFUSER ou effectuer :**
+GUADELOUPE/ GUYANE / MARTINIQUE/ MAYOTTE/ REUNION (pre-recorded)
+
+**ARRIVEE A L'ILE DE LA REUNION:**
+Mesdames, messieurs, le ... h... en heure lokal, deor i fait ... degres et nous vien atterrir su l'aeroport de La Reunion Roland Garros, su l'ile intense !
+Le Commandant Monsieur ...... Ek toute son lekipaz letai conten accueille a zot su Corsair et nou espere retrouv a zot prochainement.
+Nou souhaite a zot un gayar sejour ou retour su not ti caillou.
+
+**ARRIVEE EN MARTINIQUE:**
+Mesye ze dam,
+Nou fini rive Matinik, asou ayewo entenasynal-la, Aime Cesaire.
+i ..h... an e lokal.
+Dewo-a ka fe en bon ti ....degre.
+Komandan de bord -la e tout lekipaj-li te bien kontan risiwe zot jodi a.
+Nou ka espere we zot prochainement asou avyon Korse.
+Nou ka swete zot an bon sejou ou an bon ritou la kay zot.
+A an lot soleil.
+
+**ARRIVEE EN GUADELOUPE:**
+Mesye ze dam
+i ..(X).. zed.... (maten/ swa/ lapremidi)
+Mi nou soti rive Gwadloup aeropo entenasynal maryz konde
+Nou ka mande zot rete size e gade senti a zot mare jis tan avyon la (arese / bout).
+Komandan la Misiye (..X..) eve tout ekipaj a-y ka espere vwayaj a zo te adoumanman eve nou.
+Pase on bel (jone /apre midi/sware), on bon vakans oben on bon (vire/retou) o peyi, mesi onpil davwa zo chwazi Cosair pou vwayaj a zot e nou ka di nou (a tanto/Adan on dot soley).
+
+### 7.3 PRESENTATION PASSEPORT (pre-recorded)
+
+**FR :** Mesdames et Messieurs
+Merci de preparer votre passeport ouvert a la page comportant votre photo afin de satisfaire aux demandes des autorites locales.
+
+**EN :** Ladies and Gentlemen
+Please have your passport open on the page with your picture for the local authorities.
+
+---
+
+## CHAPTER 8 - MESSAGES D'IRREGULARITES
+
+### 8.1 ARRIVEE CDG
+
+**FR :** Mesdames et messieurs,
+(Se renseigner aupres de l'escale pour confirmation avant annonce)
+Des bus affretes par la compagnie sont mis a votre disposition pour vous acheminer vers l'aeroport d'Orly 4.
+Un representant Corsair vous accueillera aupres des tapis bagages et vous donnera de plus amples informations.
+Des dispositions ont ete prises pour que les parkings d'Orly soient ouverts a votre arrivee.
+
+**EN :** Ladies and Gentlemen,
+Buses operating for Corsair are available to take you to Orly 4 Airport.
+Further information will be provided by a Corsair representative near the carousels.
+Measures have been taken to ensure that Orly's car parks will be open upon your arrival.
+
+### 8.2 IRG AVION ISOLE AVEC PAX A BORD
+
+**FR :** Mesdames et messieurs,
+Le commandant de Bord vient d'envisager l'arret de l'appareil suite a.... Nous vous demandons de rester assis, ceinture detachee
+Nous vous informons que durant cette attente, aucun service ne sera effectue. Nous vous informerons de l'evolution de la situation dans les plus brefs delais.
+Nous vous remercions de votre comprehension.
+
+**EN :** Ladies and Gentlemen,
+Further to .... The Captain is planning to stop the aircraft. Please remain seated, with your seatbelt unfastened.
+During this stop, no services will be provided. We will keep you informed as soon as possible.
+Thank you for your cooperation
+
+### 8.3 IRG RETARD AVION ET TRAITEMENT CORRESPONDANCE
+
+**FR :** Mesdames et messieurs,
+Nous prions les passagers en correspondance de se presenter au personnel sol en quittant l'appareil.
+Les informations necessaires a la poursuite de leur voyage leur seront communiquees.
+
+**EN :** Ladies and Gentlemen,
+Passengers with a connecting flight are kindly requested to contact our ground staff after leaving the aircraft. They will receive all information they need for the remainder of their trip.
+
+### 8.4 IRG CHOC AVION PAR PRESTATAIRE
+
+**FR :** Mesdames et messieurs,
+Suite a un choc recu d'un vehicule circulant sur la piste, nous sommes contraints d'effectuer une verification technique.
+Nous vous invitons a rejoindre la salle d'embarquement munis de votre carte d'embarquement et de vos effets personnels.
+OU
+Nous vous invitons a rester a bord de l'appareil.
+Soyez assures que nous vous informerons regulierement de l'evolution de la situation.
+Nous vous remercions de votre patience et de votre comprehension.
+
+**EN :** Ladies and Gentlemen,
+Due to an incident on the tarmac involving a vehicle and our aircraft, we are obliged to carry out a technical inspection.
+We kindly ask you to return to the boarding area with your boarding pass and personal belongings.
+OU
+We kindly ask that you remain on board the aircraft.
+Please be assured that we will keep you updated regularly.
+Thank you for your patience and understanding.
+
+### 8.5 IRG GREVE INTERNE
+
+**FR :** Mesdames et messieurs,
+Nous vous informons qu'en raison d'un mouvement social au sein de la compagnie, notre depart est retarde/ vol annule.
+Nous vous invitons a rejoindre la salle d'embarquement munis de votre carte d'embarquement et de vos effets personnels.
+OU
+Nous vous invitons a rester a bord de l'appareil.
+Soyez assures que nous vous informerons regulierement de l'evolution de la situation.
+Nous vous remercions de votre patience et/ou de votre comprehension.
+
+**EN :** Ladies and Gentlemen,
+We would like to inform you that due to strike action within the company our departure is delayed/flight is cancelled.
+We kindly ask you to return to the boarding area with your boarding pass and personal belongings.
+OU
+We kindly ask that you remain on board the aircraft.
+Please rest assured that we will keep you updated regularly.
+Thank you for your patience and understanding.
+
+### 8.6 IRG GREVE EXTERNE
+
+**FR :** Mesdames et messieurs,
+Nous vous informons que suite au mouvement social de la societe (citer le nom) exterieure a la compagnie / de l'aeroport de ...
+Notre depart est retarde/ vol annule/ la restauration est adaptee ...
+Nous vous remercions de votre patience et/ou de votre comprehension.
+
+**EN :** Ladies and Gentlemen,
+We would like to inform you that due to a strike action carried out by the company (citer le nom) / an air traffic controllers,
+Our departure is delayed/flight is cancelled/catering on board is adapted...
+Thank you for your patience and understanding.
+
+### 8.7 IRG METEO
+
+**FR :** Mesdames et messieurs,
+En raison de mauvaises conditions climatiques, nous vous informons que notre depart est retarde.
+Nous vous invitons a rejoindre la salle d'embarquement munis de votre carte d'embarquement et de vos effets personnels.
+OU
+Nous vous invitons a rester a bord de l'appareil.
+Soyez assures que nous vous informerons regulierement de l'evolution de la situation.
+Nous vous remercions de votre patience et de votre comprehension.
+
+**EN :** Ladies and Gentlemen,
+Please note that our departure is delayed due to poor weather conditions.
+We kindly ask you to return to the boarding area with your boarding pass and personal belongings.
+OU
+We kindly ask that you remain on board the aircraft.
+Please be assured that we will keep you updated regularly.
+Thank you for your patience and understanding.
+
+### 8.8 IRG PROBLEME GEOPOLITIQUE
+
+**FR :** Mesdames et Messieurs,
+Suite a une instabilite politique a ...... nous sommes contraints de :
+Faire demi-tour a .../ de derouter vers l'aeroport de ...
+Nous vous tiendrons informes des que possible de l'evolution de la situation et de l'importance du retard engendre.
+Nous vous remercions de votre patience et de votre comprehension.
+
+**EN :** Ladies and gentlemen,
+Due to political instability in ....We are forced to :
+Turn back to .../ divert to ...airport
+We will keep you informed of the latest developments and the extent of the delay as soon as possible.
+Thank you for your patience and understanding.
+
+### 8.9 IRG FTL / PB EQUIPAGE
+
+**FR :** Mesdames et Messieurs,
+La reglementation des temps de vol des equipages nous contraint a reporter le vol de xH.
+Nous vous invitons a rejoindre la salle d'embarquement munis de votre carte d'embarquement et de vos effets personnels.
+Le personnel sol est a votre disposition. (Annonce a elaborer en fonction de ce qui est possible d'offrir aux clients)
+Nous vous remercions de votre comprehension.
+
+**EN :** Ladies and gentlemen,
+Flight and duty time limitations concerning our flight crew have obliged us to delay the flight leaving at .......
+We kindly ask you to return to the boarding area with your boarding pass and personal belongings.
+Ground staff is at your service.
+Thank you for your patience and understanding.
+
+### 8.10 IRG ESCALE IMPREVUE / FRET
+
+**FR :** Mesdames et Messieurs,
+Annonce PNT puis :
+Suite aux informations diffusees par notre commandant de bord,
+Nous vous precisons que cette escale ne devrait pas exceder ......
+Nous vous invitons a rejoindre la salle d'embarquement munis de votre carte d'embarquement et de vos effets personnels.
+OU
+Nous vous invitons a rester a bord de l'appareil.
+Nous vous remercions de votre patience et de votre comprehension.
+
+**EN :** Ladies and gentlemen,
+Following on the information given by the Captain,
+Please note that our stopover should not exceed ......
+We kindly ask you to return to the boarding area with your boarding pass and personal belongings.
+OU
+We kindly ask that you remain on board the aircraft.
+Thank you for your patience and understanding.
+
+### 8.11 IRG DEROUTEMENT
+
+**FR :** Mesdames et Messieurs,
+Le Commandant de bord a decide de proceder a un controle de l'appareil / a un deroutement pour raisons medicales... Pour cela, nous nous deroutons actuellement sur l'aeroport de ...
+Nous vous tiendrons informes des que possible de l'evolution de la situation et de l'importance du retard engendre.
+Nous vous remercions de votre patience et de votre comprehension.
+
+**EN :** Ladies and gentlemen,
+The Captain has decided to carry out an additional check of the aircraft (following a hostage situation or serious incident)/following a diversion for medical reasons etc. This means we will now turn back to ...airport/we will now divert to .... airport/we will now return to the terminal.
+We will keep you informed of the latest developments and the extent of the delay as soon as possible.
+Thank you for your patience and understanding.
+
+---
+
+That is the complete extraction of the 80-page PDF. The document contains **8 chapters** with a total of approximately **60 announcement sections** (some with sub-sections). The structure is:
+
+1. **Chapter 1 - INTRODUCTION** (3 sections: 1.1-1.3)
+2. **Chapter 2 - LEXIQUE ANGLAIS SECOURISME / COMMERCIAL** (14 sections: 2.1-2.14)
+3. **Chapter 3 - FORMULE DE POLITESSE** (4 sections: 3.1-3.4)
+4. **Chapter 4 - DEPART** (8 sections: 4.1-4.8)
+5. **Chapter 5 - EN VOL** (28 sections: 5.1-5.28, with sub-sections under 5.3 and 5.8)
+6. **Chapter 6 - ANNONCES PARTICULIERES** (7 sections: 6.1-6.7)
+7. **Chapter 7 - ARRIVEE** (3 sections: 7.1-7.3)
+8. **Chapter 8 - MESSAGES D'IRREGULARITES** (11 sections: 8.1-8.11)
