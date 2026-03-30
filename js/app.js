@@ -7,9 +7,9 @@
   var splashLoader = document.getElementById('splash-loader');
 
   var BRAND_PAUSE = 3000;    // 3s brand + loader visible
-  var TRAVEL_MS   = 2800;    // 2.8s plane traversal
+  var TRAVEL_MS   = 2200;    // 2.2s plane traversal (faster)
   var FADE_IN     = 500;     // plane opacity fade-in
-  var WING_MID    = 0.35;    // wing position from nose (% of plane length)
+  var WING_MID    = 0.38;    // wing position from nose (% of plane length)
 
   var vh = window.innerHeight;
   var vw = window.innerWidth;
@@ -56,17 +56,18 @@
         var curX = startX + (endX - startX) * t;
         splashPlane.style.transform = 'translate3d(' + curX + 'px,0,0)';
 
-        // Wing line X on screen (plane center + offset toward nose)
-        // Nose is on the right after rotation; wings at WING_MID from nose
+        // Wing line X on screen
+        // Nose points right; wings at WING_MID from nose → toward the LEFT (rear)
         var planeCenterX = vw / 2 + curX;
-        var wingX = planeCenterX + planeVisW * (0.5 - WING_MID);
-        // Shift clip line slightly toward plane so wings mask the edge
-        wingX -= planeVisW * 0.08;
+        // Wing X = fuselage center - offset toward rear (left)
+        var wingX = planeCenterX - planeVisW * (WING_MID - 0.5);
+        // Shift clip slightly left so wings cover the edge
+        wingX -= planeVisW * 0.03;
         var cPct = (wingX / vw) * 100;
-        // 30° angle offset: V-shape vertical
+        // 30° sweep: wing tips extend further LEFT (behind) than fuselage center
         var aOff = (0.577 * vh * 0.5) / vw * 100;
-        var cX = Math.min(110, cPct);
-        var eX = Math.min(110, cX + aOff);
+        var cX = Math.min(110, cPct);           // fuselage center (more right)
+        var eX = Math.min(110, cX - aOff);      // wing tips (more left = behind)
 
         splashBg.style.clipPath = 'polygon(' +
           eX + '% 0%,100% 0%,100% 100%,' +
@@ -93,11 +94,10 @@
         splashPlane.style.transform = 'translate3d(0,' + curY + 'px,0)';
 
         // Wing line Y on screen
-        // img is centered in container → visual top = vh/2 - planeH/2 + containerTY
-        var imgVisualTop = vh / 2 - planeH / 2 + curY;
-        var wingY = imgVisualTop + planeH * WING_MID;
-        // Shift clip up slightly so wings mask the edge
-        wingY -= planeH * 0.06;
+        // img centered in container → center at vh/2 + curY
+        var wingY = vh / 2 + curY + planeH * (WING_MID - 0.5);
+        // Shift clip slightly up so wings cover the edge
+        wingY -= planeH * 0.03;
         var cPct = (wingY / vh) * 100;
         // 30° angle offset: V-shape horizontal
         var aOff = (0.577 * vw * 0.5) / vh * 100;
