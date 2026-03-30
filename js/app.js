@@ -500,7 +500,8 @@ function buildBriefing(){
 }
 
 // === Crew list builder + inline door edit with drag & drop ===
-var GRIP_SVG='<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="8" x2="20" y2="8"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="16" x2="20" y2="16"/></svg>';
+// Grip SVG: three horizontal lines (iOS reorder handle)
+var GRIP_SVG='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="8" x2="20" y2="8"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="16" x2="20" y2="16"/></svg>';
 
 function getCrewSorted(){
   var doorOrder={'G':0,'D':1};
@@ -517,31 +518,31 @@ function buildCrewList(container){
   container.textContent='';
   var sorted=getCrewSorted();
   sorted.forEach(function(c,i){
-    // Outer row: [badge] [grip?] [crew-card]
-    var wrapper=document.createElement('div');wrapper.className='crew-row';
-    wrapper.dataset.crewName=c.name;
-    // Door badge (fixed, stays in place)
-    var saved=doorAssignments[c.name];
-    var door=(saved&&DOORS.includes(saved))?saved:c.door;
-    var badge=document.createElement('div');badge.className='crew-door-badge';badge.textContent=door;
-    // Grip handle (hidden until edit mode)
-    var grip=document.createElement('div');grip.className='crew-grip';grip.innerHTML=GRIP_SVG;
-    // Crew card (the draggable part)
+    // Slot: [fixed badge] [crew card with grip inside]
+    var slot=document.createElement('div');slot.className='crew-slot';
+    slot.dataset.doorIndex=String(i);
+    // Door badge — FIXED, never moves
+    var badge=document.createElement('div');badge.className='crew-door-badge';
+    badge.textContent=DOORS[i];
+    // Crew card — the movable part
     var card=document.createElement('div');card.className='crew-member';
+    card.dataset.crewName=c.name;
+    // Grip handle (inside card, hidden until edit mode)
+    var grip=document.createElement('div');grip.className='crew-grip';grip.innerHTML=GRIP_SVG;
     var av=document.createElement('div');av.className='crew-avatar '+c.rankCls;
     av.textContent=c.trigramme;
     var info=document.createElement('div');info.className='crew-info';
     var nm=document.createElement('div');nm.className='crew-name';nm.textContent=c.name;
     var rl=document.createElement('div');rl.className='crew-role';rl.textContent=c.rank;
     info.appendChild(nm);info.appendChild(rl);
-    card.appendChild(av);card.appendChild(info);
-    wrapper.appendChild(badge);wrapper.appendChild(grip);wrapper.appendChild(card);
+    card.appendChild(grip);card.appendChild(av);card.appendChild(info);
+    slot.appendChild(badge);slot.appendChild(card);
     card.addEventListener('click',function(){if(!crewEditMode)showCrewDetail(c);});
-    container.appendChild(wrapper);
+    container.appendChild(slot);
   });
 }
 
-// --- Door edit mode state ---
+// --- Door edit mode ---
 var crewEditMode=false;
 var dragState=null;
 
@@ -555,7 +556,7 @@ function enterDoorEditMode(){
   var btn=document.getElementById('editDoorsBtn');
   btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Valider';
   btn.classList.add('validate');
-  document.querySelectorAll('#briefCrew .crew-row').forEach(function(row){row.classList.add('editing');});
+  document.querySelectorAll('#briefCrew .crew-slot').forEach(function(s){s.classList.add('editing');});
   attachDragListeners();
 }
 
@@ -564,11 +565,12 @@ function exitDoorEditMode(){
   var btn=document.getElementById('editDoorsBtn');
   btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg> Modifier';
   btn.classList.remove('validate');
-  // Read current DOM order → map each position to door
-  var rows=document.querySelectorAll('#briefCrew .crew-row');
+  // Read crew name in each slot → assign to slot's door
+  var slots=document.querySelectorAll('#briefCrew .crew-slot');
   var newAssign={};
-  rows.forEach(function(row,i){
-    var name=row.dataset.crewName;
+  slots.forEach(function(slot,i){
+    var card=slot.querySelector('.crew-member');
+    var name=card?card.dataset.crewName:'';
     if(name&&DOORS[i]) newAssign[name]=DOORS[i];
   });
   Object.keys(doorAssignments).forEach(function(k){delete doorAssignments[k];});
@@ -579,90 +581,91 @@ function exitDoorEditMode(){
   detachDragListeners();
 }
 
-// --- Touch drag & drop (grip handle = instant drag, no long press) ---
+// --- Touch drag & drop: slots stay fixed, cards swap ---
 var touchHandlers={};
 
 function attachDragListeners(){
   var container=document.getElementById('briefCrew');
+
   touchHandlers.start=function(e){
-    // Only start drag if touching the grip handle or crew card in edit mode
     var grip=e.target.closest('.crew-grip');
     if(!grip)return;
-    var wrapper=grip.closest('.crew-row.editing');
-    if(!wrapper)return;
+    var slot=grip.closest('.crew-slot.editing');
+    if(!slot)return;
     e.preventDefault();
-    var touch=e.touches[0];
-    startDrag(wrapper,touch);
+    startDrag(slot,e.touches[0]);
   };
   touchHandlers.move=function(e){
-    if(dragState){
-      e.preventDefault();
-      moveDrag(e.touches[0]);
-    }
+    if(dragState){e.preventDefault();moveDrag(e.touches[0]);}
   };
-  touchHandlers.end=function(e){
-    if(dragState) endDrag();
+  touchHandlers.end=function(){
+    if(dragState)endDrag();
   };
   container.addEventListener('touchstart',touchHandlers.start,{passive:false});
   container.addEventListener('touchmove',touchHandlers.move,{passive:false});
   container.addEventListener('touchend',touchHandlers.end,{passive:true});
   container.addEventListener('touchcancel',touchHandlers.end,{passive:true});
-  // Also support mouse for desktop testing
+
+  // Mouse support for desktop
   touchHandlers.mousedown=function(e){
     var grip=e.target.closest('.crew-grip');
     if(!grip)return;
-    var wrapper=grip.closest('.crew-row.editing');
-    if(!wrapper)return;
+    var slot=grip.closest('.crew-slot.editing');
+    if(!slot)return;
     e.preventDefault();
-    startDrag(wrapper,{clientY:e.clientY,clientX:e.clientX});
-    function onMouseMove(ev){ev.preventDefault();moveDrag({clientY:ev.clientY});}
-    function onMouseUp(){endDrag();document.removeEventListener('mousemove',onMouseMove);document.removeEventListener('mouseup',onMouseUp);}
-    document.addEventListener('mousemove',onMouseMove);
-    document.addEventListener('mouseup',onMouseUp);
+    startDrag(slot,{clientY:e.clientY,clientX:e.clientX});
+    function mm(ev){ev.preventDefault();moveDrag({clientY:ev.clientY});}
+    function mu(){endDrag();document.removeEventListener('mousemove',mm);document.removeEventListener('mouseup',mu);}
+    document.addEventListener('mousemove',mm);
+    document.addEventListener('mouseup',mu);
   };
   container.addEventListener('mousedown',touchHandlers.mousedown);
 }
 
 function detachDragListeners(){
   var container=document.getElementById('briefCrew');
-  if(touchHandlers.start){
-    container.removeEventListener('touchstart',touchHandlers.start);
-    container.removeEventListener('touchmove',touchHandlers.move);
-    container.removeEventListener('touchend',touchHandlers.end);
-    container.removeEventListener('touchcancel',touchHandlers.end);
-    container.removeEventListener('mousedown',touchHandlers.mousedown);
-  }
+  if(!touchHandlers.start)return;
+  container.removeEventListener('touchstart',touchHandlers.start);
+  container.removeEventListener('touchmove',touchHandlers.move);
+  container.removeEventListener('touchend',touchHandlers.end);
+  container.removeEventListener('touchcancel',touchHandlers.end);
+  container.removeEventListener('mousedown',touchHandlers.mousedown);
 }
 
-function startDrag(wrapper,touch){
+function startDrag(slot,touch){
   try{navigator.vibrate(10);}catch(e){}
-  var card=wrapper.querySelector('.crew-member');
+  var card=slot.querySelector('.crew-member');
   var rect=card.getBoundingClientRect();
+  // Ghost = visual copy of the card
   var ghost=card.cloneNode(true);
+  ghost.querySelector('.crew-grip').style.display='none'; // hide grip in ghost
   ghost.className='crew-drag-ghost';
   ghost.style.width=rect.width+'px';
   ghost.style.height=rect.height+'px';
   ghost.style.left=rect.left+'px';
   ghost.style.top=rect.top+'px';
   ghost.style.background=getComputedStyle(document.documentElement).getPropertyValue('--bg-surface')||'#1a1a2e';
+  ghost.style.padding='8px 10px';
   document.body.appendChild(ghost);
-  wrapper.classList.add('dragging');
-  dragState={ghost:ghost,sourceRow:wrapper,offsetY:touch.clientY-rect.top,currentGapRow:null};
+  slot.classList.add('drag-source');
+  dragState={ghost:ghost,sourceSlot:slot,sourceCard:card,offsetY:touch.clientY-rect.top,overSlot:null};
 }
 
 function moveDrag(touch){
   if(!dragState)return;
   dragState.ghost.style.top=(touch.clientY-dragState.offsetY)+'px';
+  // Find which slot the finger is over
   var container=document.getElementById('briefCrew');
-  var rows=Array.from(container.querySelectorAll('.crew-row:not(.dragging)'));
-  rows.forEach(function(r){r.classList.remove('drag-gap');});
-  dragState.currentGapRow=null;
+  var slots=Array.from(container.querySelectorAll('.crew-slot:not(.drag-source)'));
+  // Clear previous highlight
+  slots.forEach(function(s){s.classList.remove('drag-over');});
+  dragState.overSlot=null;
   var fingerY=touch.clientY;
-  for(var i=0;i<rows.length;i++){
-    var rRect=rows[i].getBoundingClientRect();
-    if(fingerY<rRect.top+rRect.height/2){
-      rows[i].classList.add('drag-gap');
-      dragState.currentGapRow=rows[i];
+  for(var i=0;i<slots.length;i++){
+    var r=slots[i].getBoundingClientRect();
+    if(fingerY>=r.top&&fingerY<=r.bottom){
+      slots[i].classList.add('drag-over');
+      dragState.overSlot=slots[i];
       break;
     }
   }
@@ -672,17 +675,20 @@ function endDrag(){
   if(!dragState)return;
   var container=document.getElementById('briefCrew');
   dragState.ghost.remove();
-  container.querySelectorAll('.crew-row').forEach(function(r){r.classList.remove('drag-gap');});
-  var src=dragState.sourceRow;
-  var gap=dragState.currentGapRow;
-  src.classList.remove('dragging');
-  if(gap) container.insertBefore(src,gap);
-  else container.appendChild(src);
-  // Update door badges to reflect new positions
-  container.querySelectorAll('.crew-row').forEach(function(row,i){
-    var badge=row.querySelector('.crew-door-badge');
-    if(badge&&DOORS[i]) badge.textContent=DOORS[i];
+  // Clear highlights
+  container.querySelectorAll('.crew-slot').forEach(function(s){
+    s.classList.remove('drag-over');s.classList.remove('drag-source');
   });
+  // Swap cards between source and target slots
+  var srcSlot=dragState.sourceSlot;
+  var tgtSlot=dragState.overSlot;
+  if(tgtSlot&&tgtSlot!==srcSlot){
+    var srcCard=srcSlot.querySelector('.crew-member');
+    var tgtCard=tgtSlot.querySelector('.crew-member');
+    // Swap: move tgtCard to srcSlot, srcCard to tgtSlot
+    srcSlot.appendChild(tgtCard);
+    tgtSlot.appendChild(srcCard);
+  }
   dragState=null;
 }
 

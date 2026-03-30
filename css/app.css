@@ -740,12 +740,12 @@ button, [role="button"] { min-height: 36px; min-width: 36px; }
 .crew-name { font-size: 13px; font-weight: 600; color: white; }
 .crew-role { font-size: 10px; color: var(--corsair-beige-sable); letter-spacing: 0.5px; }
 
-/* Crew row: two-part layout — fixed door badge + draggable crew card */
-.crew-row {
+/* Crew slot: fixed row with door badge + crew card side by side */
+.crew-slot {
   display: flex; align-items: center; gap: 8px;
 }
 
-/* Door badge — small colored square (fixed, never moves) */
+/* Door badge — small colored square, always fixed in place */
 .crew-door-badge {
   width: 28px; height: 28px; border-radius: 7px; flex-shrink: 0;
   display: flex; align-items: center; justify-content: center;
@@ -753,50 +753,47 @@ button, [role="button"] { min-height: 36px; min-width: 36px; }
   background: var(--corsair-bleu-economie);
 }
 
-/* Crew card (the draggable part) */
+/* Crew card (sits inside slot, swapped between slots on drag) */
 .crew-member {
   display: flex; align-items: center; gap: 10px; padding: 8px 10px;
   background: rgba(255,255,255,0.03); border-radius: 10px;
-  transition: opacity 0.2s ease, box-shadow 0.2s ease;
   position: relative; flex: 1; min-width: 0;
   -webkit-user-select: none; user-select: none;
 }
 
-/* Grip handle — hidden by default, shown in edit mode */
+/* Grip handle inside the card — hidden by default */
 .crew-grip {
-  display: none;
-  flex-shrink: 0; width: 20px; height: 20px;
-  color: var(--text-muted); opacity: 0.5;
-  touch-action: none;
+  display: none; flex-shrink: 0; width: 18px; height: 18px;
+  color: var(--text-muted); opacity: 0.4;
+  touch-action: none; margin-right: 2px;
 }
-.crew-row.editing .crew-grip { display: flex; }
-.crew-row.editing .crew-member { cursor: grab; background: rgba(255,255,255,0.06); }
 
-/* Dragging: placeholder */
-.crew-row.dragging .crew-member {
-  opacity: 0.2;
-  border: 1.5px dashed rgba(82,167,190,0.3);
-  background: transparent;
+/* Edit mode */
+.crew-slot.editing .crew-grip { display: flex; }
+.crew-slot.editing .crew-member { cursor: grab; background: rgba(255,255,255,0.06); }
+
+/* Placeholder when card is being dragged away */
+.crew-slot.drag-source .crew-member {
+  opacity: 0;
+  pointer-events: none;
 }
-.crew-row.dragging .crew-member > * { visibility: hidden; }
 
-/* Gap indicator for drop target */
-.crew-row.drag-gap { margin-top: 52px; transition: margin-top 0.15s ease; }
+/* Highlight the drop target slot */
+.crew-slot.drag-over .crew-member {
+  box-shadow: 0 0 0 2px var(--corsair-bleu-economie);
+  background: rgba(82,167,190,0.08);
+}
 
 /* Floating ghost following finger */
 .crew-drag-ghost {
-  position: fixed;
-  z-index: 10000;
-  pointer-events: none;
-  opacity: 0.92;
-  transform: scale(1.04);
+  position: fixed; z-index: 10000; pointer-events: none;
+  opacity: 0.92; transform: scale(1.04);
   box-shadow: 0 8px 32px rgba(0,0,0,0.35);
-  border-radius: 10px;
-  will-change: transform;
+  border-radius: 10px; will-change: transform;
   display: flex; align-items: center; gap: 10px;
 }
 
-/* Edit button styling */
+/* Edit button */
 .crew-edit-btn {
   background: none; border: none; color: var(--corsair-bleu-economie);
   font-size: 12px; font-weight: 600; cursor: pointer; padding: 4px 10px;
