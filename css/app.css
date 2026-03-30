@@ -1211,7 +1211,16 @@ button, [role="button"] { min-height: 36px; min-width: 36px; }
 /* Annonce detail content */
 .annonce-content {
   font-size: 13px; line-height: 1.6; color: var(--text);
-  white-space: pre-line; padding: 12px 16px;
+  padding: 12px 16px;
+}
+.annonce-block {
+  display: flex; gap: 10px; align-items: flex-start;
+  white-space: pre-line;
+}
+.annonce-block em { font-style: italic; color: var(--text-muted); }
+.annonce-flag {
+  font-size: 18px; flex-shrink: 0; line-height: 1.5;
+  margin-top: 1px;
 }
 .annonce-tag {
   display: inline-block; font-size: 9px; font-weight: 700;

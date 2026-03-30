@@ -1326,69 +1326,55 @@ function openAnnonceDetail(chapterTitle,sec){
     });
     list.appendChild(tagRow);
   }
-  // Content — split by \n\n blocks, detect English blocks and italicize
+  // Content — split by \n\n blocks, detect language, add flag + italicize EN
   var content=document.createElement('div');content.className='annonce-content';
   var blocks=sec.content.split('\n\n');
   blocks.forEach(function(block,idx){
     if(idx>0){
-      var spacer=document.createElement('div');spacer.style.height='12px';
+      var spacer=document.createElement('div');spacer.style.height='14px';
       content.appendChild(spacer);
     }
-    var isEnglish=isEnglishBlock(block);
-    if(isEnglish){
-      var em=document.createElement('em');em.style.display='block';
+    var lang=detectBlockLang(block);
+    // Flag + block wrapper
+    var wrapper=document.createElement('div');wrapper.className='annonce-block';
+    var flag=document.createElement('span');flag.className='annonce-flag';
+    if(lang==='en') flag.textContent='\uD83C\uDDEC\uD83C\uDDE7';      // 🇬🇧
+    else if(lang==='cr-re') flag.textContent='\uD83C\uDDF7\uD83C\uDDEA'; // 🇷🇪
+    else if(lang==='cr-mq') flag.textContent='\uD83C\uDDF2\uD83C\uDDF6'; // 🇲🇶
+    else if(lang==='cr-gp') flag.textContent='\uD83C\uDDEC\uD83C\uDDF5'; // 🇬🇵
+    else flag.textContent='\uD83C\uDDEB\uD83C\uDDF7';                    // 🇫🇷
+    wrapper.appendChild(flag);
+    if(lang==='en'){
+      var em=document.createElement('em');
       em.textContent=block;
-      content.appendChild(em);
+      wrapper.appendChild(em);
     } else {
       var span=document.createElement('span');
       span.textContent=block;
-      content.appendChild(span);
+      wrapper.appendChild(span);
     }
+    content.appendChild(wrapper);
   });
   list.appendChild(content);
 }
 
-// Detect if a text block is English
-function isEnglishBlock(text){
+// Detect language of a text block: 'fr', 'en', 'cr-re', 'cr-mq', 'cr-gp'
+function detectBlockLang(text){
   var t=text.trim();
-  // Common English starts
-  if(/^Ladies and Gentlemen/i.test(t))return true;
-  if(/^We /i.test(t)&&!/^We\s/.test(t)===false)return true;
-  if(/^Please /i.test(t))return true;
-  if(/^Thank you/i.test(t))return true;
-  if(/^Your /i.test(t))return true;
-  if(/^The /i.test(t)&&t.length>20)return true;
-  if(/^In the event/i.test(t))return true;
-  if(/^Due to/i.test(t))return true;
-  if(/^May I/i.test(t))return true;
-  if(/^Would you/i.test(t))return true;
-  if(/^Are you/i.test(t))return true;
-  if(/^Do you/i.test(t))return true;
-  if(/^Have you/i.test(t))return true;
-  if(/^Could I/i.test(t))return true;
-  if(/^Good morning/i.test(t))return true;
-  if(/^Captain /i.test(t))return true;
-  if(/^Passengers /i.test(t))return true;
-  if(/^To all passengers/i.test(t))return true;
-  if(/^Cabin crew/i.test(t))return true;
-  if(/^WIFI is/i.test(t))return true;
-  if(/^We inform you/i.test(t))return true;
-  if(/^Drinks will/i.test(t))return true;
-  if(/^Headphones/i.test(t))return true;
-  if(/^You are travel/i.test(t))return true;
-  if(/^If ever you/i.test(t))return true;
-  if(/^Cases of Mpox/i.test(t))return true;
-  if(/^For future/i.test(t))return true;
-  if(/^If you have any/i.test(t))return true;
-  if(/^Buses operating/i.test(t))return true;
-  if(/^Further to/i.test(t))return true;
-  if(/^Flight and duty/i.test(t))return true;
-  if(/^Following on/i.test(t))return true;
-  if(/^The Captain/i.test(t))return true;
-  // Heuristic: count English indicator words vs French
-  var enWords=(t.match(/\b(the|and|you|your|please|that|this|with|from|have|will|are|for|our|not|can|all|must|been|seat|belt|cabin|crew|board|flight|passengers)\b/gi)||[]).length;
-  var frWords=(t.match(/\b(les|des|nous|vous|est|une|sur|dans|pour|que|votre|notre|sont|pas|avec|aux|ses|qui|par|ont|mesdames|messieurs|bord|ceinture|siege|cabine)\b/gi)||[]).length;
-  return enWords>frWords&&enWords>=3;
+  // Creole Reunion: "zot", "lekipaj", "gayar", "caillou", "lokal"
+  if(/\b(zot|lekipaj|gayar|caillou|na le plaisir|ti caillou|heure lokal|deor i fait)\b/i.test(t))return 'cr-re';
+  // Creole Martinique: "Mesie ze danm", "Matinik", "asou", "lekipaj-li"
+  if(/\b(Mesie ze danm|Matinik|Misie|koumandan de bow|anle Airbus|Korse|dekolaj-la)\b/i.test(t))return 'cr-mq';
+  // Creole Guadeloupe: "Mesye ze dam", "Gwadloup", "Komandan la"
+  if(/\b(Gwadloup|Komandan la|senti a zot|Cosair pou|onpil davwa|chwazi)\b/i.test(t))return 'cr-gp';
+  // English detection
+  if(/^Ladies and Gentlemen/i.test(t))return 'en';
+  if(/^(Please |Thank you|Your |The |In the event|Due to|May I|Would you|Are you|Do you|Have you|Could I|Good morning|Captain |Passengers |To all passengers|Cabin crew|WIFI is|We inform|Drinks will|Headphones|You are trav|If ever you|Cases of Mpox|For future|If you have any|Buses operating|Further to|Flight and duty|Following on|The Captain|We are|We have|We will|We remind|We ask|We invite|We welcome|We would|We carry|We may|Correctly|Put on|Pull down|Make sure|Fasten|Keep your|Wait for|You will|Then,|Emergency|When opening|Only cash|Kiosks|An identity|Payments|A circulation|Ministry|Ocean users|The Mauritian|For your safety|Mobile phones|Please note|When the illuminated|You can find|In business|All electronic|Your laptop|In case of|The life jacket|The product used|To comply|Tampering|Recharging|The crew member|We also inform|For transit|The cabin crew|It is|Swimming)\b/i.test(t))return 'en';
+  // Word frequency heuristic
+  var enWords=(t.match(/\b(the|and|you|your|please|that|this|with|from|have|will|are|for|our|not|can|all|must|been|seat|belt|cabin|crew|board|flight|passengers|safety|luggage|emergency)\b/gi)||[]).length;
+  var frWords=(t.match(/\b(les|des|nous|vous|est|une|sur|dans|pour|que|votre|notre|sont|pas|avec|aux|ses|qui|par|ont|mesdames|messieurs|bord|ceinture|cabine|equipage|securite)\b/gi)||[]).length;
+  if(enWords>frWords&&enWords>=3)return 'en';
+  return 'fr';
 }
 
 // ============================================================
