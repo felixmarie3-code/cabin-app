@@ -1378,13 +1378,18 @@ function openAnnonceDetail(chapterTitle,sec){
       var spacer=document.createElement('div');spacer.style.height='14px';
       content.appendChild(spacer);
     }
-    var lang=detectBlockLang(block);
+    var lang=detectBlockLang(block, sec.title);
     // Flag + block wrapper
     var wrapper=document.createElement('div');wrapper.className='annonce-block';
     var flag=document.createElement('span');flag.className='annonce-flag';
-    if(lang==='en') flag.textContent='\uD83C\uDDEC\uD83C\uDDE7';      // 🇬🇧
-    else if(lang==='cr') flag.textContent='CR';                         // Créole
-    else flag.textContent='\uD83C\uDDEB\uD83C\uDDF7';                  // 🇫🇷
+    if(lang==='en') flag.textContent='\uD83C\uDDEC\uD83C\uDDE7';           // 🇬🇧
+    else if(lang==='cr-re') flag.textContent='\uD83C\uDDF7\uD83C\uDDEA';   // 🇷🇪 Réunion
+    else if(lang==='cr-mq') flag.textContent='\uD83C\uDDF2\uD83C\uDDF6';   // 🇲🇶 Martinique
+    else if(lang==='cr-gp') flag.textContent='\uD83C\uDDEC\uD83C\uDDF5';   // 🇬🇵 Guadeloupe
+    else if(lang==='cr-mu') flag.textContent='\uD83C\uDDF2\uD83C\uDDFA';   // 🇲🇺 Maurice
+    else if(lang==='cr-yt') flag.textContent='\uD83C\uDDFE\uD83C\uDDF9';   // 🇾🇹 Mayotte
+    else if(lang==='cr') flag.textContent='\uD83C\uDDEB\uD83C\uDDF7 CR';   // 🇫🇷 CR fallback
+    else flag.textContent='\uD83C\uDDEB\uD83C\uDDF7';                       // 🇫🇷
     wrapper.appendChild(flag);
     if(lang==='en'){
       var em=document.createElement('em');
@@ -1400,11 +1405,29 @@ function openAnnonceDetail(chapterTitle,sec){
   list.appendChild(content);
 }
 
-// Detect language of a text block: 'fr', 'en', 'cr'
-function detectBlockLang(text){
+// Detect language of a text block: 'fr', 'en', 'cr-re', 'cr-mq', 'cr-gp', 'cr-mu', 'cr-yt', 'cr'
+function detectBlockLang(text, sectionTitle){
   var t=text.trim();
-  // Creole (any variant): common Creole markers
-  if(/\b(zot|lekipaj|gayar|ti caillou|lokal|deor i fait|Mesie ze danm|Matinik|koumandan de bow|dekolaj-la|Gwadloup|Komandan la|senti a zot|onpil davwa|chwazi|Korse|lekipaj-li|risive|risouwe|Mesye ze dam)\b/i.test(t))return 'cr';
+  var st=(sectionTitle||'').toLowerCase();
+
+  // Creole detection — first check if it's Creole, then identify variant
+  var isCreole=/\b(zot|lekipaj|gayar|ti caillou|lokal|deor i fait|Mesie ze danm|Matinik|koumandan de bow|dekolaj-la|Gwadloup|Komandan la|senti a zot|onpil davwa|chwazi|Korse|lekipaj-li|risive|risouwe|Mesye ze dam|kabin|anlè|sièj|tablèt|ékipaj|ranjé|bagaj|ridrésé)\b/i.test(t);
+  if(isCreole){
+    // Identify variant from block content (headers) or section title
+    // Réunion: "RÉUNION", "RUN", "zot", "na le plaisir", "caillou"
+    if(/R[ÉE]UNION|RUN/i.test(t)||/R[ÉE]UNION|RUN/i.test(st)||/\b(gayar|ti caillou|heure lokal|deor i fait|na le plaisir)\b/i.test(t))return 'cr-re';
+    // Martinique: "MARTINIQUE", "FDF", "Mesié ze danm", "Matinik"
+    if(/MARTINIQUE|FDF/i.test(t)||/MARTINIQUE|FDF/i.test(st)||/\b(Mesie ze danm|Matinik|Misié|koumandan de bow|dekolaj-la|Korse)\b/i.test(t))return 'cr-mq';
+    // Guadeloupe: "GUADELOUPE", "PTP", "Mésyé zé dam", "Gwadloup"
+    if(/GUADELOUPE|PTP/i.test(t)||/GUADELOUPE|PTP/i.test(st)||/\b(Gwadloup|Komandan la|risiv[eé]|M[eé]sy[eé] z[eé] dam)\b/i.test(t))return 'cr-gp';
+    // Maurice: "MAURICE", "MRU"
+    if(/MAURICE|MRU/i.test(t)||/MAURICE|MRU/i.test(st))return 'cr-mu';
+    // Mayotte: "MAYOTTE", "DZA"
+    if(/MAYOTTE|DZA/i.test(t)||/MAYOTTE|DZA/i.test(st))return 'cr-yt';
+    // Generic Creole (unknown variant)
+    return 'cr';
+  }
+
   // English detection
   if(/^Ladies and Gentlemen/i.test(t))return 'en';
   if(/^(Please |Thank you|Your |The |In the event|Due to|May I|Would you|Are you|Do you|Have you|Could I|Good morning|Captain |Passengers |To all passengers|Cabin crew|WIFI is|We inform|Drinks will|Headphones|You are trav|If ever you|Cases of Mpox|For future|If you have any|Buses operating|Further to|Flight and duty|Following on|The Captain|We are|We have|We will|We remind|We ask|We invite|We welcome|We would|We carry|We may|Correctly|Put on|Pull down|Make sure|Fasten|Keep your|Wait for|You will|Then,|Emergency|When opening|Only cash|Kiosks|An identity|Payments|A circulation|Ministry|Ocean users|The Mauritian|For your safety|Mobile phones|Please note|When the illuminated|You can find|In business|All electronic|Your laptop|In case of|The life jacket|The product used|To comply|Tampering|Recharging|The crew member|We also inform|For transit|The cabin crew|It is|Swimming)\b/i.test(t))return 'en';
