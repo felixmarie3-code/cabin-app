@@ -1391,15 +1391,9 @@ function openAnnonceDetail(chapterTitle,sec){
     else if(lang==='cr') flag.textContent='\uD83C\uDDEB\uD83C\uDDF7 CR';   // 🇫🇷 CR fallback
     else flag.textContent='\uD83C\uDDEB\uD83C\uDDF7';                       // 🇫🇷
     wrapper.appendChild(flag);
-    if(lang==='en'){
-      var em=document.createElement('em');
-      em.textContent=block;
-      wrapper.appendChild(em);
-    } else {
-      var span=document.createElement('span');
-      span.textContent=block;
-      wrapper.appendChild(span);
-    }
+    var span=document.createElement('span');
+    span.textContent=block;
+    wrapper.appendChild(span);
     content.appendChild(wrapper);
   });
   list.appendChild(content);
