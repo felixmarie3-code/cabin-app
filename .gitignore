@@ -1,2 +1,15 @@
 *.pdf
 pdf_extract.txt
+
+# Documents internes / fichiers de référence
+CDC.docx
+CabinReady_Forms_Import.*
+Questionnaire_Beta_Test_CabinReady.docx
+recap_projet_pwa_pnc.md
+
+# Scripts de build locaux
+build_*.py
+
+# Assets non utilisés
+logoappV2.png
+plan cabine.png
