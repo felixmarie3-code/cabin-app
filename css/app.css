@@ -432,20 +432,31 @@ html, body {
 }
 [data-theme="light"] .tab { color: rgba(60,60,67,0.45); }
 .tab:active { transform: scale(0.88); }
-/* Active: frosted pill MORE opaque than bar, colored icon */
+/* Sliding indicator pill */
+.tab-indicator {
+  position: absolute; top: 4px; bottom: 4px;
+  border-radius: 28px; z-index: 0;
+  background: rgba(255,255,255,0.08);
+  box-shadow: inset 0 0.5px 0 rgba(255,255,255,0.08);
+  transition: left 0.4s var(--spring-soft), width 0.35s var(--spring-soft);
+  pointer-events: none;
+  will-change: left, width;
+}
+html[data-theme="light"] .tab-bar .tab-indicator {
+  background: rgba(255,255,255,0.4);
+  box-shadow:
+    0 1px 4px rgba(0,0,0,0.05),
+    inset 0 0.5px 0 rgba(255,255,255,0.5);
+}
+/* Active: no background on tab itself, indicator handles it */
 .tab.active {
   color: var(--corsair-bleu-economie);
-  background: rgba(255,255,255,0.12);
-  box-shadow:
-    inset 0 0.5px 0 rgba(255,255,255,0.1);
+  background: none;
 }
 .tab.active span { color: white; font-weight: 600; }
 html[data-theme="light"] .tab-bar .tab.active {
   color: var(--corsair-bleu-premium);
-  background: rgba(255,255,255,0.55);
-  box-shadow:
-    0 1px 4px rgba(0,0,0,0.06),
-    inset 0 0.5px 0 rgba(255,255,255,0.7);
+  background: none;
 }
 html[data-theme="light"] .tab-bar .tab.active span { color: var(--corsair-bleu-business); }
 .tab.active::after { display: none; }

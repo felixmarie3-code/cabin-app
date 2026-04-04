@@ -218,6 +218,7 @@ function switchToTab(name, direction) {
   });
   currentTabIdx = newIdx;
   updateSwipeDots(newIdx);
+  updateTabIndicator();
   var content = document.getElementById('content');
   if (content) content.scrollTop = 0;
 }
@@ -227,6 +228,25 @@ function updateSwipeDots(idx) {
     d.classList.toggle('active', i === idx);
   });
 }
+
+// === Sliding Tab Indicator ===
+function updateTabIndicator() {
+  var indicator = document.getElementById('tabIndicator');
+  var activeTab = document.querySelector('.tab.active');
+  var bar = document.getElementById('tabBar');
+  if (!indicator || !activeTab || !bar) return;
+  var barRect = bar.getBoundingClientRect();
+  var tabRect = activeTab.getBoundingClientRect();
+  indicator.style.left = (tabRect.left - barRect.left) + 'px';
+  indicator.style.width = tabRect.width + 'px';
+}
+// Position on load (no transition)
+setTimeout(function() {
+  var indicator = document.getElementById('tabIndicator');
+  if (indicator) { indicator.style.transition = 'none'; updateTabIndicator(); requestAnimationFrame(function() { indicator.style.transition = ''; }); }
+}, 100);
+// Reposition on resize
+window.addEventListener('resize', updateTabIndicator);
 
 document.getElementById('tabBar').addEventListener('click', e => {
   const t = e.target.closest('.tab'); if (!t) return; switchToTab(t.dataset.module);
