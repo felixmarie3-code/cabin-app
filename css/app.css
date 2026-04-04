@@ -905,6 +905,8 @@ button, [role="button"] { min-height: 36px; min-width: 36px; }
   width: 24px; height: 24px; border-radius: 6px; border: 2px solid rgba(255,255,255,0.15);
   display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.15s;
 }
+[data-theme="light"] .cl-check { border-color: rgba(0,0,0,0.2); }
+[data-theme="light"] .checklist-item.done .cl-check { border-color: #257A6C; }
 .checklist-item.done .cl-check { background: #257A6C; border-color: #257A6C; }
 .cl-check svg { width: 14px; height: 14px; stroke: white; stroke-width: 2.5; fill: none; opacity: 0; }
 .checklist-item.done .cl-check svg { opacity: 1; }
@@ -1798,16 +1800,16 @@ button, [role="button"] { min-height: 36px; min-width: 36px; }
   display: flex; align-items: center; gap: 8px; margin-bottom: 10px;
 }
 .widget-icon {
-  width: 28px; height: 28px; border-radius: 7px;
+  width: 36px; height: 36px; border-radius: 9px;
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
   background: rgba(82,167,190,0.1);
 }
-.widget-icon svg { width: 16px; height: 16px; stroke-width: 1.75; fill: none !important; stroke: var(--corsair-bleu-economie) !important; }
+.widget-icon svg { width: 20px; height: 20px; stroke-width: 1.75; fill: none !important; stroke: var(--corsair-bleu-economie) !important; }
 [data-theme="light"] .widget-icon { background: rgba(40,43,98,0.06); }
 [data-theme="light"] .widget-icon svg { stroke: var(--corsair-bleu-premium) !important; }
 .widget-title {
-  font-size: 13px; font-weight: 700; color: var(--text);
+  font-size: 16px; font-weight: 700; color: var(--text);
   letter-spacing: 0.2px; flex: 1;
 }
 .widget-chevron {
