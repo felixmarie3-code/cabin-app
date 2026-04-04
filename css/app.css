@@ -1539,24 +1539,19 @@ button, [role="button"] { min-height: 36px; min-width: 36px; }
 
 /* === Large Title Headers === */
 .module-large-title {
-  padding: 2px 2px 0;
+  padding: 2px 2px 8px;
   transition: opacity 0.25s ease, transform 0.25s ease, max-height 0.3s ease;
   max-height: 60px; overflow: hidden;
+  display: flex; align-items: center; justify-content: space-between;
 }
 .module-large-title h1 {
   font-size: 28px; font-weight: 700; color: var(--text);
   letter-spacing: -0.5px; line-height: 1.2; margin: 0;
   font-family: 'Gilroy', -apple-system, sans-serif;
 }
-.module-large-title .large-title-subtitle {
-  font-size: 13px; color: var(--text-muted); margin-top: 2px;
-  letter-spacing: 0.2px;
-}
 .content.scrolled .module-large-title {
   opacity: 0; transform: translateY(-8px); max-height: 0; padding: 0 2px;
 }
-/* When scrolled, compact header visible */
-.module-header { transition: padding 0.25s ease; }
 
 /* === iOS Segmented Control === */
 .ios-segmented {
@@ -1808,9 +1803,9 @@ button, [role="button"] { min-height: 36px; min-width: 36px; }
   flex-shrink: 0;
   background: rgba(82,167,190,0.1);
 }
-.widget-icon svg { width: 16px; height: 16px; stroke-width: 1.75; fill: none; stroke: var(--corsair-bleu-economie); }
+.widget-icon svg { width: 16px; height: 16px; stroke-width: 1.75; fill: none !important; stroke: var(--corsair-bleu-economie) !important; }
 [data-theme="light"] .widget-icon { background: rgba(40,43,98,0.06); }
-[data-theme="light"] .widget-icon svg { stroke: var(--corsair-bleu-premium); }
+[data-theme="light"] .widget-icon svg { stroke: var(--corsair-bleu-premium) !important; }
 .widget-title {
   font-size: 13px; font-weight: 700; color: var(--text);
   letter-spacing: 0.2px; flex: 1;
