@@ -201,21 +201,44 @@ var currentTabIdx = 0;
 function switchToTab(name, direction) {
   var newIdx = TAB_ORDER.indexOf(name);
   if (newIdx === -1) newIdx = 0;
+  if (newIdx === currentTabIdx) return;
   if (!direction) {
     if (newIdx > currentTabIdx) direction = 'left';
     else if (newIdx < currentTabIdx) direction = 'right';
   }
   try { navigator.vibrate(10); } catch(e) {}
+
+  // Find current active module for exit animation
+  var currentMod = document.querySelector('.module.active');
+  var exitClass = direction === 'left' ? 'slide-out-left' : 'slide-out-right';
+
+  // Animate current page out
+  if (currentMod && direction) {
+    currentMod.classList.remove('active', 'slide-left', 'slide-right');
+    currentMod.classList.add(exitClass);
+    // Clean up after animation
+    currentMod.addEventListener('animationend', function handler() {
+      currentMod.classList.remove(exitClass, 'slide-out-left', 'slide-out-right');
+      currentMod.removeEventListener('animationend', handler);
+    });
+  }
+
+  // Update tabs
   document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.module === name));
+
+  // Activate new module with enter animation
   document.querySelectorAll('.module').forEach(m => {
     var isTarget = m.id === 'mod-' + name;
-    m.classList.remove('active', 'slide-left', 'slide-right');
     if (isTarget) {
+      m.classList.remove('slide-left', 'slide-right', 'slide-out-left', 'slide-out-right');
       m.classList.add('active');
       if (direction === 'left') m.classList.add('slide-left');
       else if (direction === 'right') m.classList.add('slide-right');
+    } else if (!m.classList.contains(exitClass)) {
+      m.classList.remove('active', 'slide-left', 'slide-right');
     }
   });
+
   currentTabIdx = newIdx;
   updateSwipeDots(newIdx);
   updateTabIndicator();

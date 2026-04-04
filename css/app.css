@@ -472,15 +472,20 @@ html[data-theme="light"] .tab-bar .tab.active .tab-icon { stroke: var(--corsair-
   padding-bottom: calc(60px + 10px + env(safe-area-inset-bottom, 0px) + 18px);
   overflow-y: auto; -webkit-overflow-scrolling: touch; padding-left: 14px; padding-right: 14px; padding-top: 10px;
 }
-.module { display: none; }
-.module.active { display: flex; flex-direction: column; animation: ios-slide-in 0.3s var(--ios-ease) both; }
-.module.active.slide-left { animation: ios-slide-left 0.3s var(--ios-ease) both; }
-.module.active.slide-right { animation: ios-slide-right 0.3s var(--ios-ease) both; }
+.module { display: none; position: relative; }
+.module.active { display: flex; flex-direction: column; }
+/* Entering page */
+.module.active.slide-left { animation: page-enter-left 0.4s var(--spring-soft) both; }
+.module.active.slide-right { animation: page-enter-right 0.4s var(--spring-soft) both; }
+/* Exiting page */
+.module.slide-out-left { display: flex; flex-direction: column; animation: page-exit-left 0.35s var(--ios-ease) both; pointer-events: none; position: absolute; top: 0; left: 0; right: 0; }
+.module.slide-out-right { display: flex; flex-direction: column; animation: page-exit-right 0.35s var(--ios-ease) both; pointer-events: none; position: absolute; top: 0; left: 0; right: 0; }
 .module[data-module="pax"].active { height: calc(100vh - 130px); overflow: hidden; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes ios-slide-in { from { opacity: 0; transform: translateX(0); } to { opacity: 1; transform: translateX(0); } }
-@keyframes ios-slide-left { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
-@keyframes ios-slide-right { from { opacity: 0; transform: translateX(-40px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes page-enter-left { from { opacity: 0; transform: translateX(60px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes page-enter-right { from { opacity: 0; transform: translateX(-60px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes page-exit-left { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(-60px); } }
+@keyframes page-exit-right { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(60px); } }
 
 .module-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
 .module-header h2 { font-size: 16px; font-weight: 400; letter-spacing: 2px; text-transform: uppercase; color: var(--corsair-bleu-economie); }
