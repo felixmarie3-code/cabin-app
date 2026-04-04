@@ -384,100 +384,80 @@ html, body {
 
 /* === Tab Bar (Liquid Glass iOS 26 style) === */
 .tab-bar {
-  display: flex; height: 62px;
+  display: flex; height: 60px;
   position: fixed; bottom: 10px; left: 14px; right: 14px; z-index: 50;
-  /* Glass: more transparent, keep blur */
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 40%, rgba(255,255,255,0.02) 100%),
-    rgba(10,12,30,0.15);
-  -webkit-backdrop-filter: blur(36px) saturate(170%) brightness(110%);
-  backdrop-filter: blur(36px) saturate(170%) brightness(110%);
-  border: 0.5px solid rgba(255,255,255,0.18);
+  /* Very transparent — content visible behind */
+  background: rgba(10,12,30,0.12);
+  -webkit-backdrop-filter: blur(40px) saturate(180%) brightness(110%);
+  backdrop-filter: blur(40px) saturate(180%) brightness(110%);
+  border: 0.5px solid rgba(255,255,255,0.1);
   border-radius: 32px;
-  padding: 5px 5px;
+  padding: 4px 4px;
   margin-bottom: env(safe-area-inset-bottom, 0px);
   gap: 2px;
   box-shadow:
-    0 16px 48px rgba(0,0,0,0.3),
-    0 4px 12px rgba(0,0,0,0.18),
-    inset 0 1.5px 0 rgba(255,255,255,0.12),
-    inset 0 -0.5px 0 rgba(255,255,255,0.04);
+    0 8px 32px rgba(0,0,0,0.2),
+    inset 0 0.5px 0 rgba(255,255,255,0.08);
   overflow: hidden;
 }
-/* Top caustic shine */
+/* Subtle top shine */
 .tab-bar::before {
-  content: ''; position: absolute; top: 0; left: 8%; right: 8%; height: 1.5px;
-  background: linear-gradient(90deg,
-    transparent,
-    rgba(255,255,255,0.15) 20%,
-    rgba(255,255,255,0.35) 40%,
-    rgba(255,255,255,0.45) 50%,
-    rgba(255,255,255,0.35) 60%,
-    rgba(255,255,255,0.15) 80%,
-    transparent);
-  pointer-events: none; z-index: 10;
-  border-radius: 1px;
-}
-/* Bottom inner glow */
-.tab-bar::after {
-  content: ''; position: absolute; bottom: 0; left: 15%; right: 15%; height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(82,167,190,0.15) 30%, rgba(82,167,190,0.08) 70%, transparent);
+  content: ''; position: absolute; top: 0; left: 12%; right: 12%; height: 0.5px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2) 30%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0.2) 70%, transparent);
   pointer-events: none; z-index: 10;
 }
+.tab-bar::after { display: none; }
 [data-theme="light"] .tab-bar {
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.08) 40%, rgba(255,255,255,0.15) 100%),
-    rgba(180,185,200,0.12);
-  -webkit-backdrop-filter: blur(36px) saturate(160%) brightness(115%);
-  backdrop-filter: blur(36px) saturate(160%) brightness(115%);
-  border-color: rgba(255,255,255,0.4);
+  background: rgba(190,195,210,0.15);
+  -webkit-backdrop-filter: blur(40px) saturate(170%) brightness(108%);
+  backdrop-filter: blur(40px) saturate(170%) brightness(108%);
+  border-color: rgba(255,255,255,0.3);
   box-shadow:
-    0 16px 48px rgba(0,0,0,0.1),
-    0 4px 12px rgba(0,0,0,0.05),
-    inset 0 1px 0 rgba(255,255,255,0.5),
-    inset 0 -0.5px 0 rgba(255,255,255,0.15);
+    0 8px 32px rgba(0,0,0,0.06),
+    inset 0 0.5px 0 rgba(255,255,255,0.4);
 }
 [data-theme="light"] .tab-bar::before {
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5) 25%, rgba(255,255,255,0.7) 50%, rgba(255,255,255,0.5) 75%, transparent);
-  height: 1.5px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4) 30%, rgba(255,255,255,0.55) 50%, rgba(255,255,255,0.4) 70%, transparent);
 }
-[data-theme="light"] .tab-bar::after {
-  background: linear-gradient(90deg, transparent, rgba(53,94,171,0.1) 30%, rgba(53,94,171,0.05) 70%, transparent);
-}
+/* Tabs: gray when inactive */
 .tab {
   flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
-  background: none; border: none; color: rgba(255,255,255,0.4);
+  background: none; border: none; color: rgba(255,255,255,0.35);
   font-family: 'Gilroy', Arial, sans-serif; font-size: 10px; font-weight: 500;
   letter-spacing: 0.3px; cursor: pointer;
-  transition: all 0.35s var(--spring-soft); padding: 6px 2px 4px;
+  transition: all 0.35s var(--spring-soft); padding: 5px 2px 3px;
   min-width: 0; position: relative; text-transform: none;
-  border-radius: 27px; z-index: 1;
+  border-radius: 28px; z-index: 1;
 }
-[data-theme="light"] .tab { color: rgba(0,0,0,0.35); }
+[data-theme="light"] .tab { color: rgba(60,60,67,0.45); }
 .tab:active { transform: scale(0.88); }
+/* Active: frosted pill MORE opaque than bar, colored icon */
 .tab.active {
-  color: white;
-  background: rgba(255,255,255,0.1);
+  color: var(--corsair-bleu-economie);
+  background: rgba(255,255,255,0.12);
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.12),
-    inset 0 -0.5px 0 rgba(255,255,255,0.04);
+    inset 0 0.5px 0 rgba(255,255,255,0.1);
 }
+.tab.active span { color: white; font-weight: 600; }
 html[data-theme="light"] .tab-bar .tab.active {
-  color: #282B62;
+  color: var(--corsair-bleu-premium);
   background: rgba(255,255,255,0.55);
   box-shadow:
-    0 1px 6px rgba(0,0,0,0.06),
-    inset 0 1px 0 rgba(255,255,255,0.8),
-    inset 0 -0.5px 0 rgba(0,0,0,0.04);
+    0 1px 4px rgba(0,0,0,0.06),
+    inset 0 0.5px 0 rgba(255,255,255,0.7);
 }
+html[data-theme="light"] .tab-bar .tab.active span { color: var(--corsair-bleu-business); }
 .tab.active::after { display: none; }
-.tab-icon { width: 22px; height: 22px; flex-shrink: 0; stroke-width: 1.5; transition: transform 0.35s var(--spring-soft); }
-.tab.active .tab-icon { transform: scale(1.12); }
+/* Icon: colored when active */
+.tab-icon { width: 22px; height: 22px; flex-shrink: 0; stroke-width: 1.5; transition: transform 0.3s var(--spring-soft); }
+.tab.active .tab-icon { transform: scale(1.08); }
+.tab.active .tab-icon { stroke: var(--corsair-bleu-economie); }
+html[data-theme="light"] .tab-bar .tab.active .tab-icon { stroke: var(--corsair-bleu-premium); }
 
 /* === Content (above bottom tab bar) === */
 .content {
   height: calc(100% - var(--header-height));
-  padding-bottom: calc(62px + 10px + env(safe-area-inset-bottom, 0px) + 18px);
+  padding-bottom: calc(60px + 10px + env(safe-area-inset-bottom, 0px) + 18px);
   overflow-y: auto; -webkit-overflow-scrolling: touch; padding-left: 14px; padding-right: 14px; padding-top: 10px;
 }
 .module { display: none; }
