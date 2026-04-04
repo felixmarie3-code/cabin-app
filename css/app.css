@@ -430,7 +430,8 @@ html, body {
   min-width: 0; position: relative; text-transform: none;
   border-radius: 28px; z-index: 1;
 }
-[data-theme="light"] .tab { color: rgba(60,60,67,0.45); }
+html[data-theme="light"] .tab-bar .tab { color: rgba(60,60,67,0.5); }
+html[data-theme="light"] .tab-bar .tab .tab-icon { stroke: rgba(60,60,67,0.45); }
 .tab:active { transform: scale(0.88); }
 /* Sliding indicator pill */
 .tab-indicator {
