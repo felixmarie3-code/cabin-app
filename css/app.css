@@ -461,11 +461,14 @@ html[data-theme="light"] .tab-bar .tab.active {
 }
 html[data-theme="light"] .tab-bar .tab.active span { color: var(--corsair-bleu-business); }
 .tab.active::after { display: none; }
-/* Icon: colored when active */
-.tab-icon { width: 22px; height: 22px; flex-shrink: 0; stroke-width: 1.5; transition: transform 0.3s var(--spring-soft); }
+/* Icons: outline/filled toggle */
+.tab-icon { width: 22px; height: 22px; flex-shrink: 0; transition: transform 0.3s var(--spring-soft); }
+.tab-icon-filled { display: none; }
+.tab-icon-outline { display: block; }
+.tab.active .tab-icon-filled { display: block; color: var(--corsair-bleu-economie); }
+.tab.active .tab-icon-outline { display: none; }
 .tab.active .tab-icon { transform: scale(1.08); }
-.tab.active .tab-icon { stroke: var(--corsair-bleu-economie); }
-html[data-theme="light"] .tab-bar .tab.active .tab-icon { stroke: var(--corsair-bleu-premium); }
+html[data-theme="light"] .tab-bar .tab.active .tab-icon-filled { color: var(--corsair-bleu-premium); }
 
 /* === Content (above bottom tab bar) === */
 .content {
@@ -1371,7 +1374,7 @@ button, [role="button"] { min-height: 36px; min-width: 36px; }
 .annonce-flag { min-width: 22px; text-align: center; }
 
 /* === Checklist Tiles === */
-.checklist-tiles { display: flex; flex-direction: column; gap: 12px; }
+.checklist-tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .cl-tile {
   background: var(--bg-surface); border-radius: 14px; padding: 0; cursor: default;
   box-shadow: 0 1px 3px rgba(0,0,0,0.12); overflow: hidden;
