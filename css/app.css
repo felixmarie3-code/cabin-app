@@ -386,12 +386,12 @@ html, body {
 .tab-bar {
   display: flex; height: 62px;
   position: fixed; bottom: 10px; left: 14px; right: 14px; z-index: 50;
-  /* Glass: multi-layer background — more transparent */
+  /* Glass: more transparent, keep blur */
   background:
-    linear-gradient(180deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.01) 40%, rgba(255,255,255,0.03) 100%),
-    rgba(10,12,30,0.22);
-  -webkit-backdrop-filter: blur(32px) saturate(170%) brightness(108%);
-  backdrop-filter: blur(32px) saturate(170%) brightness(108%);
+    linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 40%, rgba(255,255,255,0.02) 100%),
+    rgba(10,12,30,0.15);
+  -webkit-backdrop-filter: blur(36px) saturate(170%) brightness(110%);
+  backdrop-filter: blur(36px) saturate(170%) brightness(110%);
   border: 0.5px solid rgba(255,255,255,0.18);
   border-radius: 32px;
   padding: 5px 5px;
@@ -426,16 +426,16 @@ html, body {
 }
 [data-theme="light"] .tab-bar {
   background:
-    linear-gradient(180deg, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0.12) 40%, rgba(255,255,255,0.2) 100%),
-    rgba(200,205,220,0.18);
-  -webkit-backdrop-filter: blur(32px) saturate(160%) brightness(112%);
-  backdrop-filter: blur(32px) saturate(160%) brightness(112%);
-  border-color: rgba(255,255,255,0.5);
+    linear-gradient(180deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.08) 40%, rgba(255,255,255,0.15) 100%),
+    rgba(180,185,200,0.12);
+  -webkit-backdrop-filter: blur(36px) saturate(160%) brightness(115%);
+  backdrop-filter: blur(36px) saturate(160%) brightness(115%);
+  border-color: rgba(255,255,255,0.4);
   box-shadow:
-    0 16px 48px rgba(0,0,0,0.08),
-    0 4px 12px rgba(0,0,0,0.04),
-    inset 0 1px 0 rgba(255,255,255,0.6),
-    inset 0 -0.5px 0 rgba(255,255,255,0.2);
+    0 16px 48px rgba(0,0,0,0.1),
+    0 4px 12px rgba(0,0,0,0.05),
+    inset 0 1px 0 rgba(255,255,255,0.5),
+    inset 0 -0.5px 0 rgba(255,255,255,0.15);
 }
 [data-theme="light"] .tab-bar::before {
   background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5) 25%, rgba(255,255,255,0.7) 50%, rgba(255,255,255,0.5) 75%, transparent);
@@ -464,10 +464,11 @@ html, body {
 }
 html[data-theme="light"] .tab-bar .tab.active {
   color: #282B62;
-  background: rgba(255,255,255,0.35);
+  background: rgba(255,255,255,0.55);
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.6),
-    inset 0 -0.5px 0 rgba(0,0,0,0.03);
+    0 1px 6px rgba(0,0,0,0.06),
+    inset 0 1px 0 rgba(255,255,255,0.8),
+    inset 0 -0.5px 0 rgba(0,0,0,0.04);
 }
 .tab.active::after { display: none; }
 .tab-icon { width: 22px; height: 22px; flex-shrink: 0; stroke-width: 1.5; transition: transform 0.35s var(--spring-soft); }
