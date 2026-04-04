@@ -14,6 +14,20 @@
 </head>
 <body>
 
+  <!-- SVG filter for liquid glass lens refraction -->
+  <svg style="position:absolute;width:0;height:0;pointer-events:none" aria-hidden="true">
+    <defs>
+      <filter id="liquid-glass-lens" x="-10%" y="-10%" width="120%" height="120%">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="0.8" result="blurred"/>
+        <feTurbulence type="fractalNoise" baseFrequency="0.015 0.015" numOctaves="2" seed="3" result="noise"/>
+        <feDisplacementMap in="blurred" in2="noise" scale="6" xChannelSelector="R" yChannelSelector="G" result="displaced"/>
+        <feGaussianBlur in="displaced" stdDeviation="0.3" result="smooth"/>
+        <feColorMatrix in="smooth" type="saturate" values="1.3" result="saturated"/>
+        <feComposite in="saturated" in2="SourceGraphic" operator="in"/>
+      </filter>
+    </defs>
+  </svg>
+
   <!-- ===== SPLASH SCREEN ===== -->
   <div id="splash" aria-hidden="true">
     <div id="splash-bg">
@@ -40,18 +54,18 @@
     <div class="header-right">
       <span class="flight-info" id="flightInfo">SS 901 &middot; ORY &rarr; RUN &middot; <span id="headerDate"></span></span>
       <button class="header-btn clock-btn" id="utcToggle" title="Horloge UTC">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
         <span class="utc-label" id="utcLabel">00:00Z</span>
       </button>
       <button class="header-btn clock-btn timer-btn" id="timerToggle" title="Minuteur">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/><path d="M5 3l2 2"/><path d="M19 3l-2 2"/><line x1="12" y1="1" x2="12" y2="3"/></svg>
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/><path d="M5 3l2 2"/><path d="M19 3l-2 2"/><line x1="12" y1="1" x2="12" y2="3"/></svg>
         <span class="utc-label" id="timerLabel" style="display:none">00:00</span>
       </button>
       <button class="header-btn" id="shareToggle" title="Partager">
-        <svg viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
       </button>
       <button class="header-btn" id="notifToggle" title="Notifications">
-        <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
         <span class="notif-badge" id="notifBadge"></span>
       </button>
       <button class="header-btn" id="themeToggle" title="Changer de th&egrave;me">
@@ -142,8 +156,7 @@
 
         <!-- Crew -->
         <div class="brief-card">
-          <div class="widget-header"><div class="widget-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><div class="widget-title">&Eacute;quipage</div></div>
-          <div class="brief-card-title" style="display:none">&Eacute;quipage cabine
+          <div class="widget-header"><div class="widget-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><div class="widget-title">&Eacute;quipage</div>
             <span class="crew-btns">
               <button class="inline-btn" id="restTourBtn">Tour de repos</button>
               <button class="crew-edit-btn" id="editDoorsBtn">
@@ -278,15 +291,15 @@
       </div>
       <div class="meals-grid">
         <div class="brief-card wide">
-          <div class="brief-card-title">Comptage repas</div>
+          <div class="widget-header"><div class="widget-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg></div><div class="widget-title">Comptage repas</div></div>
           <div class="brief-kpi-row" id="mealsCountRow"></div>
         </div>
         <div class="brief-card wide">
-          <div class="brief-card-title">Repas sp&eacute;ciaux &mdash; attribution par si&egrave;ge</div>
+          <div class="widget-header"><div class="widget-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75"><path d="M12 2H2v10l9.29 9.29c.94.94 2.48.94 3.42 0l6.58-6.58c.94-.94.94-2.48 0-3.42L12 2Z"/><path d="M7 7h.01"/></svg></div><div class="widget-title">Repas sp&eacute;ciaux</div></div>
           <div class="meals-special-list" id="mealsSpecialList"></div>
         </div>
         <div class="brief-card">
-          <div class="brief-card-title">Service 1 &mdash; Repas</div>
+          <div class="widget-header"><div class="widget-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="widget-title">Service 1 &mdash; Repas</div></div>
           <div class="service-tracker">
             <div class="service-row"><span>Business</span><div class="service-progress"><div class="service-bar" id="svc1Biz" style="width:0%"></div></div><span class="service-pct" id="svc1BizPct">0%</span></div>
             <div class="service-row"><span>Premium</span><div class="service-progress"><div class="service-bar prem" id="svc1Prem" style="width:0%"></div></div><span class="service-pct" id="svc1PremPct">0%</span></div>
@@ -294,7 +307,7 @@
           </div>
         </div>
         <div class="brief-card">
-          <div class="brief-card-title">Service 2 &mdash; Collation</div>
+          <div class="widget-header"><div class="widget-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg></div><div class="widget-title">Service 2 &mdash; Collation</div></div>
           <div class="service-tracker">
             <div class="service-row"><span>Business</span><div class="service-progress"><div class="service-bar" id="svc2Biz" style="width:0%"></div></div><span class="service-pct" id="svc2BizPct">0%</span></div>
             <div class="service-row"><span>Premium</span><div class="service-progress"><div class="service-bar prem" id="svc2Prem" style="width:0%"></div></div><span class="service-pct" id="svc2PremPct">0%</span></div>
@@ -325,18 +338,16 @@
       </div>
       <div class="report-sections">
         <div class="brief-card wide">
-          <div class="brief-card-title">&Eacute;tat cabine</div>
+          <div class="widget-header"><div class="widget-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div><div class="widget-title">&Eacute;tat cabine</div></div>
           <div class="report-cabin-grid" id="reportCabinGrid"></div>
         </div>
         <div class="brief-card wide">
-          <div class="brief-card-title">Incidents &amp; &eacute;v&eacute;nements</div>
+          <div class="widget-header"><div class="widget-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div><div class="widget-title">Incidents &amp; &eacute;v&eacute;nements</div></div>
           <div class="incidents-list" id="incidentsList"></div>
           <button class="add-incident-btn" id="addIncidentBtn">+ Ajouter un incident</button>
         </div>
         <div class="brief-card wide">
-          <div class="brief-card-title">Photos
-            <span class="photo-storage" id="photoStorage"></span>
-          </div>
+          <div class="widget-header"><div class="widget-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div><div class="widget-title">Photos</div><span class="photo-storage" id="photoStorage"></span></div>
           <div class="photo-grid" id="photoGrid"></div>
           <label class="add-photo-btn" id="addPhotoLabel">
             <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="1.75" fill="none"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
@@ -345,11 +356,11 @@
           </label>
         </div>
         <div class="brief-card wide">
-          <div class="brief-card-title">Remarques g&eacute;n&eacute;rales</div>
+          <div class="widget-header"><div class="widget-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><div class="widget-title">Remarques g&eacute;n&eacute;rales</div></div>
           <textarea class="brief-notes" id="reportNotes" placeholder="Observations sur le vol..."></textarea>
         </div>
         <div class="brief-card wide">
-          <div class="brief-card-title">R&eacute;sum&eacute; du vol</div>
+          <div class="widget-header"><div class="widget-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div><div class="widget-title">R&eacute;sum&eacute; du vol</div></div>
           <div class="report-summary" id="reportSummary"></div>
         </div>
       </div>
