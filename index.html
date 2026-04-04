@@ -105,6 +105,9 @@
 
     <!-- ==================== BRIEFING ==================== -->
     <section class="module active" id="mod-briefing">
+      <div class="module-large-title">
+        <h1>Briefing</h1>
+      </div>
       <div class="module-header">
         <h2>Briefing vol</h2>
         <div class="otp-clock" id="briefingClock"></div>
@@ -113,7 +116,7 @@
       <div class="briefing-grid">
         <!-- Flight info + profile -->
         <div class="brief-card wide">
-          <div class="brief-card-title">Informations vol</div>
+          <div class="widget-header"><div class="widget-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.4-.1.9.3 1.1L11 12l-2 3H6l-2 2 4-1 4-1 2-2 4.3 7.3c.2.4.7.6 1.1.3l.5-.3c.4-.2.5-.7.4-1.1z"/></svg></div><div class="widget-title">Informations vol</div></div>
           <div class="brief-kpi-row" id="briefKpiRow">
             <div class="brief-kpi"><div class="brief-kpi-value">SS 901</div><div class="brief-kpi-label">Vol</div></div>
             <div class="brief-kpi"><div class="brief-kpi-value">ORY &rarr; RUN</div><div class="brief-kpi-label">Route</div></div>
@@ -128,7 +131,7 @@
 
         <!-- Pax summary + particularit&eacute;s -->
         <div class="brief-card">
-          <div class="brief-card-title">Passagers</div>
+          <div class="widget-header"><div class="widget-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div><div class="widget-title">Passagers</div></div>
           <div class="brief-kpi-row">
             <div class="brief-kpi"><div class="brief-kpi-value" id="briefPaxTotal">0</div><div class="brief-kpi-label">Total</div></div>
             <div class="brief-kpi"><div class="brief-kpi-value" id="briefPaxBiz">0</div><div class="brief-kpi-label">Business</div></div>
@@ -142,7 +145,8 @@
 
         <!-- Crew -->
         <div class="brief-card">
-          <div class="brief-card-title">&Eacute;quipage cabine
+          <div class="widget-header"><div class="widget-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><div class="widget-title">&Eacute;quipage</div></div>
+          <div class="brief-card-title" style="display:none">&Eacute;quipage cabine
             <span class="crew-btns">
               <button class="inline-btn" id="restTourBtn">Tour de repos</button>
               <button class="crew-edit-btn" id="editDoorsBtn">
@@ -156,13 +160,13 @@
 
         <!-- Cabin Status -->
         <div class="brief-card">
-          <div class="brief-card-title">Cabin Status <button class="inline-btn" id="addDefectBtn">+ D&eacute;faut</button></div>
+          <div class="widget-header"><div class="widget-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div class="widget-title">Cabin Status</div><button class="inline-btn" id="addDefectBtn">+ D&eacute;faut</button></div>
           <div class="cabin-defects-list" id="cabinDefects"></div>
         </div>
 
         <!-- Th&egrave;mes de briefing -->
         <div class="brief-card wide">
-          <div class="brief-card-title">Th&egrave;mes de briefing</div>
+          <div class="widget-header"><div class="widget-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><div class="widget-title">Th&egrave;mes de briefing</div></div>
           <div class="briefing-themes" id="briefingThemes">
             <div class="theme-item">S&eacute;curit&eacute; : v&eacute;rification portes arm&eacute;es avant push-back</div>
             <div class="theme-item">Service : nouveau menu long-courrier, pr&eacute;sentation plateau Business</div>
@@ -173,7 +177,7 @@
 
         <!-- Infos manag&eacute;riales -->
         <div class="brief-card wide">
-          <div class="brief-card-title">Informations manag&eacute;riales</div>
+          <div class="widget-header"><div class="widget-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div><div class="widget-title">Informations manag&eacute;riales</div></div>
           <div class="mgmt-info" id="mgmtInfo">
             <div class="mgmt-item info">Rappel : port du badge obligatoire en zone publique (note DS 2025-14)</div>
             <div class="mgmt-item info">Formation CRM recycl&eacute;e disponible sur le portail &mdash; deadline 15 avril</div>
@@ -183,7 +187,7 @@
 
         <!-- Notes -->
         <div class="brief-card wide">
-          <div class="brief-card-title">Notes de briefing</div>
+          <div class="widget-header"><div class="widget-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div><div class="widget-title">Notes de briefing</div></div>
           <textarea class="brief-notes" id="briefingNotes" placeholder="Ajouter des notes..."></textarea>
           <div style="margin-top:10px">
             <button class="notif-test-btn" id="notifTestBtn">
@@ -197,6 +201,9 @@
 
     <!-- ==================== CHECKLIST (2e position) ==================== -->
     <section class="module" id="mod-checklist">
+      <div class="module-large-title">
+        <h1>Proc&eacute;dures</h1>
+      </div>
       <div class="module-header">
         <h2>Proc&eacute;dures &amp; Annonces</h2>
         <span class="badge" id="checklistBadge">0 / 0</span>
@@ -212,6 +219,9 @@
 
     <!-- ==================== PASSAGERS ==================== -->
     <section class="module" id="mod-passengers">
+      <div class="module-large-title">
+        <h1>Passagers</h1>
+      </div>
       <div class="toolbar">
         <div class="search-box">
           <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -268,6 +278,9 @@
 
     <!-- ==================== REPAS ==================== -->
     <section class="module" id="mod-meals">
+      <div class="module-large-title">
+        <h1>Repas</h1>
+      </div>
       <div class="module-header">
         <h2>Service repas &amp; boissons</h2>
         <span class="badge" id="mealsBadge">0 sp&eacute;ciaux</span>
@@ -302,6 +315,9 @@
 
     <!-- ==================== PONCTUALIT&Eacute; ==================== -->
     <section class="module" id="mod-punctuality">
+      <div class="module-large-title">
+        <h1>Ponctualit&eacute;</h1>
+      </div>
       <div class="module-header">
         <h2>Ponctualit&eacute;</h2>
         <div class="otp-clock" id="otpClock"></div>
@@ -316,6 +332,9 @@
 
     <!-- ==================== RAPPORT ==================== -->
     <section class="module" id="mod-report">
+      <div class="module-large-title">
+        <h1>Rapport</h1>
+      </div>
       <div class="module-header"><h2>Rapport de vol</h2></div>
       <div class="report-sections">
         <div class="brief-card wide">
@@ -379,14 +398,15 @@
     </div>
   </div>
 
-  <!-- Incident form modal -->
-  <div class="pax-panel-overlay" id="incidentOverlay">
-    <div class="pax-panel" style="max-width:520px">
+  <!-- Incident form — Action Sheet -->
+  <div class="action-sheet-overlay" id="incidentOverlay">
+    <div class="action-sheet">
+      <div class="action-sheet-handle"></div>
       <div class="pax-panel-header">
         <div class="pax-panel-title"><div class="pax-name">Nouvel incident</div></div>
         <div class="pax-panel-actions">
           <button class="pax-action-btn close-btn" id="incidentClose">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
         </div>
       </div>
@@ -416,26 +436,27 @@
   <div class="header-panel" id="sharePanel">
     <div class="header-panel-title">Partager</div>
     <div class="share-options" id="shareOptions">
-      <label class="share-opt"><input type="checkbox" value="briefing" checked> Briefing vol</label>
-      <label class="share-opt"><input type="checkbox" value="passengers" checked> Liste passagers</label>
-      <label class="share-opt"><input type="checkbox" value="meals"> Repas sp&eacute;ciaux</label>
-      <label class="share-opt"><input type="checkbox" value="checklist"> Checklists</label>
-      <label class="share-opt"><input type="checkbox" value="incidents"> Incidents</label>
-      <label class="share-opt"><input type="checkbox" value="report"> Rapport cabine</label>
+      <label class="share-opt"><span>Briefing vol</span><label class="ios-toggle"><input type="checkbox" value="briefing" checked><span class="toggle-track"></span><span class="toggle-thumb"></span></label></label>
+      <label class="share-opt"><span>Liste passagers</span><label class="ios-toggle"><input type="checkbox" value="passengers" checked><span class="toggle-track"></span><span class="toggle-thumb"></span></label></label>
+      <label class="share-opt"><span>Repas sp&eacute;ciaux</span><label class="ios-toggle"><input type="checkbox" value="meals"><span class="toggle-track"></span><span class="toggle-thumb"></span></label></label>
+      <label class="share-opt"><span>Checklists</span><label class="ios-toggle"><input type="checkbox" value="checklist"><span class="toggle-track"></span><span class="toggle-thumb"></span></label></label>
+      <label class="share-opt"><span>Incidents</span><label class="ios-toggle"><input type="checkbox" value="incidents"><span class="toggle-track"></span><span class="toggle-thumb"></span></label></label>
+      <label class="share-opt"><span>Rapport cabine</span><label class="ios-toggle"><input type="checkbox" value="report"><span class="toggle-track"></span><span class="toggle-thumb"></span></label></label>
     </div>
     <button class="timer-action-btn start" id="shareConfirm" style="width:100%">
       Partager
     </button>
   </div>
 
-  <!-- Rest tour modal -->
-  <div class="pax-panel-overlay" id="restOverlay">
-    <div class="pax-panel" style="max-width:520px">
+  <!-- Rest tour — Action Sheet -->
+  <div class="action-sheet-overlay" id="restOverlay">
+    <div class="action-sheet">
+      <div class="action-sheet-handle"></div>
       <div class="pax-panel-header">
         <div class="pax-panel-title"><div class="pax-name">Tour de repos</div></div>
         <div class="pax-panel-actions">
           <button class="pax-action-btn close-btn" id="restClose">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
         </div>
       </div>
@@ -450,39 +471,39 @@
 
   <nav class="tab-bar" id="tabBar">
     <button class="tab active" data-module="briefing">
-      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
         <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
       </svg>
       <span>Briefing</span>
     </button>
     <button class="tab" data-module="checklist">
-      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
         <path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
       </svg>
       <span>Checklist</span>
     </button>
     <button class="tab" data-module="passengers">
-      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
         <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
       </svg>
       <span>Passagers</span>
     </button>
     <button class="tab" data-module="meals">
-      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
         <path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/>
         <line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/>
       </svg>
       <span>Repas</span>
     </button>
     <button class="tab" data-module="punctuality">
-      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
         <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
       </svg>
       <span>OTP</span>
     </button>
     <button class="tab" data-module="report">
-      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
         <polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
       </svg>
@@ -490,14 +511,15 @@
     </button>
   </nav>
 
-  <!-- Cabin defect modal -->
-  <div class="pax-panel-overlay" id="defectOverlay">
-    <div class="pax-panel" style="max-width:420px">
+  <!-- Cabin defect — Action Sheet -->
+  <div class="action-sheet-overlay" id="defectOverlay">
+    <div class="action-sheet">
+      <div class="action-sheet-handle"></div>
       <div class="pax-panel-header">
         <div class="pax-panel-title"><div class="pax-name">Nouveau d&eacute;faut cabine</div></div>
         <div class="pax-panel-actions">
           <button class="pax-action-btn close-btn" id="defectClose">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
         </div>
       </div>

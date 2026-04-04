@@ -194,17 +194,124 @@ function updateThemeIcon(theme) {
     : '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
 }
 
-// === Tab Navigation ===
-function switchToTab(name) {
+// === Tab Navigation with iOS transitions ===
+var TAB_ORDER = ['briefing','checklist','passengers','meals','punctuality','report'];
+var currentTabIdx = 0;
+
+function switchToTab(name, direction) {
+  var newIdx = TAB_ORDER.indexOf(name);
+  if (newIdx === -1) newIdx = 0;
+  if (!direction) {
+    if (newIdx > currentTabIdx) direction = 'left';
+    else if (newIdx < currentTabIdx) direction = 'right';
+  }
+  try { navigator.vibrate(10); } catch(e) {}
   document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.module === name));
-  document.querySelectorAll('.module').forEach(m => m.classList.toggle('active', m.id === 'mod-' + name));
+  document.querySelectorAll('.module').forEach(m => {
+    var isTarget = m.id === 'mod-' + name;
+    m.classList.remove('active', 'slide-left', 'slide-right');
+    if (isTarget) {
+      m.classList.add('active');
+      if (direction === 'left') m.classList.add('slide-left');
+      else if (direction === 'right') m.classList.add('slide-right');
+    }
+  });
+  currentTabIdx = newIdx;
+  updateSwipeDots(newIdx);
+  var content = document.getElementById('content');
+  if (content) content.scrollTop = 0;
 }
+
+function updateSwipeDots(idx) {
+  document.querySelectorAll('#swipeHint .swipe-dot').forEach(function(d, i) {
+    d.classList.toggle('active', i === idx);
+  });
+}
+
 document.getElementById('tabBar').addEventListener('click', e => {
   const t = e.target.closest('.tab'); if (!t) return; switchToTab(t.dataset.module);
 });
 function handleHash() { const h = window.location.hash.replace('#',''); if (h) switchToTab(h); }
 window.addEventListener('hashchange', handleHash);
 if (window.location.hash) handleHash();
+
+// === Swipe Between Tabs ===
+(function() {
+  var content = document.getElementById('content');
+  var startX = 0, startY = 0, swiping = false;
+  content.addEventListener('touchstart', function(e) {
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+    swiping = true;
+  }, {passive: true});
+  content.addEventListener('touchmove', function(e) {
+    if (!swiping) return;
+    var dy = e.touches[0].clientY - startY;
+    var dx = e.touches[0].clientX - startX;
+    if (Math.abs(dy) > Math.abs(dx)) swiping = false;
+    if (e.target.closest && e.target.closest('.cabin-container')) swiping = false;
+  }, {passive: true});
+  content.addEventListener('touchend', function(e) {
+    if (!swiping) return;
+    var dx = e.changedTouches[0].clientX - startX;
+    var dy = e.changedTouches[0].clientY - startY;
+    swiping = false;
+    if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 2) {
+      if (dx < 0 && currentTabIdx < TAB_ORDER.length - 1) {
+        switchToTab(TAB_ORDER[currentTabIdx + 1], 'left');
+      } else if (dx > 0 && currentTabIdx > 0) {
+        switchToTab(TAB_ORDER[currentTabIdx - 1], 'right');
+      }
+    }
+  }, {passive: true});
+  var hint = document.getElementById('swipeHint');
+  if (hint) { setTimeout(function(){ hint.classList.add('visible'); setTimeout(function(){ hint.classList.remove('visible'); }, 3000); }, 4500); }
+})();
+
+// === Large Title Scroll Behavior ===
+(function() {
+  var content = document.getElementById('content');
+  var scrolled = false;
+  content.addEventListener('scroll', function() {
+    var isScrolled = content.scrollTop > 20;
+    if (isScrolled !== scrolled) {
+      scrolled = isScrolled;
+      content.classList.toggle('scrolled', scrolled);
+    }
+  }, {passive: true});
+})();
+
+
+
+// === Action Sheet close behavior ===
+(function() {
+  document.querySelectorAll('.action-sheet-overlay').forEach(function(overlay) {
+    overlay.addEventListener('click', function(e) {
+      if (e.target === overlay) overlay.classList.remove('visible');
+    });
+    var sheet = overlay.querySelector('.action-sheet');
+    var handle = overlay.querySelector('.action-sheet-handle');
+    if (handle && sheet) {
+      var sy = 0, dy = 0;
+      handle.addEventListener('touchstart', function(e) { sy = e.touches[0].clientY; dy = 0; }, {passive: true});
+      handle.addEventListener('touchmove', function(e) {
+        dy = e.touches[0].clientY - sy;
+        if (dy > 0) sheet.style.transform = 'translateY(' + dy + 'px)';
+      }, {passive: true});
+      handle.addEventListener('touchend', function() {
+        if (dy > 80) overlay.classList.remove('visible');
+        sheet.style.transform = '';
+        dy = 0;
+      }, {passive: true});
+    }
+  });
+})();
+
+// === Haptic feedback on common interactions ===
+document.addEventListener('click', function(e) {
+  if (e.target.closest('.filter-btn, .otp-dot, .timer-preset, .pax-tag, .ios-toggle, .checklist-item, .cl-subtile, .sev-btn'))
+    try { navigator.vibrate(10); } catch(ex) {}
+});
 
 // === Persistence ===
 function lsGet(k,d){try{return JSON.parse(localStorage.getItem(k))||d;}catch{return d;}}
