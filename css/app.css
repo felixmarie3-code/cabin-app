@@ -386,12 +386,12 @@ html, body {
 .tab-bar {
   display: flex; height: 68px;
   position: fixed; bottom: 10px; left: 14px; right: 14px; z-index: 50;
-  /* Glass: multi-layer background */
+  /* Glass: multi-layer background — more transparent */
   background:
-    linear-gradient(180deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.02) 40%, rgba(255,255,255,0.05) 100%),
-    rgba(10,12,30,0.35);
-  -webkit-backdrop-filter: blur(40px) saturate(180%) brightness(105%);
-  backdrop-filter: blur(40px) saturate(180%) brightness(105%);
+    linear-gradient(180deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.01) 40%, rgba(255,255,255,0.03) 100%),
+    rgba(10,12,30,0.22);
+  -webkit-backdrop-filter: blur(32px) saturate(170%) brightness(108%);
+  backdrop-filter: blur(32px) saturate(170%) brightness(108%);
   border: 0.5px solid rgba(255,255,255,0.18);
   border-radius: 34px;
   padding: 0 6px;
@@ -426,18 +426,20 @@ html, body {
 }
 [data-theme="light"] .tab-bar {
   background:
-    linear-gradient(180deg, rgba(255,255,255,0.75) 0%, rgba(255,255,255,0.35) 40%, rgba(255,255,255,0.55) 100%),
-    rgba(230,232,245,0.3);
-  border-color: rgba(255,255,255,0.75);
+    linear-gradient(180deg, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0.12) 40%, rgba(255,255,255,0.2) 100%),
+    rgba(200,205,220,0.18);
+  -webkit-backdrop-filter: blur(32px) saturate(160%) brightness(112%);
+  backdrop-filter: blur(32px) saturate(160%) brightness(112%);
+  border-color: rgba(255,255,255,0.5);
   box-shadow:
-    0 16px 48px rgba(0,0,0,0.1),
-    0 4px 12px rgba(0,0,0,0.05),
-    inset 0 1.5px 0 rgba(255,255,255,0.98),
-    inset 0 -0.5px 0 rgba(255,255,255,0.4);
+    0 16px 48px rgba(0,0,0,0.08),
+    0 4px 12px rgba(0,0,0,0.04),
+    inset 0 1px 0 rgba(255,255,255,0.6),
+    inset 0 -0.5px 0 rgba(255,255,255,0.2);
 }
 [data-theme="light"] .tab-bar::before {
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.85) 25%, rgba(255,255,255,1) 50%, rgba(255,255,255,0.85) 75%, transparent);
-  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5) 25%, rgba(255,255,255,0.7) 50%, rgba(255,255,255,0.5) 75%, transparent);
+  height: 1.5px;
 }
 [data-theme="light"] .tab-bar::after {
   background: linear-gradient(90deg, transparent, rgba(53,94,171,0.1) 30%, rgba(53,94,171,0.05) 70%, transparent);
@@ -465,11 +467,11 @@ html, body {
 [data-theme="light"] .tab.active {
   color: var(--corsair-bleu-business) !important;
   background:
-    linear-gradient(180deg, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.55) 100%);
+    linear-gradient(180deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.25) 100%);
   box-shadow:
-    0 2px 16px rgba(0,0,0,0.06),
-    inset 0 1.5px 0 rgba(255,255,255,0.98),
-    inset 0 -0.5px 0 rgba(0,0,0,0.04);
+    0 2px 12px rgba(0,0,0,0.05),
+    inset 0 1px 0 rgba(255,255,255,0.6),
+    inset 0 -0.5px 0 rgba(0,0,0,0.03);
 }
 .tab.active::after { display: none; }
 .tab-icon { width: 22px; height: 22px; flex-shrink: 0; stroke-width: 1.5; transition: transform 0.35s var(--spring-soft); }
