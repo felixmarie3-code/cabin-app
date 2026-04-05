@@ -215,7 +215,9 @@ html, body {
   -webkit-user-select: none;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
+  color-scheme: dark;
 }
+[data-theme="light"], [data-theme="light"] body { color-scheme: light; }
 
 /* === Header (iOS nav bar style) === */
 .app-header {
@@ -1323,6 +1325,10 @@ button, [role="button"] { min-height: 36px; min-width: 36px; }
   background: var(--input-bg); color: var(--text); font-size: 12px;
   font-family: 'Gilroy', sans-serif; min-height: 28px; width: 72px;
   -webkit-appearance: none; appearance: none;
+  color-scheme: dark;
+}
+[data-theme="light"] .crew-rest-edit input[type="time"] {
+  color-scheme: light;
 }
 .crew-rest-edit .rest-sep { color: var(--text-muted); font-size: 11px; }
 
