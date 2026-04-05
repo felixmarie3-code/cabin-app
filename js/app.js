@@ -926,7 +926,8 @@ function buildCrewList(container){
     card.appendChild(restZone);
 
     slot.appendChild(badge);slot.appendChild(card);
-    card.addEventListener('click',function(){if(!crewEditMode&&!restEditMode)showCrewDetail(c);});
+    av.style.cursor='pointer';
+    av.addEventListener('click',function(e){e.stopPropagation();if(!crewEditMode&&!restEditMode)showCrewDetail(c);});
     container.appendChild(slot);
   });
   renderRestWarnings();
