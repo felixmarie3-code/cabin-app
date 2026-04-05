@@ -1012,14 +1012,15 @@ function renderRestWarnings(){
 var crewEditMode=false;
 var dragState=null;
 
-document.getElementById('editDoorsBtn').addEventListener('click',function(){
-  if(!crewEditMode) enterDoorEditMode();
-  else exitDoorEditMode();
+// Single edit button for both doors + rest
+document.getElementById('crewEditBtn').addEventListener('click',function(){
+  if(!crewEditMode) { enterDoorEditMode(); enterRestEditMode(); }
+  else { exitDoorEditMode(); exitRestEditMode(); }
 });
 
 function enterDoorEditMode(){
   crewEditMode=true;
-  var btn=document.getElementById('editDoorsBtn');
+  var btn=document.getElementById('crewEditBtn');
   btn.textContent='Valider';
   btn.classList.add('active');
   document.querySelectorAll('#briefCrew .crew-slot').forEach(function(s){s.classList.add('editing');});
@@ -1031,8 +1032,8 @@ function enterDoorEditMode(){
 
 function exitDoorEditMode(){
   crewEditMode=false;
-  var btn=document.getElementById('editDoorsBtn');
-  btn.textContent='Portes';
+  var btn=document.getElementById('crewEditBtn');
+  btn.textContent='Modifier';
   btn.classList.remove('active');
   if(doorAutoSaveTimer){clearTimeout(doorAutoSaveTimer);doorAutoSaveTimer=null;}
   // Read crew name in each slot → assign to slot's door
@@ -1188,17 +1189,8 @@ function showCrewDetail(c){
   document.querySelectorAll('.seat.selected').forEach(s=>s.classList.remove('selected'));
 }
 
-// Rest tour: toggle inline edit on crew cards
-document.getElementById('restTourBtn').addEventListener('click',function(){
-  if(!restEditMode) enterRestEditMode();
-  else exitRestEditMode();
-});
-
 function enterRestEditMode(){
   restEditMode=true;
-  var btn=document.getElementById('restTourBtn');
-  btn.textContent='Valider';btn.classList.add('active');
-  // Show edit controls, hide read-only badges
   document.querySelectorAll('.crew-rest-edit').forEach(function(el){el.style.display='flex';});
   document.querySelectorAll('.crew-rest-badge').forEach(function(el){el.style.display='none';});
   resetRestAutoSave();
@@ -1206,12 +1198,9 @@ function enterRestEditMode(){
 
 function exitRestEditMode(){
   restEditMode=false;
-  var btn=document.getElementById('restTourBtn');
-  btn.textContent='Repos';btn.classList.remove('active');
   document.querySelectorAll('.crew-rest-edit').forEach(function(el){el.style.display='none';});
   saveRestTour();
   if(restAutoSaveTimer){clearTimeout(restAutoSaveTimer);restAutoSaveTimer=null;}
-  // Rebuild to show updated badges
   buildCrewList(document.getElementById('briefCrew'));
 }
 
