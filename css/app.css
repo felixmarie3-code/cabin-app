@@ -1266,43 +1266,73 @@ button, [role="button"] { min-height: 36px; min-width: 36px; }
 .rest-slot-time { font-size: 11px; color: var(--text-muted); }
 .rest-slot select { padding: 4px 8px; border-radius: 8px; background: var(--bg-surface); color: var(--text); border: 1px solid rgba(82,167,190,0.2); font-size: 12px; }
 
-/* === Crew rest summary === */
-.crew-rest-summary {
-  margin-top: 10px; padding: 10px 12px; border-radius: 10px;
-  background: rgba(82,167,190,0.06); border: 1px solid rgba(82,167,190,0.1);
+/* === iOS-style crew edit buttons === */
+.crew-ios-btn {
+  background: rgba(82,167,190,0.12); color: var(--corsair-bleu-economie); border: none;
+  font-family: 'Gilroy', -apple-system, sans-serif; font-size: 13px; font-weight: 600;
+  padding: 6px 14px; border-radius: 14px; cursor: pointer;
+  transition: all 0.2s ease; min-height: 30px;
 }
-.crew-rest-summary .rest-info-title {
-  font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
-  color: var(--corsair-bleu-economie); margin-bottom: 6px;
+.crew-ios-btn:active { transform: scale(0.95); opacity: 0.7; }
+.crew-ios-btn.active {
+  background: var(--corsair-bleu-economie); color: white;
 }
-.crew-rest-summary .rest-info-row {
-  display: flex; align-items: center; gap: 8px; font-size: 12px; padding: 3px 0;
+[data-theme="light"] .crew-ios-btn { background: rgba(40,43,98,0.08); color: var(--corsair-bleu-premium); }
+[data-theme="light"] .crew-ios-btn.active { background: var(--corsair-bleu-premium); color: white; }
+
+/* Crew card: rest info shown on the right */
+.crew-member { flex-wrap: wrap; }
+.crew-rest-zone {
+  display: flex; align-items: center; gap: 6px; margin-left: auto; flex-shrink: 0;
 }
-.crew-rest-summary .rest-tour-badge {
-  font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 4px;
-  background: rgba(82,167,190,0.15); color: var(--corsair-bleu-economie);
-  min-width: 20px; text-align: center;
+/* Rest badge (read-only, shown after validation) */
+.crew-rest-badge {
+  display: flex; align-items: center; gap: 4px;
+  font-size: 10px; color: var(--corsair-bleu-economie); font-weight: 600;
+  background: rgba(82,167,190,0.08); padding: 3px 8px; border-radius: 8px;
 }
-.crew-rest-summary .rest-crew-name { font-weight: 600; color: var(--text); min-width: 60px; }
-.crew-rest-summary .rest-time { color: var(--text-muted); }
-.crew-rest-warn {
-  margin-top: 6px; padding: 6px 10px; border-radius: 6px;
-  background: rgba(251,191,36,0.1); color: #f59e0b;
-  font-size: 11px; font-weight: 600;
+.crew-rest-badge .rest-tour-num {
+  font-weight: 700; font-size: 9px; background: rgba(82,167,190,0.2);
+  padding: 1px 5px; border-radius: 4px; color: var(--corsair-bleu-economie);
 }
 
-/* Inline rest editor in crew card */
-.crew-rest-inline {
-  display: flex; align-items: center; gap: 6px; margin-top: 4px;
+/* Inline rest editor (inside crew card right side) */
+.crew-rest-edit {
+  display: none; align-items: center; gap: 4px; margin-left: auto; flex-shrink: 0;
 }
-.crew-rest-inline select, .crew-rest-inline input {
-  padding: 3px 6px; border-radius: 6px; border: 1px solid rgba(82,167,190,0.2);
-  background: var(--bg-surface); color: var(--text); font-size: 11px;
-  font-family: 'Gilroy', sans-serif; min-height: 28px;
+/* iOS segmented for tour 1/2 */
+.rest-tour-seg {
+  display: flex; padding: 2px; border-radius: 8px;
+  background: var(--ios-fill); gap: 0;
 }
-.crew-rest-inline select { width: 50px; }
-.crew-rest-inline input { width: 70px; }
-.crew-rest-inline .rest-arrow { color: var(--text-muted); font-size: 11px; }
+.rest-tour-seg button {
+  padding: 4px 10px; border: none; border-radius: 6px;
+  background: transparent; color: var(--text-muted);
+  font-family: 'Gilroy', sans-serif; font-size: 11px; font-weight: 600;
+  cursor: pointer; transition: all 0.2s ease; min-height: 24px;
+}
+.rest-tour-seg button.active {
+  background: var(--corsair-bleu-economie); color: white;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+}
+[data-theme="light"] .rest-tour-seg button.active {
+  background: var(--corsair-bleu-premium); color: white;
+}
+.crew-rest-edit input[type="time"] {
+  padding: 4px 6px; border-radius: 8px; border: 1px solid rgba(82,167,190,0.15);
+  background: var(--input-bg); color: var(--text); font-size: 12px;
+  font-family: 'Gilroy', sans-serif; min-height: 28px; width: 72px;
+  -webkit-appearance: none; appearance: none;
+}
+.crew-rest-edit .rest-sep { color: var(--text-muted); font-size: 11px; }
+
+/* Rest warnings under crew list */
+.crew-rest-warnings { margin-top: 8px; }
+.crew-rest-warn {
+  padding: 6px 10px; border-radius: 8px;
+  background: rgba(251,191,36,0.1); color: #f59e0b;
+  font-size: 11px; font-weight: 600; margin-top: 4px;
+}
 
 /* === Crew badge in pax detail === */
 .pax-seat-badge.crew-badge.ccp { background: var(--corsair-bleu-premium); }

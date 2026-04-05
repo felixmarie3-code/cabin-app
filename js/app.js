@@ -520,8 +520,7 @@ if (window.location.hash) handleHash();
       var crewName = item.dataset.name;
       var crewObj = CREW.find(function(c) { return c.name === crewName; });
       if (crewObj) {
-        switchToTab('passengers');
-        setTimeout(function() { showCrewDetail(crewObj); }, 400);
+        showCrewDetail(crewObj);
       } else {
         switchToTab('briefing');
       }
@@ -530,20 +529,25 @@ if (window.location.hash) handleHash();
     } else if (action === 'checklist') {
       switchToTab('checklist');
       setTimeout(function() {
+        // Ensure tiles view is visible first
+        document.getElementById('checklistTiles').style.display='';
+        document.getElementById('checklistDetail').style.display='none';
         var catName = item.dataset.cat;
         var subName = item.dataset.sub;
         if (catName && subName && CHECKLISTS[catName] && CHECKLISTS[catName].subs && CHECKLISTS[catName].subs[subName]) {
           openChecklistDetail(catName, subName, CHECKLISTS[catName].subs[subName]);
         }
-      }, 400);
+      }, 500);
     } else if (action === 'annonce') {
       switchToTab('checklist');
       setTimeout(function() {
+        document.getElementById('checklistTiles').style.display='';
+        document.getElementById('checklistDetail').style.display='none';
         var chIdx = parseInt(item.dataset.chapteridx);
-        if (!isNaN(chIdx) && ANNONCES_MANUAL[chIdx]) {
+        if (!isNaN(chIdx) && ANNONCES_MANUAL && ANNONCES_MANUAL[chIdx]) {
           openAnnonceChapter(ANNONCES_MANUAL[chIdx]);
         }
-      }, 400);
+      }, 500);
     }
   });
 })();
@@ -884,88 +888,96 @@ function buildCrewList(container){
     var nm=document.createElement('div');nm.className='crew-name';nm.textContent=c.name;
     var rl=document.createElement('div');rl.className='crew-role';rl.textContent=c.rank;
     info.appendChild(nm);info.appendChild(rl);
-    // Inline rest editor (hidden by default)
-    var restRow=document.createElement('div');restRow.className='crew-rest-inline';restRow.style.display='none';
-    var restSel=document.createElement('select');restSel.dataset.crewRest=c.name;
-    ['—','1','2'].forEach(function(v){var o=document.createElement('option');o.value=v==='—'?'':v;o.textContent=v==='—'?'Tour':v;restSel.appendChild(o);});
-    var rd=restData[c.name];if(rd&&rd.tour)restSel.value=rd.tour;
-    var startIn=document.createElement('input');startIn.type='time';startIn.dataset.crewRestStart=c.name;startIn.value=(rd&&rd.start)||'';
-    var arrow=document.createElement('span');arrow.className='rest-arrow';arrow.textContent='\u2192';
-    var endIn=document.createElement('input');endIn.type='time';endIn.dataset.crewRestEnd=c.name;endIn.value=(rd&&rd.end)||'';
-    restRow.appendChild(restSel);restRow.appendChild(startIn);restRow.appendChild(arrow);restRow.appendChild(endIn);
-    // Auto-save on change
-    [restSel,startIn,endIn].forEach(function(el){el.addEventListener('change',function(){resetRestAutoSave();});});
-    info.appendChild(restRow);
     card.appendChild(grip);card.appendChild(av);card.appendChild(info);
+
+    // Rest badge (read-only, right side of card)
+    var rd=restData[c.name];
+    var restZone=document.createElement('div');restZone.className='crew-rest-zone';
+    if(rd&&rd.tour){
+      var rb=document.createElement('div');rb.className='crew-rest-badge';
+      var tn=document.createElement('span');tn.className='rest-tour-num';tn.textContent='T'+rd.tour;
+      rb.appendChild(tn);
+      if(rd.start&&rd.end){rb.appendChild(document.createTextNode(rd.start+'\u2009\u2192\u2009'+rd.end));}
+      restZone.appendChild(rb);
+    }
+    // Rest editor (hidden, replaces badge in edit mode)
+    var restEdit=document.createElement('div');restEdit.className='crew-rest-edit';
+    // Segmented tour 1/2
+    var seg=document.createElement('div');seg.className='rest-tour-seg';
+    ['1','2'].forEach(function(v){
+      var btn=document.createElement('button');btn.textContent='T'+v;btn.dataset.tour=v;
+      btn.dataset.crewTour=c.name;
+      if(rd&&rd.tour===v)btn.classList.add('active');
+      btn.addEventListener('click',function(e){
+        e.stopPropagation();
+        seg.querySelectorAll('button').forEach(function(b){b.classList.remove('active');});
+        if(btn.classList.contains('active')){btn.classList.remove('active');}
+        else{btn.classList.add('active');}
+        resetRestAutoSave();
+      });
+      seg.appendChild(btn);
+    });
+    var startIn=document.createElement('input');startIn.type='time';startIn.dataset.crewRestStart=c.name;startIn.value=(rd&&rd.start)||'';
+    var sep=document.createElement('span');sep.className='rest-sep';sep.textContent='\u2192';
+    var endIn=document.createElement('input');endIn.type='time';endIn.dataset.crewRestEnd=c.name;endIn.value=(rd&&rd.end)||'';
+    [startIn,endIn].forEach(function(el){el.addEventListener('change',function(){resetRestAutoSave();});el.addEventListener('click',function(e){e.stopPropagation();});});
+    restEdit.appendChild(seg);restEdit.appendChild(startIn);restEdit.appendChild(sep);restEdit.appendChild(endIn);
+    restZone.appendChild(restEdit);
+    card.appendChild(restZone);
+
     slot.appendChild(badge);slot.appendChild(card);
     card.addEventListener('click',function(){if(!crewEditMode&&!restEditMode)showCrewDetail(c);});
     container.appendChild(slot);
   });
-  renderRestSummary();
+  renderRestWarnings();
 }
 
 function resetRestAutoSave(){
   if(restAutoSaveTimer)clearTimeout(restAutoSaveTimer);
-  restAutoSaveTimer=setTimeout(function(){saveRestTour();},300000); // 5 min
+  restAutoSaveTimer=setTimeout(function(){if(restEditMode)exitRestEditMode();},300000);
 }
 
 function saveRestTour(){
   var data={};
-  document.querySelectorAll('[data-crew-rest]').forEach(function(sel){
-    var name=sel.dataset.crewRest;
-    var tour=sel.value;
-    var start=document.querySelector('[data-crew-rest-start="'+name+'"]');
-    var end=document.querySelector('[data-crew-rest-end="'+name+'"]');
-    if(tour||( start&&start.value)||(end&&end.value)){
+  document.querySelectorAll('.crew-rest-edit').forEach(function(edit){
+    var card=edit.closest('.crew-member');
+    var name=card?card.dataset.crewName:'';if(!name)return;
+    var activeTour=edit.querySelector('.rest-tour-seg button.active');
+    var tour=activeTour?activeTour.dataset.tour:'';
+    var start=edit.querySelector('input[data-crew-rest-start]');
+    var end=edit.querySelector('input[data-crew-rest-end]');
+    if(tour||(start&&start.value)||(end&&end.value)){
       data[name]={tour:tour,start:start?start.value:'',end:end?end.value:''};
     }
   });
   lsSet('cabin_rest_tour',data);
-  renderRestSummary();
 }
 
-function renderRestSummary(){
-  var sum=document.getElementById('crewRestSummary');
-  if(!sum)return;
+function renderRestWarnings(){
+  // Remove old warnings
+  var old=document.querySelector('.crew-rest-warnings');if(old)old.remove();
   var data=lsGet('cabin_rest_tour',{});
-  var entries=Object.entries(data).filter(function(e){return e[1].tour;});
-  if(!entries.length){sum.style.display='none';return;}
-  sum.style.display='';sum.textContent='';
-  var title=document.createElement('div');title.className='rest-info-title';title.textContent='Tours de repos';
-  sum.appendChild(title);
-  // Group by tour
   var tours={1:[],2:[]};
-  entries.forEach(function(e){var t=parseInt(e[1].tour);if(tours[t])tours[t].push(e);});
+  Object.entries(data).forEach(function(e){if(e[1].tour){var t=parseInt(e[1].tour);if(tours[t])tours[t].push(e[1]);}});
   var warnings=[];
-  [1,2].forEach(function(t){
-    if(!tours[t].length)return;
-    tours[t].forEach(function(e){
-      var row=document.createElement('div');row.className='rest-info-row';
-      var tb=document.createElement('span');tb.className='rest-tour-badge';tb.textContent='T'+t;
-      var cn=document.createElement('span');cn.className='rest-crew-name';
-      var crew=CREW.find(function(c){return c.name===e[0];});
-      cn.textContent=crew?crew.trigramme:e[0];
-      var tm=document.createElement('span');tm.className='rest-time';
-      tm.textContent=e[1].start&&e[1].end?e[1].start+' \u2192 '+e[1].end:'non d\u00e9fini';
-      row.appendChild(tb);row.appendChild(cn);row.appendChild(tm);sum.appendChild(row);
-    });
-  });
-  // Validate: tours 1 and 2 same duration, separated by 15min
   if(tours[1].length&&tours[2].length){
-    var t1=tours[1][0][1],t2=tours[2][0][1];
+    var t1=tours[1][0],t2=tours[2][0];
     if(t1.start&&t1.end&&t2.start&&t2.end){
       var toMin=function(t){var p=t.split(':');return parseInt(p[0])*60+parseInt(p[1]);};
-      var d1=toMin(t1.end)-toMin(t1.start);
-      var d2=toMin(t2.end)-toMin(t2.start);
+      var d1=toMin(t1.end)-toMin(t1.start);var d2=toMin(t2.end)-toMin(t2.start);
       var gap=toMin(t2.start)-toMin(t1.end);
       if(d1!==d2)warnings.push('Dur\u00e9es in\u00e9gales : Tour 1 = '+d1+'min, Tour 2 = '+d2+'min');
       if(gap!==15)warnings.push('Espacement entre tours : '+gap+'min (attendu : 15min)');
     }
   }
+  if(!warnings.length)return;
+  var container=document.createElement('div');container.className='crew-rest-warnings';
   warnings.forEach(function(w){
     var warn=document.createElement('div');warn.className='crew-rest-warn';warn.textContent='\u26a0 '+w;
-    sum.appendChild(warn);
+    container.appendChild(warn);
   });
+  var crewList=document.getElementById('briefCrew');
+  if(crewList)crewList.parentNode.insertBefore(container,crewList.nextSibling);
 }
 
 // --- Door edit mode ---
@@ -980,8 +992,8 @@ document.getElementById('editDoorsBtn').addEventListener('click',function(){
 function enterDoorEditMode(){
   crewEditMode=true;
   var btn=document.getElementById('editDoorsBtn');
-  btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Valider portes';
-  btn.classList.add('validate');
+  btn.textContent='Valider';
+  btn.classList.add('active');
   document.querySelectorAll('#briefCrew .crew-slot').forEach(function(s){s.classList.add('editing');});
   attachDragListeners();
   // Auto-save after 5min inactivity
@@ -992,8 +1004,8 @@ function enterDoorEditMode(){
 function exitDoorEditMode(){
   crewEditMode=false;
   var btn=document.getElementById('editDoorsBtn');
-  btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg> Modifier portes';
-  btn.classList.remove('validate');
+  btn.textContent='Portes';
+  btn.classList.remove('active');
   if(doorAutoSaveTimer){clearTimeout(doorAutoSaveTimer);doorAutoSaveTimer=null;}
   // Read crew name in each slot → assign to slot's door
   var slots=document.querySelectorAll('#briefCrew .crew-slot');
@@ -1157,18 +1169,22 @@ document.getElementById('restTourBtn').addEventListener('click',function(){
 function enterRestEditMode(){
   restEditMode=true;
   var btn=document.getElementById('restTourBtn');
-  btn.textContent='Valider repos';btn.classList.add('validate');
-  document.querySelectorAll('.crew-rest-inline').forEach(function(el){el.style.display='flex';});
+  btn.textContent='Valider';btn.classList.add('active');
+  // Show edit controls, hide read-only badges
+  document.querySelectorAll('.crew-rest-edit').forEach(function(el){el.style.display='flex';});
+  document.querySelectorAll('.crew-rest-badge').forEach(function(el){el.style.display='none';});
   resetRestAutoSave();
 }
 
 function exitRestEditMode(){
   restEditMode=false;
   var btn=document.getElementById('restTourBtn');
-  btn.textContent='Modifier repos';btn.classList.remove('validate');
-  document.querySelectorAll('.crew-rest-inline').forEach(function(el){el.style.display='none';});
+  btn.textContent='Repos';btn.classList.remove('active');
+  document.querySelectorAll('.crew-rest-edit').forEach(function(el){el.style.display='none';});
   saveRestTour();
   if(restAutoSaveTimer){clearTimeout(restAutoSaveTimer);restAutoSaveTimer=null;}
+  // Rebuild to show updated badges
+  buildCrewList(document.getElementById('briefCrew'));
 }
 
 // Cabin defect modal
