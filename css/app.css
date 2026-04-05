@@ -465,9 +465,9 @@ html[data-theme="light"] .tab-bar .tab.active span { color: var(--corsair-bleu-b
 .tab-icon { width: 22px; height: 22px; flex-shrink: 0; transition: transform 0.3s var(--spring-soft); }
 .tab-icon-filled { display: none !important; }
 .tab.active .tab-icon { transform: scale(1.08); }
-/* Active icon: same gray as inactive, no color */
-.tab.active .tab-icon-outline { stroke: rgba(255,255,255,0.5); }
-html[data-theme="light"] .tab-bar .tab.active .tab-icon-outline { stroke: rgba(60,60,67,0.6); }
+/* Active icon: colored outline, NO fill */
+.tab.active .tab-icon-outline { stroke: var(--corsair-bleu-economie) !important; fill: none !important; }
+html[data-theme="light"] .tab-bar .tab.active .tab-icon-outline { stroke: var(--corsair-bleu-premium) !important; fill: none !important; }
 
 /* === Content (above bottom tab bar) === */
 .content {
