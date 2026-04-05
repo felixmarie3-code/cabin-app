@@ -350,6 +350,161 @@ if (window.location.hash) handleHash();
   });
 })();
 
+// === Global Search ===
+(function() {
+  var bubble = document.getElementById('searchBubble');
+  var overlay = document.getElementById('globalSearchOverlay');
+  var input = document.getElementById('globalSearchInput');
+  var cancelBtn = document.getElementById('globalSearchCancel');
+  var results = document.getElementById('globalSearchResults');
+  if (!bubble || !overlay) return;
+
+  bubble.addEventListener('click', function() {
+    try { navigator.vibrate(10); } catch(e) {}
+    overlay.style.display = 'flex';
+    requestAnimationFrame(function() {
+      overlay.classList.add('visible');
+      setTimeout(function() { input.focus(); }, 300);
+    });
+  });
+
+  function closeSearch() {
+    overlay.classList.remove('visible');
+    input.value = '';
+    results.textContent = '';
+    var hint = document.createElement('div');
+    hint.className = 'global-search-hint';
+    hint.textContent = 'Passagers, \u00e9quipage, annonces, incidents...';
+    results.appendChild(hint);
+    setTimeout(function() { overlay.style.display = 'none'; }, 250);
+  }
+
+  cancelBtn.addEventListener('click', closeSearch);
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) closeSearch(); });
+
+  function makeItem(iconText, title, subtitle, module, action, data) {
+    var item = document.createElement('div');
+    item.className = 'global-search-item';
+    item.dataset.action = action;
+    if (data) Object.keys(data).forEach(function(k) { item.dataset[k] = data[k]; });
+    var icon = document.createElement('div');
+    icon.className = 'global-search-item-icon';
+    icon.textContent = iconText;
+    var content = document.createElement('div');
+    content.className = 'global-search-item-content';
+    var t = document.createElement('div'); t.className = 'global-search-item-title'; t.textContent = title;
+    var s = document.createElement('div'); s.className = 'global-search-item-subtitle'; s.textContent = subtitle;
+    var m = document.createElement('div'); m.className = 'global-search-item-module'; m.textContent = module;
+    content.appendChild(t); content.appendChild(s); content.appendChild(m);
+    item.appendChild(icon); item.appendChild(content);
+    return item;
+  }
+
+  function makeGroup(title) {
+    var g = document.createElement('div'); g.className = 'global-search-group';
+    var h = document.createElement('div'); h.className = 'global-search-group-title'; h.textContent = title;
+    g.appendChild(h); return g;
+  }
+
+  input.addEventListener('input', function() {
+    var q = input.value.trim().toLowerCase();
+    results.textContent = '';
+    if (!q) {
+      var hint = document.createElement('div');
+      hint.className = 'global-search-hint';
+      hint.textContent = 'Passagers, \u00e9quipage, annonces, incidents...';
+      results.appendChild(hint);
+      return;
+    }
+    var found = false;
+
+    // Passengers
+    if (typeof passengers !== 'undefined') {
+      var grp = null, cnt = 0;
+      Object.entries(passengers).forEach(function(e) {
+        if (cnt >= 6) return;
+        var seat = e[0], p = e[1];
+        if (p.name.toLowerCase().indexOf(q) !== -1 || seat.toLowerCase().indexOf(q) !== -1 || (p.pnr && p.pnr.toLowerCase().indexOf(q) !== -1)) {
+          if (!grp) grp = makeGroup('Passagers');
+          grp.appendChild(makeItem(seat, p.name, p.class + (p.meal ? ' \u00b7 ' + p.meal : ''), 'Passagers', 'pax', {seat: seat}));
+          cnt++; found = true;
+        }
+      });
+      if (grp) results.appendChild(grp);
+    }
+
+    // Crew
+    if (typeof CREW !== 'undefined') {
+      var grp2 = null;
+      CREW.forEach(function(c) {
+        if (c.name.toLowerCase().indexOf(q) !== -1 || c.trigramme.toLowerCase().indexOf(q) !== -1 || c.role.toLowerCase().indexOf(q) !== -1) {
+          if (!grp2) grp2 = makeGroup('\u00c9quipage');
+          grp2.appendChild(makeItem(c.trigramme, c.name, c.rank + ' \u00b7 ' + c.role, 'Briefing', 'crew', {name: c.name}));
+          found = true;
+        }
+      });
+      if (grp2) results.appendChild(grp2);
+    }
+
+    // Incidents
+    if (typeof incidents !== 'undefined' && incidents.length) {
+      var grp3 = null;
+      incidents.forEach(function(inc, idx) {
+        if ((inc.desc && inc.desc.toLowerCase().indexOf(q) !== -1) || (inc.type && inc.type.toLowerCase().indexOf(q) !== -1)) {
+          if (!grp3) grp3 = makeGroup('Incidents');
+          grp3.appendChild(makeItem('!', inc.type, inc.desc, 'Rapport', 'incident', {}));
+          found = true;
+        }
+      });
+      if (grp3) results.appendChild(grp3);
+    }
+
+    // Announcements
+    if (typeof ANNONCES_DATA !== 'undefined') {
+      var grp4 = null, cnt4 = 0;
+      ANNONCES_DATA.forEach(function(cat) {
+        if (cat.sections) cat.sections.forEach(function(sec) {
+          if (cnt4 >= 4) return;
+          if (sec.title && sec.title.toLowerCase().indexOf(q) !== -1) {
+            if (!grp4) grp4 = makeGroup('Annonces');
+            grp4.appendChild(makeItem('\u{1F4E2}', sec.title, cat.title, 'Checklist', 'annonce', {}));
+            cnt4++; found = true;
+          }
+        });
+      });
+      if (grp4) results.appendChild(grp4);
+    }
+
+    if (!found) {
+      var empty = document.createElement('div');
+      empty.className = 'global-search-empty';
+      empty.textContent = 'Aucun r\u00e9sultat pour \u00ab ' + input.value + ' \u00bb';
+      results.appendChild(empty);
+    }
+  });
+
+  // Handle result taps
+  results.addEventListener('click', function(e) {
+    var item = e.target.closest('.global-search-item');
+    if (!item) return;
+    closeSearch();
+    var action = item.dataset.action;
+    if (action === 'pax') {
+      switchToTab('passengers');
+      setTimeout(function() {
+        var seatEl = document.querySelector('.seat[data-seat="' + item.dataset.seat + '"]');
+        if (seatEl) seatEl.click();
+      }, 400);
+    } else if (action === 'crew') {
+      switchToTab('briefing');
+    } else if (action === 'incident') {
+      switchToTab('report');
+    } else if (action === 'annonce') {
+      switchToTab('checklist');
+    }
+  });
+})();
+
 // === Haptic feedback on common interactions ===
 document.addEventListener('click', function(e) {
   if (e.target.closest('.filter-btn, .otp-dot, .timer-preset, .pax-tag, .ios-toggle, .checklist-item, .cl-subtile, .sev-btn'))

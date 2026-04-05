@@ -510,6 +510,26 @@
       <span>Rapport</span>
     </button>
   </nav>
+  <!-- Search bubble (separate from tab bar, like iOS Podcasts) -->
+  <button class="search-bubble" id="searchBubble" title="Rechercher">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+    </svg>
+  </button>
+
+  <!-- Global search overlay -->
+  <div class="global-search-overlay" id="globalSearchOverlay">
+    <div class="global-search-bar">
+      <div class="global-search-input-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="globalSearchInput" placeholder="Rechercher..." autocomplete="off">
+      </div>
+      <button class="global-search-cancel" id="globalSearchCancel">Annuler</button>
+    </div>
+    <div class="global-search-results" id="globalSearchResults">
+      <div class="global-search-hint">Passagers, &eacute;quipage, annonces, incidents...</div>
+    </div>
+  </div>
 
   <!-- Cabin defect — Action Sheet -->
   <div class="action-sheet-overlay" id="defectOverlay">
