@@ -471,7 +471,7 @@ if (window.location.hash) handleHash();
             if (cnt4 >= 6) return;
             if (item.toLowerCase().indexOf(q) !== -1 || subName.toLowerCase().indexOf(q) !== -1) {
               if (!grp4) grp4 = makeGroup('Checklists');
-              grp4.appendChild(makeItem('\u2611', item.substring(0, 40), catName + ' \u203A ' + subName, 'Checklist', 'checklist', {}));
+              grp4.appendChild(makeItem('\u2611', item.substring(0, 40), catName + ' \u203A ' + subName, 'Checklist', 'checklist', {cat: catName, sub: subName}));
               cnt4++; found = true;
             }
           });
@@ -488,7 +488,7 @@ if (window.location.hash) handleHash();
           if (cnt5 >= 4) return;
           if (sec.title && sec.title.toLowerCase().indexOf(q) !== -1) {
             if (!grp5) grp5 = makeGroup('Annonces');
-            grp5.appendChild(makeItem('\u{1F399}', sec.title, ch.chapter, 'Checklist', 'annonce', {}));
+            grp5.appendChild(makeItem('\u{1F399}', sec.title, ch.chapter, 'Checklist', 'annonce', {chapterIdx: String(ANNONCES_MANUAL.indexOf(ch)), sectionIdx: String(ch.sections.indexOf(sec))}));
             cnt5++; found = true;
           }
         });
@@ -517,11 +517,33 @@ if (window.location.hash) handleHash();
         if (seatEl) seatEl.click();
       }, 400);
     } else if (action === 'crew') {
-      switchToTab('briefing');
+      var crewName = item.dataset.name;
+      var crewObj = CREW.find(function(c) { return c.name === crewName; });
+      if (crewObj) {
+        switchToTab('passengers');
+        setTimeout(function() { showCrewDetail(crewObj); }, 400);
+      } else {
+        switchToTab('briefing');
+      }
     } else if (action === 'incident') {
       switchToTab('report');
+    } else if (action === 'checklist') {
+      switchToTab('checklist');
+      setTimeout(function() {
+        var catName = item.dataset.cat;
+        var subName = item.dataset.sub;
+        if (catName && subName && CHECKLISTS[catName] && CHECKLISTS[catName].subs && CHECKLISTS[catName].subs[subName]) {
+          openChecklistDetail(catName, subName, CHECKLISTS[catName].subs[subName]);
+        }
+      }, 400);
     } else if (action === 'annonce') {
       switchToTab('checklist');
+      setTimeout(function() {
+        var chIdx = parseInt(item.dataset.chapteridx);
+        if (!isNaN(chIdx) && ANNONCES_MANUAL[chIdx]) {
+          openAnnonceChapter(ANNONCES_MANUAL[chIdx]);
+        }
+      }, 400);
     }
   });
 })();
