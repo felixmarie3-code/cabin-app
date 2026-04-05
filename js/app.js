@@ -920,7 +920,13 @@ function buildCrewList(container){
     var startIn=document.createElement('input');startIn.type='time';startIn.dataset.crewRestStart=c.name;startIn.value=(rd&&rd.start)||'';
     var sep=document.createElement('span');sep.className='rest-sep';sep.textContent='\u2192';
     var endIn=document.createElement('input');endIn.type='time';endIn.dataset.crewRestEnd=c.name;endIn.value=(rd&&rd.end)||'';
-    [startIn,endIn].forEach(function(el){el.addEventListener('change',function(){resetRestAutoSave();});el.addEventListener('click',function(e){e.stopPropagation();});});
+    [startIn,endIn].forEach(function(el){
+      el.addEventListener('change',function(){
+        syncRestTimes(el);
+        resetRestAutoSave();
+      });
+      el.addEventListener('click',function(e){e.stopPropagation();});
+    });
     restEdit.appendChild(seg);restEdit.appendChild(startIn);restEdit.appendChild(sep);restEdit.appendChild(endIn);
     restZone.appendChild(restEdit);
     card.appendChild(restZone);
@@ -931,6 +937,27 @@ function buildCrewList(container){
     container.appendChild(slot);
   });
   renderRestWarnings();
+}
+
+// Sync times across all crew with the same tour number
+function syncRestTimes(changedInput){
+  var card=changedInput.closest('.crew-member');if(!card)return;
+  var edit=card.querySelector('.crew-rest-edit');if(!edit)return;
+  var activeTour=edit.querySelector('.rest-tour-seg button.active');
+  if(!activeTour)return;
+  var tourNum=activeTour.dataset.tour;
+  var startVal=edit.querySelector('input[data-crew-rest-start]').value;
+  var endVal=edit.querySelector('input[data-crew-rest-end]').value;
+  // Find all other crew edits with the same active tour and sync their times
+  document.querySelectorAll('.crew-rest-edit').forEach(function(otherEdit){
+    if(otherEdit===edit)return;
+    var otherActive=otherEdit.querySelector('.rest-tour-seg button.active');
+    if(!otherActive||otherActive.dataset.tour!==tourNum)return;
+    var otherStart=otherEdit.querySelector('input[data-crew-rest-start]');
+    var otherEnd=otherEdit.querySelector('input[data-crew-rest-end]');
+    if(otherStart)otherStart.value=startVal;
+    if(otherEnd)otherEnd.value=endVal;
+  });
 }
 
 function resetRestAutoSave(){
