@@ -1955,8 +1955,8 @@ button, [role="button"] { min-height: 36px; min-width: 36px; }
 
 /* === Search Bubble (iOS Podcasts style) === */
 .search-bubble {
-  position: fixed; bottom: 14px; right: 14px; z-index: 51;
-  width: 52px; height: 52px; border-radius: 50%;
+  position: fixed; bottom: 10px; right: 14px; z-index: 51;
+  width: 60px; height: 60px; border-radius: 50%;
   background: rgba(10,12,30,0.15);
   -webkit-backdrop-filter: blur(40px) saturate(180%) brightness(110%);
   backdrop-filter: blur(40px) saturate(180%) brightness(110%);
